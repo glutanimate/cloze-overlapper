@@ -1,0 +1,6 @@
+*.pyo
+*.pyc
+.hidden
+.directory
+*.sublime-project
+*.sublime-workspace
