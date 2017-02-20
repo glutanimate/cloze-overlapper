@@ -7,22 +7,28 @@ Copyright: Glutanimate 2016-2017
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 """
 
-import sys
-reload(sys)  
-sys.setdefaultencoding('utf8')
-
 from aqt import editor
 from aqt.utils import tooltip
+from anki.utils import stripHTML
 from anki.hooks import addHook
+
+from BeautifulSoup import BeautifulSoup
+
 
 overlapping_cloze_note_type = u"E-Lückentext-OL-ns"
 overlapping_cloze_fields_prefix = "Text"
 overlapping_cloze_fields_fullcloze = "Full"
 
 ol_cloze_max = 20
+ol_cloze_dfltopts = (1,1,0)
 ol_cloze_no_context_first = False
 ol_cloze_no_context_last = False
 ol_cloze_incremental_ends = False
+ol_cloze_model = u"E-Lückentext-OL-ns"
+ol_cloze_fldprefix = "Text"
+ol_cloze_fldfull = "Full"
+ol_cloze_fldoptions = "Options"
+
 
 def generateOverlappingClozes(self, text):
     lines = text.splitlines()
@@ -70,111 +76,147 @@ def generateOverlappingClozes(self, text):
 
     return {'fields': fields, 'fullCloze': fullCloze}
 
+def getOptions(field):
+    options = field.replace(" ", "").split(",")
+    dflts = ol_cloze_dfltopts
+    if not field or not options:
+        return ol_cloze_dfltopts, True
+    opts = []
+    for i in options:
+        try:
+            opts.append(int(i))
+        except ValueError:
+            opts.append(None)
+    length = len(opts)
+    if length == 3 and isinstance(opts[1], int):
+        return tuple(opts), False
+    elif length == 2 and isinstance(opts[0], int):
+        return (opts[1], opts[0], opts[1]), False
+    elif length == 1 and isinstance(opts[0], int):
+        return (dflts[0], opts[0], dflts[2]), False
+    return False, False
+
 def getClozeStart(idx, target, total):
     if idx < target or idx > total:
         return 0
     return idx-target
 
-def getBeforeStart(idx, target, total, start_c):
-    if start_c < 1 or (ol_cloze_no_context_last and idx == total):
+def getBeforeStart(start, idx, target, total, start_c):
+    if (target == 0 or start_c < 1 
+      or (target and ol_cloze_no_context_last and idx == total)):
         return None
-    if target == "a" or target > start_c:
+    if target is None or target > start_c:
         return 0
     return start_c-target
 
-def getAfterEnd(idx, target, total):
+def getAfterEnd(start, idx, target, total):
     left = total - idx
-    if left < 1 or (ol_cloze_no_context_first and idx == 1):
+    if (target == 0 or left < 1
+      or (target and ol_cloze_no_context_first and idx == start)):
         return None
-    if target == "a" or target > left:
+    if target is None or target > left:
         return total
     return idx+target
 
-def generateClozes(self, text, options):
+def generateOlClozes(self, items, options):
     before, prompt, after = options
-    print options
-    lines = unicode(text, "utf-8").splitlines()
-    length = len(lines)
+    length = len(items)
     if ol_cloze_incremental_ends:
         total = length + prompt - 1
         start = 1
     else:
-        total = length - prompt
+        total = length
         start = prompt
     if total > ol_cloze_max:
-        print "Error: more clozes than the note type can handle"
-        return
+        return False
     fields = []
     cloze_format = u"{{c%i::%s}}"
     for idx in range(start,total+1):
-        field = ["..."] * total
+        field = ["..."] * length
         start_c = getClozeStart(idx, prompt, total)
-        start_b = getBeforeStart(idx, before, total, start_c)
-        end_a = getAfterEnd(idx, after, total)
-        print start_b, start_c, end_a
+        start_b = getBeforeStart(start, idx, before, total, start_c)
+        end_a = getAfterEnd(start, idx, after, total)
         if start_b is not None:
-            field[start_b:start_c] = lines[start_b:start_c]
-        field[start_c:idx] = [cloze_format % (idx, l) for l in lines[start_c:idx]]
+            field[start_b:start_c] = items[start_b:start_c]
         if end_a is not None:
-            field[idx:end_a] = lines[idx:end_a]
+            field[idx:end_a] = items[idx:end_a]
+        field[start_c:idx] = [cloze_format % (idx-start+1, l) for l in items[start_c:idx]]
         fields.append(field)
-    if ol_cloze_max > total:
-        # delete contents of unused fields
-        fields = fields + [""] * (ol_cloze_max - total)
-    full = [cloze_format % (ol_cloze_max+1, l) for l in lines]
+    if ol_cloze_max > total: # delete contents of unused fields
+        fields = fields + [""] * (ol_cloze_max - len(fields))
+    full = [cloze_format % (ol_cloze_max+1, l) for l in items]
 
     return fields, full
 
 def insertOverlappingCloze(self):
     # make sure the right model is set
     modelName = self.note.model()["name"]
-    if modelName != overlapping_cloze_note_type:
+    if modelName != ol_cloze_model:
         tooltip(u"Can only generate overlapping clozes on<br>%s" 
-            % overlapping_cloze_note_type)
+            % ol_cloze_model)
         return False
 
-    selection = self.web.selectedText()
+    # save field
+    self.web.eval("""
+       if (currentField) {
+         saveField("key");
+       }
+       """)
+
+    selection = self.note["Volltext"]
+    soup = BeautifulSoup(selection)
+    selection = soup.getText("\n") # will need to be updated for bs4
+    items = selection.splitlines()
     
     # make sure we have a selection
-    if not selection:
+    if not selection or not items:
         tooltip("Please select some lines")
         return False
 
     # make sure the right number of lines are selected
-    if not 2 <= selection.count("\n") <= ol_cloze_max-1:
+    if not 2 <= len(items) <= ol_cloze_max-1:
         tooltip("Please select between 3 and %d lines" 
             % ol_cloze_max )
         return False
 
-    retDict = self.generateOverlappingClozes(selection)
+    fld_opts = self.note[ol_cloze_fldoptions]
+    options, defaults = getOptions(fld_opts)
 
-    fields = retDict["fields"]
-    fullCloze = retDict ["fullCloze"]
+    fields, full = self.generateOlClozes(items, options)
+    if not fields:
+        tooltip("Error: more clozes than the note type can handle")
+        return False
 
     for idx, field in enumerate(fields):
-        fieldName = overlapping_cloze_fields_prefix + str(idx+1)
-        self.note[fieldName] = field
+        name = ol_cloze_fldprefix + str(idx+1)
+        self.note[name] = "<br>".join(field)
 
-    self.note[overlapping_cloze_fields_fullcloze] = fullCloze
+    if defaults:
+        self.note[ol_cloze_fldoptions] = ",".join(str(i) for i in ol_cloze_dfltopts)
+    self.note[ol_cloze_fldfull] = "<br>".join(full)
 
-    # set original selection to ordered list and save field
+    # save field
     self.web.eval("""
-        var parNode = window.getSelection().focusNode.parentNode;
-        if (parNode.toString() !== "[object HTMLLIElement]") {
-            document.execCommand('insertOrderedList');
-            var olElem = window.getSelection().focusNode.parentNode;
-            if (olElem.toString() !== "[object HTMLOListElement]") {
-                olElem = olElem.parentNode;
-            }
-            olElem.setAttribute("type", "1");
-            olElem.setAttribute("start", "1");
-            olElem.style.marginLeft = "20px";
-        }
-        if (currentField) {
-          saveField("key");
-        }
-        """)
+       if (currentField) {
+         saveField("key");
+       }
+       """)
     self.loadNote()
+
+
+    """
+       var parNode = window.getSelection().focusNode.parentNode;
+       if (parNode.toString() !== "[object HTMLLIElement]") {
+           document.execCommand('insertOrderedList');
+           var olElem = window.getSelection().focusNode.parentNode;
+           if (olElem.toString() !== "[object HTMLOListElement]") {
+               olElem = olElem.parentNode;
+           }
+           olElem.setAttribute("type", "1");
+           olElem.setAttribute("start", "1");
+           olElem.style.marginLeft = "20px";
+       }
+    """
 
 def onSetupButtons(self):
     self._addButton("Cloze Overlapper", self.insertOverlappingCloze,
@@ -182,5 +224,5 @@ def onSetupButtons(self):
         text="[.]]", size=True)
 
 editor.Editor.insertOverlappingCloze = insertOverlappingCloze
-editor.Editor.generateOverlappingClozes = generateOverlappingClozes
+editor.Editor.generateOlClozes = generateOlClozes
 addHook("setupEditorButtons", onSetupButtons)
