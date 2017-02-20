@@ -7,6 +7,7 @@ Copyright: Glutanimate 2016-2017
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 """
 
+from aqt import mw
 from aqt import editor
 from aqt.utils import tooltip
 from anki.utils import stripHTML
@@ -14,20 +15,18 @@ from anki.hooks import addHook
 
 from BeautifulSoup import BeautifulSoup
 
-# CONSTANTS
+from .consts import *
+from .template import addModel
+
+# OPTIONS
 
 ol_cloze_max = 20
 ol_cloze_dfltopts = (1,1,0)
 ol_cloze_no_context_first = False
 ol_cloze_no_context_last = False
 ol_cloze_incremental_ends = False
-ol_cloze_model = "Overlapping Cloze"
-ol_cloze_fld_prefix = "Text"
-ol_cloze_fld_full = "Full"
-ol_cloze_fld_options = "Options"
-ol_cloze_fld_original = "Original"
 
-def getOptions(field):
+def getNoteSettings(field):
     """Return options tuple. Fall back to defaults if necessary."""
     options = field.replace(" ", "").split(",")
     dflts = ol_cloze_dfltopts
@@ -73,7 +72,7 @@ def getAfterEnd(start, idx, target, total):
         return total
     return idx+target
 
-def generateOlClozes(self, items, options):
+def generateOlClozes(items, options):
     """Returns an array of lists with overlapping cloze deletions"""
     before, prompt, after = options
     length = len(items)
@@ -132,26 +131,26 @@ def processField(field, markup):
 def updateNote(note, fields, full, markup, defaults):
     """Write changes to note"""
     for idx, field in enumerate(fields):
-        name = ol_cloze_fld_prefix + str(idx+1)
+        name = OLC_FLDS["tx"] + str(idx+1)
         note[name] = processField(field, markup)
 
-    note[ol_cloze_fld_full] = processField(full, markup)
+    note[OLC_FLDS["fl"]] = processField(full, markup)
 
     if defaults:
-        note[ol_cloze_fld_options] = ",".join(str(i) for i in ol_cloze_dfltopts)
+        note[OLC_FLDS["st"]] = ",".join(str(i) for i in ol_cloze_dfltopts)
 
 def insertOverlappingCloze(self):
     """Main function, called on button press"""
     mname = self.note.model()["name"] # make sure the right model is set
-    if mname != ol_cloze_model:
-        tooltip(u"Can only generate overlapping clozes on<br>'%s' note type" % ol_cloze_model)
+    if mname != OLC_MODEL:
+        tooltip(u"Can only generate overlapping clozes on<br>'%s' note type" % OLC_MODEL)
         return False
 
     self.web.eval("""saveField("key");""") # save field
-    original = self.note[ol_cloze_fld_original]
+    original = self.note[OLC_FLDS["og"]]
 
     if not original:
-        tooltip(u"Please enter some text in the %s field" % ol_cloze_fld_original)
+        tooltip(u"Please enter some text in the %s field" % OLC_FLDS["og"])
         return False
 
     items, markup = processOriginalText(original)
@@ -163,10 +162,10 @@ def insertOverlappingCloze(self):
         tooltip("Please enter at least three items to cloze.")
         return False
 
-    fld_opts = self.note[ol_cloze_fld_options]
-    options, defaults = getOptions(fld_opts)
+    fld_opts = self.note[OLC_FLDS["st"]]
+    options, defaults = getNoteSettings(fld_opts)
 
-    fields, full = self.generateOlClozes(items, options)
+    fields, full = generateOlClozes(items, options)
     if not fields:
         tooltip("Error: More clozes than the note type can handle.")
         return False
@@ -180,9 +179,14 @@ def insertOverlappingCloze(self):
 
 def onSetupButtons(self):
     self._addButton("Cloze Overlapper", self.insertOverlappingCloze,
-        _("Alt+Shift+C"), "Insert Overlapping Clozes (Alt+Shift+C)", 
+        _("Alt+Shift+C"), "Generate Overlapping Clozes (Alt+Shift+C)", 
         text="[.]]", size=True)
 
+def setupTemplate():
+    model = mw.col.models.byName(OLC_MODEL)
+    if not model:
+        model = addTemplate(mw.col)
+
+addHook("profileLoaded", setupTemplate)
 editor.Editor.insertOverlappingCloze = insertOverlappingCloze
-editor.Editor.generateOlClozes = generateOlClozes
 addHook("setupEditorButtons", onSetupButtons)
