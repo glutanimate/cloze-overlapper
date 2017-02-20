@@ -110,15 +110,14 @@ def addModel(col):
         if i == "tx":
             for i in range(1, OLC_MAX+1):
                 fld = models.newField(OLC_FLDS["tx"]+str(i))
-                fld["size"] = 14
+                fld["size"] = 12
                 models.addField(model, fld)
             continue
         fld = models.newField(OLC_FLDS[i])
         if i == "st":
-            fld["size"] = 16
             fld["sticky"] = True
         if i == "fl":
-            fld["size"] = 14
+            fld["size"] = 12
         models.addField(model, fld)
     # Add template
     template = models.newTemplate(OLC_CARD)

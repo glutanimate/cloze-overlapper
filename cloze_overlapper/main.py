@@ -9,7 +9,7 @@ License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 
 from aqt import mw
 from aqt import editor
-from aqt.utils import tooltip
+from aqt.utils import tooltip, showWarning
 from anki.utils import stripHTML
 from anki.hooks import addHook
 
@@ -153,16 +153,50 @@ def updateNote(note, fields, full, markup, defaults):
 
     return None
 
-def getMaxFields(model):
-    pass
+def getMaxFields(m):
+    prefix = OLC_FLDS["tx"]
+    fields = [f['name'] for f in m['flds'] if f['name'].startswith(prefix)]
+    last = 0
+    for f in fields:
+        # check for non-continuous cloze fields
+        if not f.startswith(prefix):
+            continue
+        try:
+            cur = int(f.replace(prefix, ""))
+        except ValueError:
+            break
+        if cur != last + 1:
+            break
+        last = cur
+    return len(fields), last
+
+def warnUser(reason, text):
+    showWarning(("<b>%s Error</b>: " % reason) + text, title="Cloze Overlapper")
+
+def checkModelIntegrity(m):
+    fields = [f['name'] for f in m['flds']]
+    for fld in OLC_FLDS.values():
+        if fld == OLC_FLDS["tx"]:
+            continue
+        if fld not in fields:
+            return False
+    return True
 
 def insertOverlappingCloze(self):
     """Main function, called on button press"""
-    if self.note.model()["name"] != OLC_MODEL:
-        tooltip(u"Can only generate overlapping clozes on<br>'%s' note type" % OLC_MODEL)
+    setupTemplate()
+
+    model = self.note.model()
+    if model["name"] != OLC_MODEL:
+        tooltip(u"Can only generate overlapping clozes <br> on '%s' note type" % OLC_MODEL)
         return False
 
-    self.web.eval("""saveField("key");""") # save field
+    if not checkModelIntegrity(model):
+        warnUser("Note Type", "Fields not configured properly.<br>Please make "
+            "sure you didn't remove or rename any of the default fields.")
+        return False
+
+    self.web.eval("saveField('key');") # save field
     original = self.note[OLC_FLDS["og"]]
 
     if not original:
@@ -172,7 +206,7 @@ def insertOverlappingCloze(self):
     items, markup = processOriginalText(original)
 
     if not items:
-        tooltip("Could not find items to cloze. Please check your input.")
+        tooltip("Could not find items to cloze.<br>Please check your input.")
         return False
     if len(items) < 3:
         tooltip("Please enter at least three items to cloze.")
@@ -180,18 +214,28 @@ def insertOverlappingCloze(self):
 
     note_settings = self.note[OLC_FLDS["st"]]
     settings, defaults = getNoteSettings(note_settings)
+    expected_nr, actual_nr = getMaxFields(model)
 
-    generator = OlClozeGenerator(default_conf, settings, ol_cloze_max)
+    if not expected_nr or not actual_nr:
+        warnUser("Note Type", "Cloze fields not configured properly")
+        return False
+    elif expected_nr != actual_nr:
+        warnUser("Note Type", "Cloze fields are not continuous."
+            "<br>(breaking off after %i fields)" % actual_nr)
+        return False
+
+    generator = OlClozeGenerator(default_conf, settings, actual_nr)
     fields, full = generator.generate(items)
 
     if not fields:
-        tooltip("Error: More clozes than the note type can handle.")
+        tooltip("Warning: More clozes than the note type can handle.")
         return False
 
     missing = updateNote(self.note, fields, full, markup, defaults)
 
     if missing:
-        tooltip("Error: '%s' field missing in the note type" % missing)
+        showWarning(u"Error: '%s' field missing in the note type" % missing,
+            title="Cloze Overlapper")
 
     self.web.eval("saveField('key');") # save current field
     self.loadNote()
