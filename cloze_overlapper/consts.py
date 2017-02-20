@@ -9,7 +9,8 @@ Copyright: Glutanimate 2016-2017
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 """
 
-OLC_MODEL = "Overlapping Cloze"
+OLC_MODEL = "Cloze (overlapping)"
+OLC_CARD = "cloze-ol"
 
 OLC_FLDS = {
     'og': u"Original",
@@ -21,4 +22,6 @@ OLC_FLDS = {
     'fl': u"Full"
 }
 
-OLC_FLDS_IDS = ['og', 'tt', 'rk', 'sc', 'st', 'tx', 'fl'] 
+OLC_FLDS_IDS = ['og', 'tt', 'rk', 'sc', 'st', 'tx', 'fl']
+
+OLC_MAX = 20

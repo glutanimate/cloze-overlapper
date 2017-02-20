@@ -132,12 +132,16 @@ def updateNote(note, fields, full, markup, defaults):
     """Write changes to note"""
     for idx, field in enumerate(fields):
         name = OLC_FLDS["tx"] + str(idx+1)
+        if name not in note:
+            return name
         note[name] = processField(field, markup)
 
     note[OLC_FLDS["fl"]] = processField(full, markup)
 
     if defaults:
         note[OLC_FLDS["st"]] = ",".join(str(i) for i in ol_cloze_dfltopts)
+
+    return None
 
 def insertOverlappingCloze(self):
     """Main function, called on button press"""
@@ -170,7 +174,10 @@ def insertOverlappingCloze(self):
         tooltip("Error: More clozes than the note type can handle.")
         return False
 
-    updateNote(self.note, fields, full, markup, defaults)
+    missing = updateNote(self.note, fields, full, markup, defaults)
+
+    if missing:
+        tooltip("Error: '%s' field missing in the note type" % missing)
 
     self.web.eval("saveField('key');") # save current field
     self.loadNote()
@@ -185,7 +192,7 @@ def onSetupButtons(self):
 def setupTemplate():
     model = mw.col.models.byName(OLC_MODEL)
     if not model:
-        model = addTemplate(mw.col)
+        model = addModel(mw.col)
 
 addHook("profileLoaded", setupTemplate)
 editor.Editor.insertOverlappingCloze = insertOverlappingCloze
