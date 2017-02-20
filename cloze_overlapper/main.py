@@ -17,6 +17,7 @@ from BeautifulSoup import BeautifulSoup
 
 from .consts import *
 from .template import addModel
+from .config import *
 
 # OPTIONS
 
@@ -25,6 +26,71 @@ ol_cloze_dfltopts = (1,1,0)
 ol_cloze_no_context_first = False
 ol_cloze_no_context_last = False
 ol_cloze_incremental_ends = False
+
+class OlClozeGenerator(object):
+    """Cloze generator"""
+    def __init__(self, config, settings, max_fields):
+        self.config = config
+        self.settings = settings
+        self.max_fields = max_fields
+        self.start = None
+        self.total = None
+
+    def generate(self, items):
+        """Returns an array of lists with overlapping cloze deletions"""
+        before, prompt, after = self.settings
+        length = len(items)
+        if self.config["incrEnds"]:
+            self.total = length + prompt - 1
+            self.start = 1
+        else:
+            self.total = length
+            self.start = prompt
+        if self.total > self.max_fields:
+            return False
+        fields = []
+        cformat = u"{{c%i::%s}}"
+        for idx in range(self.start, self.total+1):
+            field = ["..."] * length
+            start_c = self.getClozeStart(idx, prompt)
+            start_b = self.getBeforeStart(idx, before, start_c)
+            end_a = self.getAfterEnd(idx, after)
+            if start_b is not None:
+                field[start_b:start_c] = items[start_b:start_c]
+            if end_a is not None:
+                field[idx:end_a] = items[idx:end_a]
+            field[start_c:idx] = [cformat % (idx-self.start+1, l) for l in items[start_c:idx]]
+            fields.append(field)
+        if self.max_fields > self.total: # delete contents of unused fields
+            fields = fields + [""] * (self.max_fields - len(fields))
+        full = [cformat % (self.max_fields + 1, l) for l in items]
+        return fields, full
+
+    def getClozeStart(self, idx, target):
+        """Determine start index of clozed items"""
+        if idx < target or idx > self.total:
+            return 0
+        return idx-target # looking back from current index
+
+    def getBeforeStart(self, idx, target, start_c):
+        """Determine start index of preceding context"""
+        if (target == 0 or start_c < 1 
+          or (target and self.config["ncLast"] and idx == self.total)):
+            return None
+        if target is None or target > start_c:
+            return 0
+        return start_c-target
+
+    def getAfterEnd(self, idx, target):
+        """Determine ending index of following context"""
+        left = self.total - idx
+        if (target == 0 or left < 1
+          or (target and self.config["ncFirst"] and idx == self.start)):
+            return None
+        if target is None or target > left:
+            return self.total
+        return idx+target
+
 
 def getNoteSettings(field):
     """Return options tuple. Fall back to defaults if necessary."""
@@ -46,62 +112,6 @@ def getNoteSettings(field):
     elif length == 1 and isinstance(opts[0], int):
         return (dflts[0], opts[0], dflts[2]), False
     return False, False
-
-def getClozeStart(idx, target, total):
-    """Determine start index of clozed items"""
-    if idx < target or idx > total:
-        return 0
-    return idx-target # looking back from current index
-
-def getBeforeStart(start, idx, target, total, start_c):
-    """Determine start index of preceding context"""
-    if (target == 0 or start_c < 1 
-      or (target and ol_cloze_no_context_last and idx == total)):
-        return None
-    if target is None or target > start_c:
-        return 0
-    return start_c-target
-
-def getAfterEnd(start, idx, target, total):
-    """Determine ending index of following context"""
-    left = total - idx
-    if (target == 0 or left < 1
-      or (target and ol_cloze_no_context_first and idx == start)):
-        return None
-    if target is None or target > left:
-        return total
-    return idx+target
-
-def generateOlClozes(items, options):
-    """Returns an array of lists with overlapping cloze deletions"""
-    before, prompt, after = options
-    length = len(items)
-    if ol_cloze_incremental_ends:
-        total = length + prompt - 1
-        start = 1
-    else:
-        total = length
-        start = prompt
-    if total > ol_cloze_max:
-        return False
-    fields = []
-    cloze_format = u"{{c%i::%s}}"
-    for idx in range(start,total+1):
-        field = ["..."] * length
-        start_c = getClozeStart(idx, prompt, total)
-        start_b = getBeforeStart(start, idx, before, total, start_c)
-        end_a = getAfterEnd(start, idx, after, total)
-        if start_b is not None:
-            field[start_b:start_c] = items[start_b:start_c]
-        if end_a is not None:
-            field[idx:end_a] = items[idx:end_a]
-        field[start_c:idx] = [cloze_format % (idx-start+1, l) for l in items[start_c:idx]]
-        fields.append(field)
-    if ol_cloze_max > total: # delete contents of unused fields
-        fields = fields + [""] * (ol_cloze_max - len(fields))
-    full = [cloze_format % (ol_cloze_max+1, l) for l in items]
-
-    return fields, full
 
 def processOriginalText(html):
     """Convert original field HTML to plain text and determine markup tags"""
@@ -143,10 +153,12 @@ def updateNote(note, fields, full, markup, defaults):
 
     return None
 
+def getMaxFields(model):
+    pass
+
 def insertOverlappingCloze(self):
     """Main function, called on button press"""
-    mname = self.note.model()["name"] # make sure the right model is set
-    if mname != OLC_MODEL:
+    if self.note.model()["name"] != OLC_MODEL:
         tooltip(u"Can only generate overlapping clozes on<br>'%s' note type" % OLC_MODEL)
         return False
 
@@ -166,10 +178,12 @@ def insertOverlappingCloze(self):
         tooltip("Please enter at least three items to cloze.")
         return False
 
-    fld_opts = self.note[OLC_FLDS["st"]]
-    options, defaults = getNoteSettings(fld_opts)
+    note_settings = self.note[OLC_FLDS["st"]]
+    settings, defaults = getNoteSettings(note_settings)
 
-    fields, full = generateOlClozes(items, options)
+    generator = OlClozeGenerator(default_conf, settings, ol_cloze_max)
+    fields, full = generator.generate(items)
+
     if not fields:
         tooltip("Error: More clozes than the note type can handle.")
         return False
