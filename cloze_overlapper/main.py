@@ -14,69 +14,21 @@ from anki.hooks import addHook
 
 from BeautifulSoup import BeautifulSoup
 
-
-overlapping_cloze_note_type = u"E-Lückentext-OL-ns"
-overlapping_cloze_fields_prefix = "Text"
-overlapping_cloze_fields_fullcloze = "Full"
+# CONSTANTS
 
 ol_cloze_max = 20
 ol_cloze_dfltopts = (1,1,0)
 ol_cloze_no_context_first = False
 ol_cloze_no_context_last = False
 ol_cloze_incremental_ends = False
-ol_cloze_model = u"E-Lückentext-OL-ns"
-ol_cloze_fldprefix = "Text"
-ol_cloze_fldfull = "Full"
-ol_cloze_fldoptions = "Options"
-
-
-def generateOverlappingClozes(self, text):
-    lines = text.splitlines()
-    total = len(lines)
-    fields = []
-    htmlBefore = """<div><ol type="1" start="1" style="margin-left: 20px; ">"""
-    htmlAfter = """</ol></div>"""
-    # regular cloze fields
-    for idx in range(0, ol_cloze_max):
-        if idx >= total:
-            # delete contents of unused fields
-            fields.append("")
-            continue
-        line = lines[idx]
-        field = []
-        context = None
-        cloze = None
-        cor = 0
-        if idx != 0:
-            # add in older lines as dots
-            field += (idx-1) * ["..."]
-            # add previous line as context if available
-            context = lines[idx-1]
-            field.append(context)
-        # add current line as cloze
-        cloze = "{{c%d::%s}}" % (idx+1, line)
-        field.append(cloze)
-
-        '''uncomment this to add the next line as second context'''
-        # if idx != total-1:
-        #     context2 = lines[idx+1]
-        #     field.append(context2)
-        #     cor = 1
-
-        # add in other lines as dots
-        field += (total-idx-1-cor) * ["..."]
-        # format lines as ordered list
-        fields.append(
-            htmlBefore
-            + '\n'.join('<li>{0}</li>'.format(l) for l in field)
-            + htmlAfter)
-    # full cloze field
-    lineFormat = "<li>{{{{c%s::{0}}}}}</li>" % str(idx+2) # double {} to escape
-    fullCloze = htmlBefore + '\n'.join(lineFormat.format(l) for l in lines) + htmlAfter
-
-    return {'fields': fields, 'fullCloze': fullCloze}
+ol_cloze_model = "Overlapping Cloze"
+ol_cloze_fld_prefix = "Text"
+ol_cloze_fld_full = "Full"
+ol_cloze_fld_options = "Options"
+ol_cloze_fld_original = "Original"
 
 def getOptions(field):
+    """Return options tuple. Fall back to defaults if necessary."""
     options = field.replace(" ", "").split(",")
     dflts = ol_cloze_dfltopts
     if not field or not options:
@@ -97,11 +49,13 @@ def getOptions(field):
     return False, False
 
 def getClozeStart(idx, target, total):
+    """Determine start index of clozed items"""
     if idx < target or idx > total:
         return 0
-    return idx-target
+    return idx-target # looking back from current index
 
 def getBeforeStart(start, idx, target, total, start_c):
+    """Determine start index of preceding context"""
     if (target == 0 or start_c < 1 
       or (target and ol_cloze_no_context_last and idx == total)):
         return None
@@ -110,6 +64,7 @@ def getBeforeStart(start, idx, target, total, start_c):
     return start_c-target
 
 def getAfterEnd(start, idx, target, total):
+    """Determine ending index of following context"""
     left = total - idx
     if (target == 0 or left < 1
       or (target and ol_cloze_no_context_first and idx == start)):
@@ -119,6 +74,7 @@ def getAfterEnd(start, idx, target, total):
     return idx+target
 
 def generateOlClozes(self, items, options):
+    """Returns an array of lists with overlapping cloze deletions"""
     before, prompt, after = options
     length = len(items)
     if ol_cloze_incremental_ends:
@@ -148,75 +104,79 @@ def generateOlClozes(self, items, options):
 
     return fields, full
 
+def processOriginalText(html):
+    """Convert original field HTML to plain text and determine markup tags"""
+    soup = BeautifulSoup(html)
+    text = soup.getText("\n") # will need to be updated for bs4
+    items = text.splitlines()
+    if soup.findAll("ol"):
+        markup = "ol"
+    elif soup.findAll("ul"):
+        markup = "ul"
+    else:
+        markup = "div"
+    return items, markup
+
+def processField(field, markup):
+    """Convert field contents back to HTML"""
+    if markup == "div":
+        tag_start, tag_end = "", ""
+        tag_items = "<div>{0}</div>"
+    else:
+        tag_start = '<{0}>'.format(markup)
+        tag_end = '</{0}>'.format(markup)
+        tag_items = "<li>{0}</li>"
+    lines = "".join(tag_items.format(line) for line in field)
+    return tag_start + lines + tag_end
+
+def updateNote(note, fields, full, markup, defaults):
+    """Write changes to note"""
+    for idx, field in enumerate(fields):
+        name = ol_cloze_fld_prefix + str(idx+1)
+        note[name] = processField(field, markup)
+
+    note[ol_cloze_fld_full] = processField(full, markup)
+
+    if defaults:
+        note[ol_cloze_fld_options] = ",".join(str(i) for i in ol_cloze_dfltopts)
+
 def insertOverlappingCloze(self):
-    # make sure the right model is set
-    modelName = self.note.model()["name"]
-    if modelName != ol_cloze_model:
-        tooltip(u"Can only generate overlapping clozes on<br>%s" 
-            % ol_cloze_model)
+    """Main function, called on button press"""
+    mname = self.note.model()["name"] # make sure the right model is set
+    if mname != ol_cloze_model:
+        tooltip(u"Can only generate overlapping clozes on<br>'%s' note type" % ol_cloze_model)
         return False
 
-    # save field
-    self.web.eval("""
-       if (currentField) {
-         saveField("key");
-       }
-       """)
+    self.web.eval("""saveField("key");""") # save field
+    original = self.note[ol_cloze_fld_original]
 
-    selection = self.note["Volltext"]
-    soup = BeautifulSoup(selection)
-    selection = soup.getText("\n") # will need to be updated for bs4
-    items = selection.splitlines()
-    
-    # make sure we have a selection
-    if not selection or not items:
-        tooltip("Please select some lines")
+    if not original:
+        tooltip(u"Please enter some text in the %s field" % ol_cloze_fld_original)
         return False
 
-    # make sure the right number of lines are selected
-    if not 2 <= len(items) <= ol_cloze_max-1:
-        tooltip("Please select between 3 and %d lines" 
-            % ol_cloze_max )
+    items, markup = processOriginalText(original)
+
+    if not items:
+        tooltip("Could not find items to cloze. Please check your input.")
+        return False
+    if len(items) < 3:
+        tooltip("Please enter at least three items to cloze.")
         return False
 
-    fld_opts = self.note[ol_cloze_fldoptions]
+    fld_opts = self.note[ol_cloze_fld_options]
     options, defaults = getOptions(fld_opts)
 
     fields, full = self.generateOlClozes(items, options)
     if not fields:
-        tooltip("Error: more clozes than the note type can handle")
+        tooltip("Error: More clozes than the note type can handle.")
         return False
 
-    for idx, field in enumerate(fields):
-        name = ol_cloze_fldprefix + str(idx+1)
-        self.note[name] = "<br>".join(field)
+    updateNote(self.note, fields, full, markup, defaults)
 
-    if defaults:
-        self.note[ol_cloze_fldoptions] = ",".join(str(i) for i in ol_cloze_dfltopts)
-    self.note[ol_cloze_fldfull] = "<br>".join(full)
-
-    # save field
-    self.web.eval("""
-       if (currentField) {
-         saveField("key");
-       }
-       """)
+    self.web.eval("saveField('key');") # save current field
     self.loadNote()
+    self.web.eval("focusField(%d);" % self.currentField)
 
-
-    """
-       var parNode = window.getSelection().focusNode.parentNode;
-       if (parNode.toString() !== "[object HTMLLIElement]") {
-           document.execCommand('insertOrderedList');
-           var olElem = window.getSelection().focusNode.parentNode;
-           if (olElem.toString() !== "[object HTMLOListElement]") {
-               olElem = olElem.parentNode;
-           }
-           olElem.setAttribute("type", "1");
-           olElem.setAttribute("start", "1");
-           olElem.style.marginLeft = "20px";
-       }
-    """
 
 def onSetupButtons(self):
     self._addButton("Cloze Overlapper", self.insertOverlappingCloze,
