@@ -12,15 +12,17 @@ from operator import itemgetter
 from itertools import groupby
 from BeautifulSoup import BeautifulSoup
 
+from aqt.qt import *
 from aqt import mw
-from aqt import editor
+from aqt.editor import Editor
 from aqt.utils import tooltip, showWarning
 from anki.utils import stripHTML
-from anki.hooks import addHook
+from anki.hooks import addHook, wrap
 
 from .consts import *
 from .template import addModel
 from .config import *
+from .cgen import OlClozeGenerator
 
 # OPTIONS
 
@@ -31,101 +33,6 @@ ol_cloze_no_context_last = False
 ol_cloze_incremental_ends = False
 
 cloze_reg = r"(?s)\[\[oc(\d+)::((.*?)(::(.*?))?)?\]\]"
-
-class OlClozeGenerator(object):
-    """Cloze generator"""
-
-    cformat = u"{{c%i::%s}}"
-
-    def __init__(self, config, settings, max_fields):
-        self.config = config
-        self.settings = settings
-        self.max_fields = max_fields
-        self.start = None
-        self.total = None
-
-    def generate(self, items, original=None, keys=None):
-        """Returns an array of lists with overlapping cloze deletions"""
-        before, prompt, after = self.settings
-        length = len(items)
-        if self.config["incrEnds"]:
-            self.total = length + prompt - 1
-            self.start = 1
-        else:
-            self.total = length
-            self.start = prompt
-        if self.total > self.max_fields:
-            return False
-        fields = []
-        for idx in range(self.start, self.total+1):
-            snippets = ["..."] * length
-            start_c = self.getClozeStart(idx, prompt)
-            start_b = self.getBeforeStart(idx, before, start_c)
-            end_a = self.getAfterEnd(idx, after)
-            if start_b is not None:
-                snippets[start_b:start_c] = items[start_b:start_c]
-            if end_a is not None:
-                snippets[idx:end_a] = items[idx:end_a]
-            snippets[start_c:idx] = self.formatCloze(items[start_c:idx], idx-self.start+1)
-            field = self.formatSnippets(snippets, original, keys)
-            fields.append(field)
-        if self.max_fields > self.total: # delete contents of unused fields
-            fields = fields + [""] * (self.max_fields - len(fields))
-        fullsnippet = self.formatCloze(items, self.max_fields + 1)
-        full = self.formatSnippets(fullsnippet, original, keys)
-        return fields, full
-
-    def formatCloze(self, items, nr):
-        res = []
-        for item in items:
-            if not hasattr(item, "__iter__"): #iterable
-                res.append(self.cformat % (nr, item))
-                continue
-            res.append([self.cformat % (nr, i) for i in item])
-        return res
-
-    def formatSnippets(self, snippets, original, keys):
-        if not original:
-            return snippets
-        res = original
-        print snippets
-        for nr, phrases in zip(keys, snippets):
-            print "phrases", phrases
-            if not hasattr(phrases, "__iter__"):
-                if phrases == "...":
-                    res = res.replace("{{" + nr + "}}", phrases)
-                else:
-                    res = res.replace("{{" + nr + "}}", phrases, 1)
-                continue
-            for phrase in phrases:
-                res = res.replace("{{" + nr + "}}", phrase, 1)
-        return res
-
-    def getClozeStart(self, idx, target):
-        """Determine start index of clozed items"""
-        if idx < target or idx > self.total:
-            return 0
-        return idx-target # looking back from current index
-
-    def getBeforeStart(self, idx, target, start_c):
-        """Determine start index of preceding context"""
-        if (target == 0 or start_c < 1 
-          or (target and self.config["ncLast"] and idx == self.total)):
-            return None
-        if target is None or target > start_c:
-            return 0
-        return start_c-target
-
-    def getAfterEnd(self, idx, target):
-        """Determine ending index of following context"""
-        left = self.total - idx
-        if (target == 0 or left < 1
-          or (target and self.config["ncFirst"] and idx == self.start)):
-            return None
-        if target is None or target > left:
-            return self.total
-        return idx+target
-
 
 def getNoteSettings(field):
     """Return options tuple. Fall back to defaults if necessary."""
@@ -236,7 +143,7 @@ def checkModelIntegrity(m):
             return False
     return True
 
-def insertOverlappingCloze(self):
+def onOlClozeButton(self):
     """Main function, called on button press"""
     setupTemplate()
 
@@ -303,9 +210,25 @@ def insertOverlappingCloze(self):
     self.loadNote()
     self.web.eval("focusField(%d);" % self.currentField)
 
+def onInsertCloze(self, _old):
+    if self.note.model()["name"] != OLC_MODEL:
+        return _old(self)
+    # find the highest existing cloze
+    highest = 0
+    for name, val in self.note.items():
+        m = re.findall("\[\[oc(\d+)::", val)
+        if m:
+            highest = max(highest, sorted([int(x) for x in m])[-1])
+    # reuse last?
+    if not self.mw.app.keyboardModifiers() & Qt.AltModifier:
+        highest += 1
+    # must start at 1
+    highest = max(1, highest)
+    self.web.eval("wrap('[[oc%d::', ']]');" % highest)
+
 
 def onSetupButtons(self):
-    self._addButton("Cloze Overlapper", self.insertOverlappingCloze,
+    self._addButton("Cloze Overlapper", self.onOlClozeButton,
         _("Alt+Shift+C"), "Generate Overlapping Clozes (Alt+Shift+C)", 
         text="[.]]", size=True)
 
@@ -315,5 +238,6 @@ def setupTemplate():
         model = addModel(mw.col)
 
 addHook("profileLoaded", setupTemplate)
-editor.Editor.insertOverlappingCloze = insertOverlappingCloze
 addHook("setupEditorButtons", onSetupButtons)
+Editor.onOlClozeButton = onOlClozeButton
+Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
