@@ -82,7 +82,9 @@ def getLineItems(html):
         markup = "ul"
     else:
         markup = "div"
-    items = text.splitlines()
+    # remove empty lines:
+    lines = re.sub(r"^(&nbsp;)+$", "", text, flags=re.MULTILINE).splitlines()
+    items = [line for line in lines if line.strip() != ''] 
     return items, markup
 
 def processField(field, markup):

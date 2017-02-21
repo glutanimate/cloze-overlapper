@@ -30,7 +30,7 @@ class OlClozeGenerator(object):
             self.total = length
             self.start = prompt
         if self.total > self.max_fields:
-            return False
+            return False, False
         fields = []
         for idx in range(self.start, self.total+1):
             snippets = ["..."] * length
