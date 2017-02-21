@@ -239,6 +239,16 @@ def setupTemplate():
     if not model:
         model = addModel(mw.col)
 
+def onCgOptions(mw):
+    dialog = OlClozeOpts(mw)
+    dialog.exec_()
+
+
+options_action = QAction("Cloze Overlapper Options...", mw)
+mw.connect(options_action, SIGNAL("triggered()"),
+            lambda o=mw: onCgOptions(o))
+mw.form.menuTools.addAction(options_action)
+
 addHook("profileLoaded", setupTemplate)
 addHook("setupEditorButtons", onSetupButtons)
 Editor.onOlClozeButton = onOlClozeButton
