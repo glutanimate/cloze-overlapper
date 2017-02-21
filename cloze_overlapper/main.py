@@ -200,8 +200,8 @@ class ClozeOverlapper(object):
         else:
             tag_start = '<{0}>'.format(markup)
             tag_end = '</{0}>'.format(markup)
-            tag_items = "<li>{0}</li>"
-        lines = "".join(tag_items.format(line) for line in field)
+            tag_items = u"<li>{0}</li>"
+        lines = "".join(tag_items.format(line.encode("utf-8")) for line in field)
         return tag_start + lines + tag_end
 
 
