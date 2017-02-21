@@ -12,10 +12,13 @@ class OlClozeGenerator(object):
 
     cformat = u"{{c%i::%s}}"
 
-    def __init__(self, config, settings, max_fields):
+    def __init__(self, config, maxfields, settings=None):
         self.config = config
-        self.settings = settings
-        self.max_fields = max_fields
+        self.maxfields = maxfields
+        if not settings:
+            self.settings = config["dflts"]
+        else:
+            self.settings = settings
         self.start = None
         self.total = None
 
@@ -23,13 +26,13 @@ class OlClozeGenerator(object):
         """Returns an array of lists with overlapping cloze deletions"""
         before, prompt, after = self.settings
         length = len(items)
-        if self.config["incrEnds"]:
+        if self.config["incr"]:
             self.total = length + prompt - 1
             self.start = 1
         else:
             self.total = length
             self.start = prompt
-        if self.total > self.max_fields:
+        if self.total > self.maxfields:
             return False, False
         fields = []
         for idx in range(self.start, self.total+1):
@@ -44,9 +47,9 @@ class OlClozeGenerator(object):
             snippets[start_c:idx] = self.formatCloze(items[start_c:idx], idx-self.start+1)
             field = self.formatSnippets(snippets, original, keys)
             fields.append(field)
-        if self.max_fields > self.total: # delete contents of unused fields
-            fields = fields + [""] * (self.max_fields - len(fields))
-        fullsnippet = self.formatCloze(items, self.max_fields + 1)
+        if self.maxfields > self.total: # delete contents of unused fields
+            fields = fields + [""] * (self.maxfields - len(fields))
+        fullsnippet = self.formatCloze(items, self.maxfields + 1)
         full = self.formatSnippets(fullsnippet, original, keys)
         return fields, full
 
@@ -85,7 +88,7 @@ class OlClozeGenerator(object):
     def getBeforeStart(self, idx, target, start_c):
         """Determine start index of preceding context"""
         if (target == 0 or start_c < 1 
-          or (target and self.config["ncLast"] and idx == self.total)):
+          or (target and self.config["ncl"] and idx == self.total)):
             return None
         if target is None or target > start_c:
             return 0
@@ -95,7 +98,7 @@ class OlClozeGenerator(object):
         """Determine ending index of following context"""
         left = self.total - idx
         if (target == 0 or left < 1
-          or (target and self.config["ncFirst"] and idx == self.start)):
+          or (target and self.config["ncf"] and idx == self.start)):
             return None
         if target is None or target > left:
             return self.total

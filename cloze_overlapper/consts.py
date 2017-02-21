@@ -10,6 +10,7 @@ License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 """
 
 OLC_MODEL = "Cloze (overlapping)"
+
 OLC_CARD = "cloze-ol"
 
 OLC_FLDS = {
@@ -22,6 +23,8 @@ OLC_FLDS = {
     'fl': u"Full"
 }
 
+
 OLC_FLDS_IDS = ['og', 'tt', 'rk', 'sc', 'st', 'tx', 'fl']
+OLC_FIDS_PRIV = ['og', 'st', 'tx', 'fl'] # non-user editable
 
 OLC_MAX = 20
