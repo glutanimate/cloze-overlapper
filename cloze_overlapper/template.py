@@ -3,7 +3,7 @@
 """
 This file is part of the Cloze Overlapper add-on for Anki
 
-Creates and updates the note type and card templates.
+Note type and card templates
 
 Copyright: Glutanimate 2016-2017
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html

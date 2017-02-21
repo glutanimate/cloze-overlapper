@@ -3,7 +3,7 @@
 """
 This file is part of the Cloze Overlapper add-on for Anki
 
-Handles user-set options.
+User-defined add-on configuration
 
 Copyright: Glutanimate 2016-2017
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
