@@ -18,16 +18,16 @@ from aqt.qt import *
 from aqt import mw
 from aqt.editor import Editor
 from aqt.utils import tooltip, showWarning
-from anki.utils import stripHTML
 from anki.hooks import addHook, wrap
+from anki.sched import Scheduler
 
 from .consts import *
 from .template import addModel
-from config import loadConfig, OlClozeOpts
+from .config import loadConfig, OlClozeOpts
 from .cgen import OlClozeGenerator
 
 class ClozeOverlapper(object):
-    """Reads note, calls OlClozeGenerator, and writes results back to note"""
+    """Reads note, calls OlClozeGenerator, writes results back to note"""
 
     creg = r"(?s)\[\[oc(\d+)::((.*?)(::(.*?))?)?\]\]"
 
@@ -243,6 +243,49 @@ def setupAddon():
     model = mw.col.models.byName(OLC_MODEL)
     if not model:
         model = addModel(mw.col)
+        loadConfig()
+    Scheduler._burySiblings = wrap(
+        Scheduler._burySiblings, myBurySiblings, "around")
+
+def myBurySiblings(self, card, _old):
+    """Skip sibling interleaving for new cards if sibling burying disabled"""
+    if (not card.model()["name"] == OLC_MODEL
+            or not mw.col.conf["olcloze"].get("schedmod", False)):
+        return _old(self,card)
+    toBury = []
+    nconf = self._newConf(card)
+    buryNew = nconf.get("bury", True)
+    rconf = self._revConf(card)
+    buryRev = rconf.get("bury", True)
+    # loop through and remove from queues
+    for cid,queue in self.col.db.execute("""
+select id, queue from cards where nid=? and id!=?
+and (queue=0 or (queue=2 and due<=?))""",
+            card.nid, card.id, self.today):
+        if queue == 2:
+            if buryRev:
+                toBury.append(cid)
+            # if bury disabled, we still discard reviews to give same-day spacing
+            try:
+                self._revQueue.remove(cid)
+            except ValueError:
+                pass
+        else:
+            # don't discard new cards if bury disabled
+            if buryNew:
+                toBury.append(cid)
+                try:
+                    self._newQueue.remove(cid)
+                except ValueError:
+                    pass
+            else:
+                pass
+    # then bury
+    if toBury:
+        self.col.db.execute(
+            "update cards set queue=-2,mod=?,usn=? where id in "+ids2str(toBury),
+            intTime(), self.col.usn())
+        self.col.log(toBury)
 
 options_action = QAction("Cloze Over&lapper Options...", mw)
 options_action.triggered.connect(lambda _, m=mw: onCgOptions(m))

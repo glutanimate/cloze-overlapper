@@ -23,7 +23,8 @@ default_conf = {
     "ncl": False,
     "incr": False,
     "flds": OLC_FLDS,
-    "version": 0.1
+    "schedmod": True,
+    "version": 0.15
 }
 
 def loadConfig():
@@ -69,6 +70,7 @@ class OlClozeOpts(QDialog):
         self.cb_ncf.setChecked(config["ncf"])
         self.cb_ncl.setChecked(config["ncl"])
         self.cb_incr.setChecked(config["incr"])
+        self.cb_sched.setChecked(config["schedmod"])
         for key, fnedit in self.fndict:
             fnedit.setText(config["flds"][key])
 
@@ -79,11 +81,13 @@ class OlClozeOpts(QDialog):
         except AnkiError:
             print "Field rename action aborted"
             return
-        mw.col.conf['olcloze']['dflts'] = tuple(i.value() for i in 
+        config = mw.col.conf['olcloze']
+        config['dflts'] = tuple(i.value() for i in 
                         (self.sb_before, self.sb_cloze, self.sb_after))
-        mw.col.conf['olcloze']['ncf'] = self.cb_ncf.isChecked()
-        mw.col.conf['olcloze']['ncl'] = self.cb_ncl.isChecked()
-        mw.col.conf['olcloze']['incr'] = self.cb_incr.isChecked()
+        config['ncf'] = self.cb_ncf.isChecked()
+        config['ncl'] = self.cb_ncl.isChecked()
+        config['incr'] = self.cb_incr.isChecked()
+        config['schedmod'] = self.cb_sched.isChecked()
         mw.col.setMod()
         if modified:
             mw.reset()

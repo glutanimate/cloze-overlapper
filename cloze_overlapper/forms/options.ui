@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>450</width>
-    <height>342</height>
+    <height>410</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>450</width>
-    <height>342</height>
+    <height>410</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>450</width>
-    <height>342</height>
+    <height>410</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>300</y>
+     <y>370</y>
      <width>431</width>
      <height>31</height>
     </rect>
@@ -47,7 +47,7 @@
      <x>10</x>
      <y>10</y>
      <width>431</width>
-     <height>281</height>
+     <height>351</height>
     </rect>
    </property>
    <property name="currentIndex">
@@ -55,23 +55,23 @@
    </property>
    <widget class="QWidget" name="tab">
     <attribute name="title">
-     <string>Cloze Behaviour</string>
+     <string>Cloze Generation</string>
     </attribute>
     <widget class="QWidget" name="gridLayoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>120</y>
-       <width>412</width>
-       <height>101</height>
+       <y>110</y>
+       <width>411</width>
+       <height>81</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="leftMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <item row="1" column="0">
        <widget class="QCheckBox" name="cb_ncf">
@@ -79,7 +79,7 @@
          <string>Don't provide any context cues for first cloze item</string>
         </property>
         <property name="text">
-         <string>No Cues for First Item</string>
+         <string>No cues for first item</string>
         </property>
        </widget>
       </item>
@@ -96,7 +96,7 @@
          <string>Don't provide any context cues for last cloze item</string>
         </property>
         <property name="text">
-         <string>No Cues for Last Item</string>
+         <string>No cues for last item</string>
         </property>
        </widget>
       </item>
@@ -106,7 +106,7 @@
          <string>For notes that have multiple clozes revealed per card,&lt;br&gt;gradually build up to full reveal count at the start,&lt;br&gt;and vice-versa in the end</string>
         </property>
         <property name="text">
-         <string>Start and End Gradually</string>
+         <string>Start and end gradually</string>
         </property>
        </widget>
       </item>
@@ -118,15 +118,15 @@
        <x>10</x>
        <y>10</y>
        <width>411</width>
-       <height>101</height>
+       <height>91</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <property name="leftMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <property name="rightMargin">
-       <number>10</number>
+       <number>0</number>
       </property>
       <item row="2" column="2">
        <widget class="QSpinBox" name="sb_after">
@@ -191,53 +191,25 @@
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
-     <string>Advanced</string>
+     <string>Miscellaneous</string>
     </attribute>
     <widget class="QWidget" name="formLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>0</x>
-       <y>10</y>
-       <width>421</width>
-       <height>231</height>
+       <x>10</x>
+       <y>60</y>
+       <width>401</width>
+       <height>241</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="2">
-       <widget class="QLineEdit" name="le_og">
-        <property name="toolTip">
-         <string>These fields can only be renamed through this dialog</string>
-        </property>
-       </widget>
-      </item>
+     <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0" rowminimumheight="0,0,0,0,0,0,0,0" columnminimumwidth="0,0,0">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
       <item row="5" column="2">
        <widget class="QLineEdit" name="le_fl">
         <property name="toolTip">
          <string>These fields can only be renamed through this dialog</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>&lt;b&gt;Field Names&lt;/b&gt;</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::AutoText</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>Settings</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Original</string>
         </property>
        </widget>
       </item>
@@ -248,6 +220,30 @@
         </property>
        </widget>
       </item>
+      <item row="7" column="2">
+       <widget class="QLineEdit" name="le_model">
+        <property name="toolTip">
+         <string>Comma-separated list of custom note types&lt;br&gt;the add-on should be active on</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="3">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>&lt;b&gt;Field Names&lt;/b&gt;</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Text</string>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="2">
        <widget class="QLineEdit" name="le_st">
         <property name="toolTip">
@@ -255,45 +251,74 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="label_8">
+      <item row="3" column="0" colspan="2">
+       <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Text</string>
+         <string>Settings</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string/>
+         <string>Original</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
+      <item row="1" column="2">
+       <widget class="QLineEdit" name="le_og">
+        <property name="toolTip">
+         <string>These fields can only be renamed through this dialog</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
        <widget class="QLabel" name="label_9">
         <property name="text">
          <string>Full</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="1" colspan="2">
+      <item row="6" column="0" colspan="3">
        <widget class="QLabel" name="label_15">
         <property name="text">
          <string>&lt;b&gt;Custom Note Types&lt;/b&gt;</string>
         </property>
        </widget>
       </item>
-      <item row="7" column="1">
+      <item row="7" column="0" colspan="2">
        <widget class="QLabel" name="label_16">
         <property name="text">
          <string>Names</string>
         </property>
        </widget>
       </item>
-      <item row="7" column="2">
-       <widget class="QLineEdit" name="le_model">
+     </layout>
+    </widget>
+    <widget class="QWidget" name="gridLayoutWidget_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>401</width>
+       <height>47</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>&lt;b&gt;Scheduling&lt;/b&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="cb_sched">
         <property name="toolTip">
-         <string>Comma-separated list of custom note types&lt;br&gt;the add-on should be active on</string>
+         <string>When sibling-burying for new cards is disabled,&lt;br&gt;this option will deactivate same-day spacing for overlapping cloze deletions.&lt;br&gt;This will allow you to see new cards in the order they were added</string>
+        </property>
+        <property name="text">
+         <string>Disable same-day spacing if sibling-burying inactive</string>
         </property>
        </widget>
       </item>
