@@ -17,14 +17,13 @@ from aqt import mw
 
 from consts import *
 
+# dflto: no-context-first, no-context-last, gradual ends
 default_conf = {
-    "dflts": (1,1,0),
-    "ncf": False,
-    "ncl": False,
-    "incr": False,
+    "dflts": [1,1,0],
+    "dflto": [False, False, False],
     "flds": OLC_FLDS,
     "schedmod": True,
-    "version": 0.15
+    "version": 0.2
 }
 
 def loadConfig():
@@ -43,6 +42,7 @@ def loadConfig():
                 conf['olcloze'][key] = default[key]
         conf['olcloze']['version'] = default['version']
         # insert other update actions here:
+        conf['olcloze'] = default # DEBUG ONLY completely replace existing conf 
         mw.col.setMod()
 
     return mw.col.conf['olcloze']
@@ -64,19 +64,17 @@ class ClozeOverlapperOptions(QDialog):
         self.setupValues(config)
 
     def setupValues(self, config):
-        before = config["dflts"][0]
-        after = config["dflts"][2]
-        if before == "all":
+        before, prompt, after = config["dflts"]
+        if before is None:
             before = -1
-        if after == "all":
+        if after is None:
             after = -1
         self.sb_before.setValue(before)
         self.sb_after.setValue(after)
-        self.sb_cloze.setValue(config["dflts"][1])
-        self.cb_ncf.setChecked(config["ncf"])
-        self.cb_ncl.setChecked(config["ncl"])
-        self.cb_incr.setChecked(config["incr"])
+        self.sb_cloze.setValue(prompt)
         self.cb_sched.setChecked(config["schedmod"])
+        for idx, cb in enumerate((self.cb_ncf, self.cb_ncl, self.cb_incr)):
+            cb.setChecked(config["dflto"][idx])
         for key, fnedit in self.fndict:
             fnedit.setText(config["flds"][key])
 
@@ -90,17 +88,15 @@ class ClozeOverlapperOptions(QDialog):
         config = mw.col.conf['olcloze']
         before = self.sb_before.value()
         after = self.sb_after.value()
+        prompt = self.sb_cloze.value()
         if before == -1:
-            before = "all"
+            before = None
         if after == -1:
-            after = "all"
-        config['dflts'][0] = before
-        config['dflts'][2] = after
-        config['dflts'][1] = self.sb_cloze.value()
-        config['ncf'] = self.cb_ncf.isChecked()
-        config['ncl'] = self.cb_ncl.isChecked()
-        config['incr'] = self.cb_incr.isChecked()
+            after = None
+        config['dflts'] = [before, prompt, after]
         config['schedmod'] = self.cb_sched.isChecked()
+        config["dflto"] = [i.isChecked() for i in (
+                self.cb_ncf, self.cb_ncl, self.cb_incr)]
         mw.col.setMod()
         if modified:
             mw.reset()

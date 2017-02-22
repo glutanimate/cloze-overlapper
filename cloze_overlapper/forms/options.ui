@@ -61,9 +61,9 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>130</y>
+       <y>120</y>
        <width>411</width>
-       <height>81</height>
+       <height>91</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
@@ -86,7 +86,7 @@
       <item row="0" column="0" colspan="2">
        <widget class="QLabel" name="label_10">
         <property name="text">
-         <string>&lt;b&gt;Handling of First and Last Items&lt;/b&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Default Handling of First and Last Items&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>

@@ -14,26 +14,22 @@ class ClozeGenerator(object):
 
     cformat = u"{{c%i::%s}}"
 
-    def __init__(self, config, maxfields, settings=None):
-        self.config = config
+    def __init__(self, setopts, maxfields):
         self.maxfields = maxfields
-        if not settings:
-            self.settings = config["dflts"]
-        else:
-            self.settings = settings
+        self.before, self.prompt, self.after = setopts[0]
+        self.options = setopts[1]
         self.start = None
         self.total = None
 
     def generate(self, items, original=None, keys=None):
         """Returns an array of lists with overlapping cloze deletions"""
-        before, prompt, after = self.settings
         length = len(items)
-        if self.config["incr"]:
-            self.total = length + prompt - 1
+        if self.options[2]:
+            self.total = length + self.prompt - 1
             self.start = 1
         else:
             self.total = length
-            self.start = prompt
+            self.start = self.prompt
         if self.total > self.maxfields:
             return None, None
 
@@ -41,9 +37,9 @@ class ClozeGenerator(object):
 
         for idx in range(self.start, self.total+1):
             snippets = ["..."] * length
-            start_c = self.getClozeStart(idx, prompt)
-            start_b = self.getBeforeStart(idx, before, start_c)
-            end_a = self.getAfterEnd(idx, after)
+            start_c = self.getClozeStart(idx)
+            start_b = self.getBeforeStart(idx, start_c)
+            end_a = self.getAfterEnd(idx)
 
             if start_b is not None:
                 snippets[start_b:start_c] = items[start_b:start_c]
@@ -86,27 +82,27 @@ class ClozeGenerator(object):
                     html = html.replace("{{" + nr + "}}", item, 1)
         return html
 
-    def getClozeStart(self, idx, target):
+    def getClozeStart(self, idx):
         """Determine start index of clozed items"""
-        if idx < target or idx > self.total:
+        if idx < self.prompt or idx > self.total:
             return 0
-        return idx-target # looking back from current index
+        return idx-self.prompt # looking back from current index
 
-    def getBeforeStart(self, idx, target, start_c):
+    def getBeforeStart(self, idx, start_c):
         """Determine start index of preceding context"""
-        if (target == 0 or start_c < 1 
-          or (target and self.config["ncl"] and idx == self.total)):
+        if (self.before == 0 or start_c < 1 
+          or (self.before and self.options[2] and idx == self.total)):
             return None
-        if target is None or target > start_c:
+        if self.before is None or self.before > start_c:
             return 0
-        return start_c-target
+        return start_c-self.before
 
-    def getAfterEnd(self, idx, target):
+    def getAfterEnd(self, idx):
         """Determine end index of following context"""
         left = self.total - idx
-        if (target == 0 or left < 1
-          or (target and self.config["ncf"] and idx == self.start)):
+        if (self.after == 0 or left < 1
+          or (self.after and self.options[0] and idx == self.start)):
             return None
-        if target is None or target > left:
+        if self.after is None or self.after > left:
             return self.total
-        return idx+target
+        return idx+self.after

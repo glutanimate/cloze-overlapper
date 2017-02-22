@@ -16,6 +16,7 @@ from BeautifulSoup import BeautifulSoup
 
 from aqt import mw
 from aqt.utils import tooltip, showWarning
+from anki.utils import stripHTML
 
 from .consts import *
 from .config import loadConfig
@@ -47,6 +48,7 @@ class ClozeOverlapper(object):
 
     def add(self):
         """Add overlapping clozes to note"""
+
         if not self.checkIntegrity():
             return False
         self.ed.web.eval("saveField('key');") # save field
@@ -55,14 +57,12 @@ class ClozeOverlapper(object):
             tooltip(u"Please enter some text in the %s field" % self.flds["og"])
             return False
 
-
         matches = re.findall(self.creg, original)
         if matches:
             self.formstr = re.sub(self.creg, "{{\\1}}", original)
             items = self.getClozeItems(matches)
         else:
             items = self.getLineItems(original)
-
 
         if not items:
             tooltip("Could not find items to cloze.<br>Please check your input.")
@@ -71,19 +71,19 @@ class ClozeOverlapper(object):
             tooltip("Please enter at least three items to cloze.")
             return False
 
-        settings = self.getNoteSettings()
+        setopts = self.getNoteSettings()
         maxfields = self.getMaxFields()
         if not maxfields:
             return None
 
-        gen = ClozeGenerator(self.config, maxfields, settings)
+        gen = ClozeGenerator(setopts, maxfields)
         fields, full = gen.generate(items, self.formstr, self.keys)
 
         if not fields:
             tooltip("Warning: More clozes than the note type can handle.")
             return False
 
-        self.updateNote(fields, full, settings)
+        self.updateNote(fields, full, setopts)
 
         self.ed.loadNote()
         self.ed.web.eval("focusField(%d);" % self.ed.currentField)
@@ -139,25 +139,53 @@ class ClozeOverlapper(object):
 
     def getNoteSettings(self):
         """Return note settings. Fall back to defaults if necessary."""
-        field = self.note[self.flds["st"]]
-        options = field.replace(" ", "").split(",")
-        dflts = self.config["dflts"]
-        if not field or not options:
-            return None
-        opts = []
-        for i in options:
-            try:
-                opts.append(int(i))
-            except ValueError:
-                opts.append(None)
-        length = len(opts)
-        if length == 3 and isinstance(opts[1], int):
-            return tuple(opts)
-        elif length == 2 and isinstance(opts[0], int):
-            return (opts[1], opts[0], opts[1])
-        elif length == 1 and isinstance(opts[0], int):
-            return (dflts[0], opts[0], dflts[2])
-        return None
+        options, settings, opts, sets = None, None, None, None
+        dflt_set, dflt_opt = self.config["dflts"], self.config["dflto"]
+        field = stripHTML(self.note[self.flds["st"]])
+
+        lines = field.replace(" ", "").split("|")
+        if not lines:
+            return (dflt_set, dflt_opt)
+        settings = lines[0].replace(" ", "").split(",")
+        if len(lines) > 1:
+            options = lines[1].replace(" ", "").split(",")
+
+        if not options and not settings:
+            return (dflt_set, dflt_opt)
+
+        if not settings:
+            sets = dflt_set
+        else:
+            sets = []
+            for idx, item in enumerate(settings[:3]):
+                try:
+                    sets.append(int(item))
+                except ValueError:
+                    sets.append(None)
+            length = len(sets)
+            if length == 3 and isinstance(sets[1], int):
+                pass
+            elif length == 2 and isinstance(sets[0], int):
+                sets = [sets[1], sets[0], sets[1]]
+            elif length == 1 and isinstance(sets[0], int):
+                sets = [dflt_set[0], sets[0], dflt_set[2]]
+            else:
+                sets = dflt_set
+
+        if not options:
+            opts = dflt_opt
+        else:
+            opts = []
+            for i in range(3):
+                try: 
+                    if options[i] == "y":
+                        opts.append(True)
+                    else:
+                        opts.append(False)
+                except IndexError:
+                    opts.append(False)
+
+        return (sets, opts)
 
     def getMaxFields(self):
         """Determine number of text fields available for cloze sequences"""
@@ -187,7 +215,7 @@ class ClozeOverlapper(object):
             return False
         return actual
 
-    def updateNote(self, fields, full, settings):
+    def updateNote(self, fields, full, setopts):
         """Write changes to note"""
         note = self.note
         for idx, field in enumerate(fields):
@@ -199,8 +227,10 @@ class ClozeOverlapper(object):
 
         note[self.flds["fl"]] = self.processField(full)
 
-        if not settings:
-            note[self.flds["st"]] = ",".join(str(i) for i in self.config["dflts"])
+        settings_string = ",".join(str(i) if i is not None else "all" for i in setopts[0])
+        options_string = ",".join("y" if i else "n" for i in setopts[1])
+
+        note[self.flds["st"]] = settings_string + "|" + options_string
 
         if self.update:
             # update original field markup
