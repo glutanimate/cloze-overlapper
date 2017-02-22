@@ -31,16 +31,16 @@ class ClozeOverlapper(object):
 
     creg = r"(?s)\[\[oc(\d+)::((.*?)(::(.*?))?)?\]\]"
 
-    def __init__(self, ed):
+    def __init__(self, ed, markup=None):
         self.ed = ed
         self.note = self.ed.note
         self.model = self.note.model()
         self.config = loadConfig()
         self.dflts = self.config["dflts"]
         self.flds = self.config["flds"]
+        self.markup = markup
         self.formstr = None
         self.keys = None
-        self.markup = None
 
     def add(self):
         """Add overlapping clozes to note"""
@@ -117,12 +117,13 @@ class ClozeOverlapper(object):
         """Detects HTML list markups and returns a list of plaintext lines"""
         soup = BeautifulSoup(html)
         text = soup.getText("\n") # will need to be updated for bs4
-        if soup.findAll("ol"):
-            self.markup = "ol"
-        elif soup.findAll("ul"):
-            self.markup = "ul"
-        else:
-            self.markup = "div"
+        if not self.markup:
+            if soup.findAll("ol"):
+                self.markup = "ol"
+            elif soup.findAll("ul"):
+                self.markup = "ul"
+            else:
+                self.markup = "div"
         # remove empty lines:
         lines = re.sub(r"^(&nbsp;)+$", "", text, flags=re.MULTILINE).splitlines()
         items = [line for line in lines if line.strip() != ''] 
@@ -211,9 +212,9 @@ class ClozeOverlapper(object):
         return tag_start + lines + tag_end
 
 
-def onOlClozeButton(self):
+def onOlClozeButton(self, markup=None):
     """Invokes an instance of the main add-on class"""
-    overlapper = ClozeOverlapper(self)
+    overlapper = ClozeOverlapper(self, markup)
     overlapper.add()
 
 def onInsertCloze(self, _old):
@@ -238,6 +239,16 @@ def onSetupButtons(self):
     self._addButton("Cloze Overlapper", self.onOlClozeButton,
         _("Alt+Shift+C"), "Generate Overlapping Clozes (Alt+Shift+C)", 
         text="[.]]", size=True)
+    
+    add_ol_action = QAction(self.parentWindow)
+    add_ol_action.triggered.connect(lambda _, o="ol": self.onOlClozeButton(o))
+    add_ol_action.setShortcut(QKeySequence(_("Ctrl+Alt+Shift+.")))
+    self.parentWindow.addAction(add_ol_action)
+
+    add_ul_action = QAction(self.parentWindow)
+    add_ul_action.triggered.connect(lambda _, o="ul": self.onOlClozeButton(o))
+    add_ul_action.setShortcut(QKeySequence(_("Ctrl+Alt+Shift+,")))
+    self.parentWindow.addAction(add_ul_action)
 
 def onCgOptions(mw):
     """Invoke options dialog"""
