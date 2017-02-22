@@ -43,6 +43,7 @@ class ClozeOverlapper(object):
         self.markup = None
 
     def add(self):
+        """Add overlapping clozes to note"""
         self.checkIntegrity()
         self.ed.web.eval("saveField('key');") # save field
         original = self.note[self.flds["og"]]
@@ -82,6 +83,7 @@ class ClozeOverlapper(object):
         self.ed.web.eval("focusField(%d);" % self.ed.currentField)
 
     def checkIntegrity(self):
+        """Sanity checks for the model and fields"""
         if self.model["name"] != OLC_MODEL:
             tooltip(u"Can only generate overlapping clozes <br> on '%s' note type" % OLC_MODEL)
             return False
@@ -96,6 +98,7 @@ class ClozeOverlapper(object):
                 return False
 
     def getClozeItems(self, matches):
+        """Returns a list of items that were clozed by the user"""
         matches.sort(key=lambda x: int(x[0]))
         groups = groupby(matches, itemgetter(0))
         items = []
@@ -111,7 +114,7 @@ class ClozeOverlapper(object):
         return items
 
     def getLineItems(self, html):
-        """Convert original field HTML to plain text and determine markup tags"""
+        """Detects HTML list markups and returns a list of plaintext lines"""
         soup = BeautifulSoup(html)
         text = soup.getText("\n") # will need to be updated for bs4
         if soup.findAll("ol"):
@@ -126,7 +129,7 @@ class ClozeOverlapper(object):
         return items
 
     def getNoteSettings(self):
-        """Return options tuple. Fall back to defaults if necessary."""
+        """Return note settings. Fall back to defaults if necessary."""
         field = self.note[self.flds["st"]]
         options = field.replace(" ", "").split(",")
         dflts = self.config["dflts"]
@@ -148,6 +151,7 @@ class ClozeOverlapper(object):
         return None
 
     def getMaxFields(self):
+        """Determine number of text fields available for cloze sequences"""
         prefix = self.flds["tx"]
         m = self.model
         fields = [f['name'] for f in m['flds'] if f['name'].startswith(prefix)]
@@ -192,7 +196,7 @@ class ClozeOverlapper(object):
         return None
 
     def processField(self, field):
-        """Convert field contents back to HTML"""
+        """Convert field contents back to HTML based on previous markup"""
         markup = self.markup
         if not markup:
             return field
@@ -208,10 +212,12 @@ class ClozeOverlapper(object):
 
 
 def onOlClozeButton(self):
+    """Invokes an instance of the main add-on class"""
     overlapper = ClozeOverlapper(self)
     overlapper.add()
 
 def onInsertCloze(self, _old):
+    """Handles cloze-wraps when the add-on model is active"""
     if self.note.model()["name"] != OLC_MODEL:
         return _old(self)
     # find the highest existing cloze
@@ -228,11 +234,13 @@ def onInsertCloze(self, _old):
     self.web.eval("wrap('[[oc%d::', ']]');" % highest)
 
 def onSetupButtons(self):
+    """Add button and hotkey to the editor widget"""
     self._addButton("Cloze Overlapper", self.onOlClozeButton,
         _("Alt+Shift+C"), "Generate Overlapping Clozes (Alt+Shift+C)", 
         text="[.]]", size=True)
 
 def onCgOptions(mw):
+    """Invoke options dialog"""
     dialog = OlClozeOpts(mw)
     dialog.exec_()
 
@@ -240,6 +248,8 @@ def warnUser(reason, text):
     showWarning(("<b>%s Error</b>: " % reason) + text, title="Cloze Overlapper")
 
 def setupAddon():
+    """Prepare note type and apply scheduler modifications"""
+    """can only be performed after the profile has been loaded"""
     model = mw.col.models.byName(OLC_MODEL)
     if not model:
         model = addModel(mw.col)
@@ -248,7 +258,7 @@ def setupAddon():
         Scheduler._burySiblings, myBurySiblings, "around")
 
 def myBurySiblings(self, card, _old):
-    """Skip sibling interleaving for new cards if sibling burying disabled"""
+    """Skip same-day spacing for new cards if sibling burying disabled"""
     if (not card.model()["name"] == OLC_MODEL
             or not mw.col.conf["olcloze"].get("schedmod", False)):
         return _old(self,card)
@@ -287,9 +297,13 @@ and (queue=0 or (queue=2 and due<=?))""",
             intTime(), self.col.usn())
         self.col.log(toBury)
 
+# Menus
+
 options_action = QAction("Cloze Over&lapper Options...", mw)
 options_action.triggered.connect(lambda _, m=mw: onCgOptions(m))
 mw.form.menuTools.addAction(options_action)
+
+# Hooks
 
 addHook("profileLoaded", setupAddon)
 addHook("setupEditorButtons", onSetupButtons)

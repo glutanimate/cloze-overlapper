@@ -56,6 +56,7 @@ class OlClozeGenerator(object):
         return fields, full
 
     def formatCloze(self, items, nr):
+        """Apply cloze deletion syntax to item"""
         res = []
         for item in items:
             if not hasattr(item, "__iter__"): #iterable
@@ -65,6 +66,7 @@ class OlClozeGenerator(object):
         return res
 
     def formatSnippets(self, snippets, original, keys):
+        """Insert snippets back into original text, if available"""
         if not original:
             return snippets
         res = original
@@ -97,7 +99,7 @@ class OlClozeGenerator(object):
         return start_c-target
 
     def getAfterEnd(self, idx, target):
-        """Determine ending index of following context"""
+        """Determine end index of following context"""
         left = self.total - idx
         if (target == 0 or left < 1
           or (target and self.config["ncf"] and idx == self.start)):

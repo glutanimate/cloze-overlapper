@@ -140,6 +140,7 @@ card_css = """\
 """
 
 def addModel(col):
+    """Add add-on note type to collection"""
     models = col.models
     model = models.new(OLC_MODEL)
     model['type'] = MODEL_CLOZE
@@ -168,7 +169,8 @@ def addModel(col):
     return model
 
 def updateTemplate(col):
-    print "Updating Cloze (overlapping) card template"
+    """Update add-on card templates"""
+    print "Updating %s card template" % OLC_MODEL
     model = col.models.byName(OLC_MODEL)
     template = model['tmpls'][0]
     template['qfmt'] = card_front

@@ -28,7 +28,7 @@ default_conf = {
 }
 
 def loadConfig():
-    """Load and/or create add-on preferences"""
+    """Load and/or create add-on configuration"""
     conf = mw.col.conf
     default = default_conf
     if not 'olcloze' in conf:
@@ -37,7 +37,7 @@ def loadConfig():
         mw.col.setMod()
 
     elif conf['olcloze']['version'] < default['version']:
-        print("Updating synced config DB from earlier add-on release")
+        print("Updating olcloze config from earlier add-on release")
         for key in list(default.keys()):
             if key not in conf['olcloze']:
                 conf['olcloze'][key] = default[key]
