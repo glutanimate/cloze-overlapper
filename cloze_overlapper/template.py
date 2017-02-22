@@ -14,7 +14,7 @@ from .consts import *
 
 card_front = """\
 <div class="front">
-  {{#Title}}<div class="title">{{Title}}:</div>{{/Title}}
+  {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
   {{cloze:Text1}}
   {{cloze:Text2}}
   {{cloze:Text3}}
@@ -36,7 +36,7 @@ card_front = """\
   {{cloze:Text19}}
   {{cloze:Text20}}
   {{cloze:Full}}
-</div>
+</div>\
 """
 
 card_back = """\
@@ -63,11 +63,26 @@ card_back = """\
   {{cloze:Text19}}
   {{cloze:Text20}}
   {{cloze:Full}}
-  <div class="fullhint"><hr>{{hint:Original}}</hint>
-</div>
+  <hr>
+  <span class="fullhint">{{hint:Original}}</span>
+  <div class="extra">
+    {{#Remarks}}
+      <div class="extra-entry">
+        <div class="extra-descr">Remarks</div>{{Remarks}}
+      </div>
+    {{/Remarks}}
+    {{#Sources}}
+      <div class="extra-entry">
+        <div class="extra-descr">Sources</div>{{Sources}}
+      </div>
+    {{/Sources}}
+  </div>
+</div>\
 """
 
 card_css = """\
+/* general styling */
+
 .card {
   /* general card style */
   font-family: "Helvetica LT Std", Helvetica, Arial, Sans;
@@ -77,16 +92,12 @@ card_css = """\
   background-color: white;
 }
 
+/* clozes */
+
 .cloze {
   /* regular cloze deletion */
   font-weight: bold;
-  color: green;
-}
-
-.card21 .back .cloze {
-  /* full cloze deletion */
-  color: inherit;
-  font-weight: inherit;
+  color: #6200FF;
 }
 
 .title {
@@ -95,10 +106,37 @@ card_css = """\
   margin-bottom: 0.5em;
 }
 
+/* original text reveal hint */
+
 .fullhint {
-  /* hinted text hint */
   margin-top: 1em
 }
+
+.fullhint a {
+  color: #6200FF;
+}
+
+.card21 .fullhint{
+  display:none;
+}
+
+/* additional fields */
+
+.extra{
+  margin-top: 0.5em;
+}
+
+.extra-entry{
+  margin-top: 0.8em;
+  font-size: 0.9em;
+  text-align:left;
+}
+
+.extra-descr{
+  margin-bottom: 0.2em;
+  font-weight: bold;
+  font-size: 1em;
+}\
 """
 
 def addModel(col):
