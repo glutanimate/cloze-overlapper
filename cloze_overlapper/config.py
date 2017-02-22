@@ -22,8 +22,8 @@ default_conf = {
     "dflts": [1,1,0],
     "dflto": [False, False, False],
     "flds": OLC_FLDS,
-    "schedmod": True,
-    "version": 0.2
+    "nosib": [True, False],
+    "version": 0.21
 }
 
 def loadConfig():
@@ -72,7 +72,8 @@ class ClozeOverlapperOptions(QDialog):
         self.sb_before.setValue(before)
         self.sb_after.setValue(after)
         self.sb_cloze.setValue(prompt)
-        self.cb_sched.setChecked(config["schedmod"])
+        self.cb_ns_new.setChecked(config["nosib"][0])
+        self.cb_ns_rev.setChecked(config["nosib"][1])
         for idx, cb in enumerate((self.cb_ncf, self.cb_ncl, self.cb_incr)):
             cb.setChecked(config["dflto"][idx])
         for key, fnedit in self.fndict:
@@ -94,7 +95,8 @@ class ClozeOverlapperOptions(QDialog):
         if after == -1:
             after = None
         config['dflts'] = [before, prompt, after]
-        config['schedmod'] = self.cb_sched.isChecked()
+        config['nosib'][0] = self.cb_ns_new.isChecked()
+        config['nosib'][1] = self.cb_ns_rev.isChecked()
         config["dflto"] = [i.isChecked() for i in (
                 self.cb_ncf, self.cb_ncl, self.cb_incr)]
         mw.col.setMod()

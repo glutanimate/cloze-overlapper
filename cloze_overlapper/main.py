@@ -16,6 +16,7 @@ from aqt.qt import *
 from aqt import mw
 from aqt.editor import Editor
 from anki.hooks import addHook, wrap
+from anki.utils import ids2str, intTime
 from anki.sched import Scheduler
 
 from .consts import *
@@ -123,36 +124,37 @@ def onCgOptions(mw):
 
 def myBurySiblings(self, card, _old):
     """Skip same-day spacing for new cards if sibling burying disabled"""
-    if (not card.model()["name"] == OLC_MODEL
-            or not mw.col.conf["olcloze"].get("schedmod", False)):
+    if card.model()["name"] != OLC_MODEL:
         return _old(self,card)
+    nosib_conf = mw.col.conf["olcloze"].get("nosib", [False, False])
+    override_new, override_review = nosib_conf
+    if override_new and override_review:
+        return
     toBury = []
-    nconf = self._newConf(card)
-    buryNew = nconf.get("bury", True)
-    rconf = self._revConf(card)
-    buryRev = rconf.get("bury", True)
+    nconf, rconf = self._newConf(card), self._revConf(card)
+    buryNew, buryRev = nconf.get("bury", True), rconf.get("bury", True)
     # loop through and remove from queues
     for cid,queue in self.col.db.execute("""
 select id, queue from cards where nid=? and id!=?
 and (queue=0 or (queue=2 and due<=?))""",
             card.nid, card.id, self.today):
         if queue == 2:
+            if override_review:
+                continue
             if buryRev:
                 toBury.append(cid)
-            # if bury disabled, we still discard reviews to give same-day spacing
             try:
                 self._revQueue.remove(cid)
             except ValueError:
                 pass
         else:
-            # don't discard new cards if bury disabled
+            if override_new:
+                continue
             if buryNew:
                 toBury.append(cid)
-                try:
-                    self._newQueue.remove(cid)
-                except ValueError:
-                    pass
-            else:
+            try:
+                self._newQueue.remove(cid)
+            except ValueError:
                 pass
     # then bury
     if toBury:

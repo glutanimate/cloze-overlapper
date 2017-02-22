@@ -146,9 +146,9 @@ class ClozeOverlapper(object):
         lines = field.replace(" ", "").split("|")
         if not lines:
             return (dflt_set, dflt_opt)
-        settings = lines[0].replace(" ", "").split(",")
+        settings = lines[0].split(",")
         if len(lines) > 1:
-            options = lines[1].replace(" ", "").split(",")
+            options = lines[1].split(",")
 
         if not options and not settings:
             return (dflt_set, dflt_opt)
@@ -230,7 +230,7 @@ class ClozeOverlapper(object):
         settings_string = ",".join(str(i) if i is not None else "all" for i in setopts[0])
         options_string = ",".join("y" if i else "n" for i in setopts[1])
 
-        note[self.flds["st"]] = settings_string + "|" + options_string
+        note[self.flds["st"]] = settings_string + " | " + options_string
 
         if self.update:
             # update original field markup
