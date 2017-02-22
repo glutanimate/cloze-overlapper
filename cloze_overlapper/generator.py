@@ -83,7 +83,7 @@ class ClozeGenerator(object):
                 html = html.replace("{{" + nr + "}}", phrase, 1)
             else:
                 for item in phrase:
-                    html = html.replace("{{" + nr + "}}", phrase, 1)
+                    html = html.replace("{{" + nr + "}}", item, 1)
         return html
 
     def getClozeStart(self, idx, target):
