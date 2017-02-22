@@ -93,6 +93,7 @@ def onInsertMultipleClozes(self):
                 else {
                     children[i].innerHTML = contents}}
             document.execCommand('insertHTML', false, container.innerHTML);
+            saveField('key');
         }}
         """ % (increment, highest, wrap_pre, wrap_post))
 
