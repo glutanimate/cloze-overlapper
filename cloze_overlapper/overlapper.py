@@ -14,6 +14,7 @@ from operator import itemgetter
 from itertools import groupby
 from BeautifulSoup import BeautifulSoup
 
+from aqt import mw
 from aqt.utils import tooltip, showWarning
 
 from .consts import *
@@ -39,6 +40,10 @@ class ClozeOverlapper(object):
         self.markup = markup
         self.formstr = None
         self.keys = None
+        if markup:
+            self.update = True
+        else:
+            self.update = False
 
     def add(self):
         """Add overlapping clozes to note"""
@@ -197,7 +202,20 @@ class ClozeOverlapper(object):
         if not settings:
             note[self.flds["st"]] = ",".join(str(i) for i in self.config["dflts"])
 
-        return None
+        if self.update:
+            # update original field markup
+            field_map = mw.col.models.fieldMap(self.model)
+            ogfld = field_map[self.flds["og"]][0]
+            if self.markup == "ul":
+                mode = "insertUnorderedList"
+            else:
+                mode = "insertOrderedList"
+            self.ed.web.eval("""
+                focusField(%d);
+                document.execCommand('selectAll')
+                document.execCommand('%s');
+                saveField('key');
+                """ % (ogfld, mode))
 
     def processField(self, field):
         """Convert field contents back to HTML based on previous markup"""
