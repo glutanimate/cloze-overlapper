@@ -6,3 +6,4 @@
 *.sublime-workspace
 design-spec.md
 cloze_overlapper/ui_options.py
+test.py
