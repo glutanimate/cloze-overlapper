@@ -3,7 +3,7 @@
 """
 This file is part of the Cloze Overlapper add-on for Anki
 
-User-defined add-on configuration
+Configuration
 
 Copyright: Glutanimate 2016-2017
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
@@ -47,10 +47,10 @@ def loadConfig():
 
     return mw.col.conf['olcloze']
 
-class OlClozeOpts(QDialog):
+class ClozeOverlapperOptions(QDialog):
     """Options Menu"""
     def __init__(self, mw):
-        super(OlClozeOpts, self).__init__(parent=mw)
+        super(ClozeOverlapperOptions, self).__init__(parent=mw)
         # load qt-designer form:
         uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__))
             , "forms", "options.ui"), self)

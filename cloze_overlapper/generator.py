@@ -9,7 +9,7 @@ Copyright: Glutanimate 2016-2017
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 """
 
-class OlClozeGenerator(object):
+class ClozeGenerator(object):
     """Cloze generator"""
 
     cformat = u"{{c%i::%s}}"
