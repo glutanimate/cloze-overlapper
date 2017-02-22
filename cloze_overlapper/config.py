@@ -64,9 +64,15 @@ class OlClozeOpts(QDialog):
         self.setupValues(config)
 
     def setupValues(self, config):
-        self.sb_before.setValue(config["dflts"][0])
+        before = config["dflts"][0]
+        after = config["dflts"][2]
+        if before == "all":
+            before = -1
+        if after == "all":
+            after = -1
+        self.sb_before.setValue(before)
+        self.sb_after.setValue(after)
         self.sb_cloze.setValue(config["dflts"][1])
-        self.sb_after.setValue(config["dflts"][2])
         self.cb_ncf.setChecked(config["ncf"])
         self.cb_ncl.setChecked(config["ncl"])
         self.cb_incr.setChecked(config["incr"])
@@ -82,8 +88,15 @@ class OlClozeOpts(QDialog):
             print "Field rename action aborted"
             return
         config = mw.col.conf['olcloze']
-        config['dflts'] = tuple(i.value() for i in 
-                        (self.sb_before, self.sb_cloze, self.sb_after))
+        before = self.sb_before.value()
+        after = self.sb_after.value()
+        if before == -1:
+            before = "all"
+        if after == -1:
+            after = "all"
+        config['dflts'][0] = before
+        config['dflts'][2] = after
+        config['dflts'][1] = self.sb_cloze.value()
         config['ncf'] = self.cb_ncf.isChecked()
         config['ncl'] = self.cb_ncl.isChecked()
         config['incr'] = self.cb_incr.isChecked()
