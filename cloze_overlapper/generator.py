@@ -35,20 +35,25 @@ class ClozeGenerator(object):
             self.total = length
             self.start = prompt
         if self.total > self.maxfields:
-            return False, False
+            return None, None
+
         fields = []
+
         for idx in range(self.start, self.total+1):
             snippets = ["..."] * length
             start_c = self.getClozeStart(idx, prompt)
             start_b = self.getBeforeStart(idx, before, start_c)
             end_a = self.getAfterEnd(idx, after)
+
             if start_b is not None:
                 snippets[start_b:start_c] = items[start_b:start_c]
             if end_a is not None:
                 snippets[idx:end_a] = items[idx:end_a]
             snippets[start_c:idx] = self.formatCloze(items[start_c:idx], idx-self.start+1)
+
             field = self.formatSnippets(snippets, original, keys)
             fields.append(field)
+
         if self.maxfields > self.total: # delete contents of unused fields
             fields = fields + [""] * (self.maxfields - len(fields))
         fullsnippet = self.formatCloze(items, self.maxfields + 1)
@@ -59,29 +64,27 @@ class ClozeGenerator(object):
         """Apply cloze deletion syntax to item"""
         res = []
         for item in items:
-            if not hasattr(item, "__iter__"): #iterable
+            if not hasattr(item, "__iter__"): # not an iterable
                 res.append(self.cformat % (nr, item))
-                continue
-            res.append([self.cformat % (nr, i) for i in item])
+            else:
+                res.append([self.cformat % (nr, i) for i in item])
         return res
 
     def formatSnippets(self, snippets, original, keys):
         """Insert snippets back into original text, if available"""
-        if not original:
+        html = original
+        if not html:
             return snippets
-        res = original
-        print snippets
-        for nr, phrases in zip(keys, snippets):
-            print "phrases", phrases
-            if not hasattr(phrases, "__iter__"):
-                if phrases == "...":
-                    res = res.replace("{{" + nr + "}}", phrases)
-                else:
-                    res = res.replace("{{" + nr + "}}", phrases, 1)
+        for nr, phrase in zip(keys, snippets):
+            if phrase == "...": # placeholder, replace all instances
+                html = html.replace("{{" + nr + "}}", phrase)
                 continue
-            for phrase in phrases:
-                res = res.replace("{{" + nr + "}}", phrase, 1)
-        return res
+            if not hasattr(phrase, "__iter__"): # not an iterable
+                html = html.replace("{{" + nr + "}}", phrase, 1)
+            else:
+                for item in phrase:
+                    html = html.replace("{{" + nr + "}}", phrase, 1)
+        return html
 
     def getClozeStart(self, idx, target):
         """Determine start index of clozed items"""

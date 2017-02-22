@@ -50,12 +50,14 @@ class ClozeOverlapper(object):
             tooltip(u"Please enter some text in the %s field" % self.flds["og"])
             return False
 
+
         matches = re.findall(self.creg, original)
         if matches:
             self.formstr = re.sub(self.creg, "{{\\1}}", original)
             items = self.getClozeItems(matches)
         else:
             items = self.getLineItems(original)
+
 
         if not items:
             tooltip("Could not find items to cloze.<br>Please check your input.")
@@ -95,6 +97,8 @@ class ClozeOverlapper(object):
                 warnUser("Note Type", "Fields not configured properly.<br>Please make "
                     "sure you didn't remove or rename any of the default fields.")
                 return False
+
+        return True
 
     def getClozeItems(self, matches):
         """Returns a list of items that were clozed by the user"""

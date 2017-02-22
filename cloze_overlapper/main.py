@@ -3,7 +3,7 @@
 """
 This file is part of the Cloze Overlapper add-on for Anki
 
-Main Module
+Main Module, hooks add-on methods into Anki
 
 Copyright: Glutanimate 2016-2017
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
@@ -23,6 +23,7 @@ from .template import addModel
 from .config import ClozeOverlapperOptions
 from .overlapper import ClozeOverlapper
 
+# Editor
 
 def onOlClozeButton(self, markup=None):
     """Invokes an instance of the main add-on class"""
@@ -92,19 +93,20 @@ def onInsertMultipleClozes(self):
                 else {
                     children[i].innerHTML = contents}}
             document.execCommand('insertHTML', false, container.innerHTML);
-        }
+        }}
         """ % (increment, highest, wrap_pre, wrap_post))
 
 def onSetupButtons(self):
     """Add buttons and hotkeys to the editor widget"""
+    
     self._addButton("Cloze Overlapper", self.onOlClozeButton,
         _("Alt+Shift+C"), "Generate Overlapping Clozes (Alt+Shift+C)", 
         text="[.]]", size=True)
     
     add_ol_cut = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+.")), self.parentWindow)
-    add_ol_cut.activated.connect(lambda _, o="ol": self.onOlClozeButton(o))
+    add_ol_cut.activated.connect(lambda o="ol": self.onOlClozeButton(o))
     add_ul_cut = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+,")), self.parentWindow)
-    add_ul_cut.activated.connect(lambda _, o="ul": self.onOlClozeButton(o))
+    add_ul_cut.activated.connect(lambda o="ul": self.onOlClozeButton(o))
 
     mult_cloze_cut1 = QShortcut(QKeySequence(_("Ctrl+Shift+D")), self.parentWindow)
     mult_cloze_cut1.activated.connect(self.onInsertMultipleClozes)
@@ -116,16 +118,7 @@ def onCgOptions(mw):
     dialog = ClozeOverlapperOptions(mw)
     dialog.exec_()
 
-
-def setupAddon():
-    """Prepare note type and apply scheduler modifications"""
-    """can only be performed after the profile has been loaded"""
-    model = mw.col.models.byName(OLC_MODEL)
-    if not model:
-        model = addModel(mw.col)
-        loadConfig()
-    Scheduler._burySiblings = wrap(
-        Scheduler._burySiblings, myBurySiblings, "around")
+# Scheduling
 
 def myBurySiblings(self, card, _old):
     """Skip same-day spacing for new cards if sibling burying disabled"""
@@ -166,6 +159,17 @@ and (queue=0 or (queue=2 and due<=?))""",
             "update cards set queue=-2,mod=?,usn=? where id in "+ids2str(toBury),
             intTime(), self.col.usn())
         self.col.log(toBury)
+
+
+def setupAddon():
+    """Prepare note type and apply scheduler modifications"""
+    """can only be performed after the profile has been loaded"""
+    model = mw.col.models.byName(OLC_MODEL)
+    if not model:
+        model = addModel(mw.col)
+        loadConfig()
+    Scheduler._burySiblings = wrap(
+        Scheduler._burySiblings, myBurySiblings, "around")
 
 # Menus
 
