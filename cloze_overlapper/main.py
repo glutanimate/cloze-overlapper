@@ -47,37 +47,69 @@ def onInsertCloze(self, _old):
     self.web.eval("wrap('[[oc%d::', ']]');" % highest)
 
 def onInsertMultipleClozes(self):
-    print self.web.selectedText()
-    if self.note.model()["name"] != OLC_MODEL:
+    """Wraps each line in a separate cloze"""
+    if self.note.model()["name"] == OLC_MODEL:
         cloze_re = "\[\[oc(\d+)::"
-        wrap_pre = "[[oc%d::"
-        wrap_post = "]]"
+        wrap_pre, wrap_post = "[[oc", "]]"
     else:
         cloze_re = "\{\{c(\d+)::"
-        wrap_pre = "{{oc%d::"
-        wrap_post = "}}"
-    pass
+        wrap_pre, wrap_post  = "{{c", "}}"
+    # find the highest existing cloze
+    highest = 0  
+    for name, val in self.note.items():
+        m = re.findall(cloze_re, val)
+        if m:
+            highest = max(highest, sorted([int(x) for x in m])[-1])
+    increment = "false"
+    if not self.mw.app.keyboardModifiers() & Qt.AltModifier:
+        highest += 1
+        increment = "true"
+    highest = max(1, highest)
+    # process selected text
+    self.web.eval("""
+        var increment = %s;
+        var highest = %d;
+        if (typeof window.getSelection != "undefined") {
+            // get selected HTML
+            var sel = window.getSelection();
+            if (sel.rangeCount) {
+                var container = document.createElement("div");
+                for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+                    container.appendChild(sel.getRangeAt(i).cloneContents());}
+            // wrap each topmost child with cloze tags
+            children = container.childNodes
+            for (i = 0; i < children.length; i++) { 
+                var child = children[i]
+                var contents = child.innerHTML
+                if (typeof contents === 'undefined'){
+                    // handle text nodes
+                    var contents = child.textContent
+                    var textOnly = true;}
+                if (increment){idx = highest+i} else {idx = highest}
+                contents = '%s' + idx + '::' + contents + '%s'
+                if (textOnly){
+                    children[i].textContent = contents}
+                else {
+                    children[i].innerHTML = contents}}
+            document.execCommand('insertHTML', false, container.innerHTML);
+        }
+        """ % (increment, highest, wrap_pre, wrap_post))
 
 def onSetupButtons(self):
-    """Add button and hotkey to the editor widget"""
+    """Add buttons and hotkeys to the editor widget"""
     self._addButton("Cloze Overlapper", self.onOlClozeButton,
         _("Alt+Shift+C"), "Generate Overlapping Clozes (Alt+Shift+C)", 
         text="[.]]", size=True)
     
-    add_ol_action = QAction(self.parentWindow)
-    add_ol_action.triggered.connect(lambda _, o="ol": self.onOlClozeButton(o))
-    add_ol_action.setShortcut(QKeySequence(_("Ctrl+Alt+Shift+.")))
-    self.parentWindow.addAction(add_ol_action)
+    add_ol_cut = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+.")), self.parentWindow)
+    add_ol_cut.activated.connect(lambda _, o="ol": self.onOlClozeButton(o))
+    add_ul_cut = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+,")), self.parentWindow)
+    add_ul_cut.activated.connect(lambda _, o="ul": self.onOlClozeButton(o))
 
-    add_ul_action = QAction(self.parentWindow)
-    add_ul_action.triggered.connect(lambda _, o="ul": self.onOlClozeButton(o))
-    add_ul_action.setShortcut(QKeySequence(_("Ctrl+Alt+Shift+,")))
-    self.parentWindow.addAction(add_ul_action)
-
-    mult_cloze_action = QAction(self.parentWindow)
-    mult_cloze_action.triggered.connect(self.onInsertMultipleClozes)
-    mult_cloze_action.setShortcut(QKeySequence(_("Ctrl+Alt+C")))
-    self.parentWindow.addAction(mult_cloze_action)
+    mult_cloze_cut1 = QShortcut(QKeySequence(_("Ctrl+Shift+D")), self.parentWindow)
+    mult_cloze_cut1.activated.connect(self.onInsertMultipleClozes)
+    mult_cloze_cut2 = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+D")), self.parentWindow)
+    mult_cloze_cut2.activated.connect(self.onInsertMultipleClozes)
 
 def onCgOptions(mw):
     """Invoke options dialog"""

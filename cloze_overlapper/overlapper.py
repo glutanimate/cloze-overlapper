@@ -42,7 +42,8 @@ class ClozeOverlapper(object):
 
     def add(self):
         """Add overlapping clozes to note"""
-        self.checkIntegrity()
+        if not self.checkIntegrity():
+            return False
         self.ed.web.eval("saveField('key');") # save field
         original = self.note[self.flds["og"]]
         if not original:
