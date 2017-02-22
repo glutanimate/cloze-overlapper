@@ -77,7 +77,13 @@ card_back = """\
       </div>
     {{/Sources}}
   </div>
-</div>\
+</div>
+<script>
+  // remove cloze syntax from revealed hint
+  var hint = document.querySelector('.fullhint>[id^="hint"]')
+  var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg, "$2")
+  hint.innerHTML = html
+</script>\
 """
 
 card_css = """\
