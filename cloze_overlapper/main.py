@@ -15,21 +15,20 @@ from aqt.qt import *
 
 from aqt import mw
 from aqt.editor import Editor
+from aqt.addcards import AddCards
+from aqt.editcurrent import EditCurrent
+from aqt.utils import tooltip
+
 from anki.hooks import addHook, wrap
 from anki.utils import ids2str, intTime
 from anki.sched import Scheduler
 
 from .consts import *
 from .template import addModel
-from .config import ClozeOverlapperOptions, loadConfig
+from .config import OlcOptions, OlcNoteSettings, loadConfig
 from .overlapper import ClozeOverlapper
 
 # Editor
-
-def onOlClozeButton(self, markup=None):
-    """Invokes an instance of the main add-on class"""
-    overlapper = ClozeOverlapper(self, markup)
-    overlapper.add()
 
 def onInsertCloze(self, _old):
     """Handles cloze-wraps when the add-on model is active"""
@@ -98,12 +97,25 @@ def onInsertMultipleClozes(self):
         }}
         """ % (increment, highest, wrap_pre, wrap_post))
 
+def onOlOptionsButton(self):
+    options = OlcNoteSettings(self.parentWindow)
+    options.exec_()
+
+def onOlClozeButton(self, markup=None):
+    """Invokes an instance of the main add-on class"""
+    overlapper = ClozeOverlapper(self, markup)
+    overlapper.add()
+
 def onSetupButtons(self):
     """Add buttons and hotkeys to the editor widget"""
     
     self._addButton("Cloze Overlapper", self.onOlClozeButton,
         _("Alt+Shift+C"), "Generate Overlapping Clozes (Alt+Shift+C)", 
         text="[.]]", size=True)
+
+    self._addButton("Cloze Overlapper Note Settings", self.onOlOptionsButton,
+        None, "Customize Overlapping Cloze Generation Settings", 
+        text="[O]", size=True)
     
     add_ol_cut = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+.")), self.parentWindow)
     add_ol_cut.activated.connect(lambda o="ol": self.onOlClozeButton(o))
@@ -115,10 +127,35 @@ def onSetupButtons(self):
     mult_cloze_cut2 = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+D")), self.parentWindow)
     mult_cloze_cut2.activated.connect(self.onInsertMultipleClozes)
 
-def onCgOptions(mw):
-    """Invoke options dialog"""
-    dialog = ClozeOverlapperOptions(mw)
-    dialog.exec_()
+def onAddCards(self, _old):
+    """Automatically generate overlapping clozes before adding cards"""
+    note = self.editor.note
+    if not note or note.model()["name"] not in mw.col.conf["olcloze"]["olmdls"]:
+        return _old(self)
+    overlapper = ClozeOverlapper(self.editor, silent=True)
+    ret, msg = overlapper.add()
+    if not ret:
+        return
+    oldret = _old(self)
+    if msg:
+        tooltip(msg, period=1000)
+    return oldret
+
+def onEditCurrent(self, _old):
+    """Automatically update overlapping clozes before updating cards"""
+    note = self.editor.note
+    if not nore or note.model()["name"] not in mw.col.conf["olcloze"]["olmdls"]:
+        return _old(self)
+    overlapper = ClozeOverlapper(self.editor, silent=True)
+    ret, msg = overlapper.add()
+    # returning here won't stop the window from being rejected, so we simply
+    # accept whatever changes the user performed, even if the generator
+    # did not fire
+    oldret = _old(self)
+    if msg:
+        tooltip(msg, period=1000)
+    return oldret
+
 
 # Scheduling
 
@@ -176,8 +213,13 @@ def setupAddon():
 
 # Menus
 
+def onOlcOptions(mw):
+    """Invoke options dialog"""
+    dialog = OlcOptions(mw)
+    dialog.exec_()
+
 options_action = QAction("Cloze Over&lapper Options...", mw)
-options_action.triggered.connect(lambda _, m=mw: onCgOptions(m))
+options_action.triggered.connect(lambda _, m=mw: onOlcOptions(m))
 mw.form.menuTools.addAction(options_action)
 
 # Hooks
@@ -185,5 +227,9 @@ mw.form.menuTools.addAction(options_action)
 addHook("profileLoaded", setupAddon)
 addHook("setupEditorButtons", onSetupButtons)
 Editor.onOlClozeButton = onOlClozeButton
+Editor.onOlOptionsButton = onOlOptionsButton
 Editor.onInsertMultipleClozes = onInsertMultipleClozes
 Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
+
+AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
+EditCurrent.onSave = wrap(EditCurrent.onSave, onEditCurrent, "around")

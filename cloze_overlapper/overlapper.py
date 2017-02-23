@@ -19,7 +19,7 @@ from aqt.utils import tooltip, showWarning
 from anki.utils import stripHTML
 
 from .consts import *
-from .config import loadConfig
+from .config import loadConfig, parseNoteSettings, createNoteSettings
 from .generator import ClozeGenerator
 
 
@@ -31,7 +31,7 @@ class ClozeOverlapper(object):
 
     creg = r"(?s)\[\[oc(\d+)::((.*?)(::(.*?))?)?\]\]"
 
-    def __init__(self, ed, markup=None):
+    def __init__(self, ed, markup=None, silent=False):
         self.ed = ed
         self.note = self.ed.note
         self.model = self.note.model()
@@ -41,6 +41,7 @@ class ClozeOverlapper(object):
         self.markup = markup
         self.formstr = None
         self.keys = None
+        self.silent = silent
         if markup:
             self.update = True
         else:
@@ -50,12 +51,12 @@ class ClozeOverlapper(object):
         """Add overlapping clozes to note"""
 
         if not self.checkIntegrity():
-            return False
+            return False, None
         self.ed.web.eval("saveField('key');") # save field
         original = self.note[self.flds["og"]]
         if not original:
             tooltip(u"<b>Reminder</b>: Please enter some text in the '%s' field" % self.flds["og"])
-            return False
+            return False, None
 
         matches = re.findall(self.creg, original)
         if matches:
@@ -66,15 +67,15 @@ class ClozeOverlapper(object):
 
         if not items:
             tooltip("<b>Warning</b>: Could not find items to cloze.<br>Please check your input.")
-            return False
+            return False, None
         if len(items) < 3:
             tooltip("<b>Reminder</b>: Please enter at least three items to cloze.")
-            return False
+            return False, None
 
-        setopts = self.getNoteSettings()
+        setopts = parseNoteSettings(self.note[self.flds["st"]], self.config)
         maxfields = self.getMaxFields()
         if not maxfields:
-            return None
+            return False, None
 
         gen = ClozeGenerator(setopts, maxfields)
         fields, full, total = gen.generate(items, self.formstr, self.keys)
@@ -83,19 +84,22 @@ class ClozeOverlapper(object):
             tooltip("<b>Warning</b>: This would generate <b>%d</b> overlapping clozes,<br>"
                 "The note type can only handle a maximum of <b>%d</b> with<br>"
                 "the current number of %s fields" % (total, maxfields, self.flds["tx"]))
-            return False
+            return False, None
 
         self.updateNote(fields, full, setopts)
 
-        tooltip("<b>Info</b>: Generated %d overlapping clozes" % total, period=1000)
+        msg = "<b>Info</b>: Generated %d overlapping clozes" % total
+        if not self.silent:
+            tooltip(msg, period=1000)
 
         self.ed.loadNote()
         self.ed.web.eval("focusField(%d);" % self.ed.currentField)
+        return True, msg
 
     def checkIntegrity(self):
         """Sanity checks for the model and fields"""
         if self.model["name"] not in self.config["olmdls"]:
-            tooltip(u"Can only generate overlapping clozes <br>"
+            tooltip(u"<b>Reminder</b>:<br>Can only generate overlapping clozes<br>"
                 "on the following note types:<br>"
                 "%s" % ", ".join("'{0}'".format(i) for i in self.config["olmdls"]))
             return False
@@ -105,7 +109,7 @@ class ClozeOverlapper(object):
             if fid == "tx":
                 continue
             if self.flds[fid] not in fields:
-                warnUser("Note Type", "Looks like your not type is not configured properly. "
+                warnUser("Note Type", "Looks like your note type is not configured properly. "
                     "Please make sure that the fields list includes "
                     "all of these fields:<br><br><i>%s</i>" % ", ".join(
                     self.flds[fid] if fid != "tx" else "Text1-TextN" for fid in OLC_FIDS_PRIV))
@@ -144,56 +148,6 @@ class ClozeOverlapper(object):
         lines = re.sub(r"^(&nbsp;)+$", "", text, flags=re.MULTILINE).splitlines()
         items = [line for line in lines if line.strip() != ''] 
         return items
-
-    def getNoteSettings(self):
-        """Return note settings. Fall back to defaults if necessary."""
-        options, settings, opts, sets = None, None, None, None
-        dflt_set, dflt_opt = self.config["dflts"], self.config["dflto"]
-        field = stripHTML(self.note[self.flds["st"]])
-
-        lines = field.replace(" ", "").split("|")
-        if not lines:
-            return (dflt_set, dflt_opt)
-        settings = lines[0].split(",")
-        if len(lines) > 1:
-            options = lines[1].split(",")
-
-        if not options and not settings:
-            return (dflt_set, dflt_opt)
-
-        if not settings:
-            sets = dflt_set
-        else:
-            sets = []
-            for idx, item in enumerate(settings[:3]):
-                try:
-                    sets.append(int(item))
-                except ValueError:
-                    sets.append(None)
-            length = len(sets)
-            if length == 3 and isinstance(sets[1], int):
-                pass
-            elif length == 2 and isinstance(sets[0], int):
-                sets = [sets[1], sets[0], sets[1]]
-            elif length == 1 and isinstance(sets[0], int):
-                sets = [dflt_set[0], sets[0], dflt_set[2]]
-            else:
-                sets = dflt_set
-
-        if not options:
-            opts = dflt_opt
-        else:
-            opts = []
-            for i in range(3):
-                try: 
-                    if options[i] == "y":
-                        opts.append(True)
-                    else:
-                        opts.append(False)
-                except IndexError:
-                    opts.append(False)
-
-        return (sets, opts)
 
     def getMaxFields(self):
         """Determine number of text fields available for cloze sequences"""
@@ -234,11 +188,7 @@ class ClozeOverlapper(object):
             note[name] = self.processField(field)
 
         note[self.flds["fl"]] = self.processField(full)
-
-        settings_string = ",".join(str(i) if i is not None else "all" for i in setopts[0])
-        options_string = ",".join("y" if i else "n" for i in setopts[1])
-
-        note[self.flds["st"]] = settings_string + " | " + options_string
+        note[self.flds["st"]] = createNoteSettings(setopts)
 
         if self.update:
             # update original field markup

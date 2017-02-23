@@ -14,6 +14,7 @@ from PyQt4 import uic
 
 from aqt.qt import *
 from aqt import mw
+from anki.utils import stripHTML
 
 from consts import *
 
@@ -47,10 +48,116 @@ def loadConfig():
 
     return mw.col.conf['olcloze']
 
-class ClozeOverlapperOptions(QDialog):
+def parseNoteSettings(html, config):
+    """Return note settings. Fall back to defaults if necessary."""
+    options, settings, opts, sets = None, None, None, None
+    dflt_set, dflt_opt = config["dflts"], config["dflto"]
+    field = stripHTML(html)
+
+    lines = field.replace(" ", "").split("|")
+    if not lines:
+        return (dflt_set, dflt_opt)
+    settings = lines[0].split(",")
+    if len(lines) > 1:
+        options = lines[1].split(",")
+
+    if not options and not settings:
+        return (dflt_set, dflt_opt)
+
+    if not settings:
+        sets = dflt_set
+    else:
+        sets = []
+        for idx, item in enumerate(settings[:3]):
+            try:
+                sets.append(int(item))
+            except ValueError:
+                sets.append(None)
+        length = len(sets)
+        if length == 3 and isinstance(sets[1], int):
+            pass
+        elif length == 2 and isinstance(sets[0], int):
+            sets = [sets[1], sets[0], sets[1]]
+        elif length == 1 and isinstance(sets[0], int):
+            sets = [dflt_set[0], sets[0], dflt_set[2]]
+        else:
+            sets = dflt_set
+
+    if not options:
+        opts = dflt_opt
+    else:
+        opts = []
+        for i in range(3):
+            try: 
+                if options[i] == "y":
+                    opts.append(True)
+                else:
+                    opts.append(False)
+            except IndexError:
+                opts.append(False)
+
+    return (sets, opts)
+
+def createNoteSettings(setopts):
+    settings_string = ",".join(str(i) if i is not None else "all" for i in setopts[0])
+    options_string = ",".join("y" if i else "n" for i in setopts[1])
+    return settings_string + " | " + options_string
+
+class OlcNoteSettings(QDialog):
+    """Note-specific settings"""
+    def __init__(self, parent):
+        super(OlcNoteSettings, self).__init__(parent=parent)
+        # load qt-designer form:
+        uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__))
+            , "forms", "notesettings.ui"), self)
+        self.buttonBox.accepted.connect(self.onAccept)
+        self.buttonBox.rejected.connect(self.onReject)
+        self.ed = parent.editor
+        self.note = self.ed.note
+        self.config = loadConfig()
+        self.flds = self.config["flds"]
+        self.setupValues()
+
+    def setupValues(self):
+        setopts = parseNoteSettings(self.note[self.flds["st"]], self.config)
+        settings, options = setopts
+        before, prompt, after = settings
+        if before is None:
+            before = -1
+        if after is None:
+            after = -1
+        self.sb_before.setValue(before)
+        self.sb_after.setValue(after)
+        self.sb_cloze.setValue(prompt)
+        for idx, cb in enumerate((self.cb_ncf, self.cb_ncl, self.cb_incr)):
+            cb.setChecked(options[idx])
+
+    def onAccept(self):
+        before = self.sb_before.value()
+        after = self.sb_after.value()
+        prompt = self.sb_cloze.value()
+        if before == -1:
+            before = None
+        if after == -1:
+            after = None
+        settings = [before, prompt, after]
+        options = [i.isChecked() for i in (
+                self.cb_ncf, self.cb_ncl, self.cb_incr)]
+        setopts = (settings, options)
+        settings_fld = createNoteSettings(setopts)
+        self.note[self.flds["st"]] = settings_fld
+        self.ed.loadNote()
+        self.ed.web.eval("focusField(%d);" % self.ed.currentField)
+        self.ed.onOlClozeButton()
+        self.close()
+
+    def onReject(self):
+        self.close()
+
+class OlcOptions(QDialog):
     """Options Menu"""
     def __init__(self, mw):
-        super(ClozeOverlapperOptions, self).__init__(parent=mw)
+        super(OlcOptions, self).__init__(parent=mw)
         # load qt-designer form:
         uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__))
             , "forms", "options.ui"), self)
