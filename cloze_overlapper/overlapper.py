@@ -21,17 +21,14 @@ from anki.utils import stripHTML
 from .consts import *
 from .config import loadConfig, parseNoteSettings, createNoteSettings
 from .generator import ClozeGenerator
-
-
-def warnUser(reason, text):
-    showWarning(("<b>%s Error</b>: " % reason) + text, title="Cloze Overlapper")
+from .utils import warnUser, showTT
 
 class ClozeOverlapper(object):
     """Reads note, calls ClozeGenerator, writes results back to note"""
 
     creg = r"(?s)\[\[oc(\d+)::((.*?)(::(.*?))?)?\]\]"
 
-    def __init__(self, ed, markup=None, silent=False):
+    def __init__(self, ed, markup=False, silent=False, parent=None):
         self.ed = ed
         self.note = self.ed.note
         self.model = self.note.model()
@@ -39,23 +36,22 @@ class ClozeOverlapper(object):
         self.dflts = self.config["dflts"]
         self.flds = self.config["flds"]
         self.markup = markup
+        self.update = markup
         self.formstr = None
         self.keys = None
         self.silent = silent
-        if markup:
-            self.update = True
-        else:
-            self.update = False
+        self.parent = parent
+
+    def showTT(self, title, text, period=3000):
+        showTT(title, text, period, parent=self.parent)
 
     def add(self):
         """Add overlapping clozes to note"""
-
-        if not self.checkIntegrity():
-            return False, None
         self.ed.web.eval("saveField('key');") # save field
         original = self.note[self.flds["og"]]
         if not original:
-            tooltip(u"<b>Reminder</b>: Please enter some text in the '%s' field" % self.flds["og"])
+            self.showTT("Reminder",
+                u"Please enter some text in the '%s' field" % self.flds["og"])
             return False, None
 
         matches = re.findall(self.creg, original)
@@ -66,10 +62,12 @@ class ClozeOverlapper(object):
             items = self.getLineItems(original)
 
         if not items:
-            tooltip("<b>Warning</b>: Could not find items to cloze.<br>Please check your input.")
+            self.showTT("Warning",
+                "Could not find items to cloze.<br>Please check your input.",)
             return False, None
         if len(items) < 3:
-            tooltip("<b>Reminder</b>: Please enter at least three items to cloze.")
+            self.showTT("Reminder",
+                "Please enter at least three items to cloze.")
             return False, None
 
         setopts = parseNoteSettings(self.note[self.flds["st"]], self.config)
@@ -81,41 +79,20 @@ class ClozeOverlapper(object):
         fields, full, total = gen.generate(items, self.formstr, self.keys)
 
         if not fields:
-            tooltip("<b>Warning</b>: This would generate <b>%d</b> overlapping clozes,<br>"
+            self.showTT("Warning", "This would generate <b>%d</b> overlapping clozes,<br>"
                 "The note type can only handle a maximum of <b>%d</b> with<br>"
                 "the current number of %s fields" % (total, maxfields, self.flds["tx"]))
             return False, None
 
         self.updateNote(fields, full, setopts)
 
-        msg = "<b>Info</b>: Generated %d overlapping clozes" % total
+        msg = "Generated %d overlapping clozes" % total
         if not self.silent:
-            tooltip(msg, period=1000)
+            self.showTT("Info", msg, period=1000)
 
         self.ed.loadNote()
         self.ed.web.eval("focusField(%d);" % self.ed.currentField)
         return True, msg
-
-    def checkIntegrity(self):
-        """Sanity checks for the model and fields"""
-        if self.model["name"] not in self.config["olmdls"]:
-            tooltip(u"<b>Reminder</b>:<br>Can only generate overlapping clozes<br>"
-                "on the following note types:<br>"
-                "%s" % ", ".join("'{0}'".format(i) for i in self.config["olmdls"]))
-            return False
-
-        fields = [f['name'] for f in self.model['flds']]
-        for fid in OLC_FIDS_PRIV:
-            if fid == "tx":
-                continue
-            if self.flds[fid] not in fields:
-                warnUser("Note Type", "Looks like your note type is not configured properly. "
-                    "Please make sure that the fields list includes "
-                    "all of these fields:<br><br><i>%s</i>" % ", ".join(
-                    self.flds[fid] if fid != "tx" else "Text1-TextN" for fid in OLC_FIDS_PRIV))
-                return False
-
-        return True
 
     def getClozeItems(self, matches):
         """Returns a list of items that were clozed by the user"""

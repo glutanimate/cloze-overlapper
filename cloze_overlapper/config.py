@@ -99,6 +99,7 @@ def parseNoteSettings(html, config):
     return (sets, opts)
 
 def createNoteSettings(setopts):
+    """Create plain text settings string"""
     settings_string = ",".join(str(i) if i is not None else "all" for i in setopts[0])
     options_string = ",".join("y" if i else "n" for i in setopts[1])
     return settings_string + " | " + options_string
@@ -112,6 +113,7 @@ class OlcNoteSettings(QDialog):
             , "forms", "notesettings.ui"), self)
         self.buttonBox.accepted.connect(self.onAccept)
         self.buttonBox.rejected.connect(self.onReject)
+        self.parent = parent
         self.ed = parent.editor
         self.note = self.ed.note
         self.config = loadConfig()
@@ -119,6 +121,7 @@ class OlcNoteSettings(QDialog):
         self.setupValues()
 
     def setupValues(self):
+        self.ed.web.eval("saveField('key');") # save field
         setopts = parseNoteSettings(self.note[self.flds["st"]], self.config)
         settings, options = setopts
         before, prompt, after = settings
@@ -148,7 +151,7 @@ class OlcNoteSettings(QDialog):
         self.note[self.flds["st"]] = settings_fld
         self.ed.loadNote()
         self.ed.web.eval("focusField(%d);" % self.ed.currentField)
-        self.ed.onOlClozeButton()
+        self.ed.onOlClozeButton(parent=self.parent)
         self.close()
 
     def onReject(self):

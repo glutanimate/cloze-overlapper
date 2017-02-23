@@ -17,7 +17,6 @@ from aqt import mw
 from aqt.editor import Editor
 from aqt.addcards import AddCards
 from aqt.editcurrent import EditCurrent
-from aqt.utils import tooltip
 
 from anki.hooks import addHook, wrap
 from anki.utils import ids2str, intTime
@@ -27,6 +26,8 @@ from .consts import *
 from .template import addModel
 from .config import OlcOptions, OlcNoteSettings, loadConfig
 from .overlapper import ClozeOverlapper
+from .utils import warnUser, showTT
+
 
 # Editor
 
@@ -97,25 +98,57 @@ def onInsertMultipleClozes(self):
         }}
         """ % (increment, highest, wrap_pre, wrap_post))
 
+def checkModel(model):
+    """Sanity checks for the model and fields"""
+    config = mw.col.conf["olcloze"]
+    if model["name"] not in config["olmdls"]:
+        showTT("Reminder", u"Can only generate overlapping clozes<br>"
+            "on the following note types:<br><br>"
+            "%s" % ", ".join("'{0}'".format(i) for i in config["olmdls"]))
+        return False
+    fields = [f['name'] for f in model['flds']]
+    complete = True
+    for fid in OLC_FIDS_PRIV:
+        fname = config["flds"][fid] 
+        if fid == "tx":
+            # should have at least 3 text fields
+            complete = all(fname + str(i) in fields for i in range(1,4))
+        else:
+            complete = fname in fields
+        if not complete:
+            break
+    if not complete:
+        warnUser("Note Type", "Looks like your note type is not configured properly. "
+            "Please make sure that the fields list includes "
+            "all of the following fields:<br><br><i>%s</i>" % ", ".join(
+            config["flds"][fid] if fid != "tx" else "Text1-TextN" for fid in OLC_FIDS_PRIV))
+    return complete
+
 def onOlOptionsButton(self):
+    """Invoke note-specific options dialog"""
+    if not checkModel(self.note.model()):
+        return False
     options = OlcNoteSettings(self.parentWindow)
     options.exec_()
 
-def onOlClozeButton(self, markup=None):
+def onOlClozeButton(self, markup=None, parent=None):
     """Invokes an instance of the main add-on class"""
-    overlapper = ClozeOverlapper(self, markup)
+    if not checkModel(self.note.model()):
+        return False
+    overlapper = ClozeOverlapper(self, markup=markup, parent=parent)
     overlapper.add()
 
 def onSetupButtons(self):
     """Add buttons and hotkeys to the editor widget"""
-    
-    self._addButton("Cloze Overlapper", self.onOlClozeButton,
+    b =self._addButton("Cloze Overlapper", self.onOlClozeButton,
         _("Alt+Shift+C"), "Generate Overlapping Clozes (Alt+Shift+C)", 
         text="[.]]", size=True)
+    b.setFixedWidth(24)
 
-    self._addButton("Cloze Overlapper Note Settings", self.onOlOptionsButton,
-        None, "Customize Overlapping Cloze Generation Settings", 
+    b = self._addButton("Cloze Overlapper Note Settings", self.onOlOptionsButton,
+        _("Alt+Shift+O"), "Customize Overlapping Cloze Generation Settings", 
         text="[O]", size=True)
+    b.setFixedWidth(24)
     
     add_ol_cut = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+.")), self.parentWindow)
     add_ol_cut.activated.connect(lambda o="ol": self.onOlClozeButton(o))
@@ -130,7 +163,7 @@ def onSetupButtons(self):
 def onAddCards(self, _old):
     """Automatically generate overlapping clozes before adding cards"""
     note = self.editor.note
-    if not note or note.model()["name"] not in mw.col.conf["olcloze"]["olmdls"]:
+    if not note or not checkModel(note.model()):
         return _old(self)
     overlapper = ClozeOverlapper(self.editor, silent=True)
     ret, msg = overlapper.add()
@@ -138,13 +171,13 @@ def onAddCards(self, _old):
         return
     oldret = _old(self)
     if msg:
-        tooltip(msg, period=1000)
+        showTT("Info", msg, period=1000)
     return oldret
 
 def onEditCurrent(self, _old):
     """Automatically update overlapping clozes before updating cards"""
     note = self.editor.note
-    if not nore or note.model()["name"] not in mw.col.conf["olcloze"]["olmdls"]:
+    if not note or not checkModel(note.model()):
         return _old(self)
     overlapper = ClozeOverlapper(self.editor, silent=True)
     ret, msg = overlapper.add()
@@ -153,19 +186,20 @@ def onEditCurrent(self, _old):
     # did not fire
     oldret = _old(self)
     if msg:
-        tooltip(msg, period=1000)
+        showTT("info", msg, period=1000)
     return oldret
 
 
 # Scheduling
 
 def myBurySiblings(self, card, _old):
-    """Skip same-day spacing for new cards if sibling burying disabled"""
+    """Skip sibling burying for our note type if so configured"""
     if card.model()["name"] not in mw.col.conf["olcloze"]["olmdls"]:
         return _old(self,card)
     nosib_conf = mw.col.conf["olcloze"].get("nosib", [False, False])
     override_new, override_review = nosib_conf
     if override_new and override_review:
+        # sibling burying disabled entirely
         return
     toBury = []
     nconf, rconf = self._newConf(card), self._revConf(card)
@@ -214,7 +248,7 @@ def setupAddon():
 # Menus
 
 def onOlcOptions(mw):
-    """Invoke options dialog"""
+    """Invoke global config dialog"""
     dialog = OlcOptions(mw)
     dialog.exec_()
 
