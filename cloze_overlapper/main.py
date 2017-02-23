@@ -71,6 +71,23 @@ def onInsertMultipleClozes(self):
     self.web.eval("""
         var increment = %s;
         var highest = %d;
+        function clozeChildren(container) {
+            children = container.childNodes
+            for (i = 0; i < children.length; i++) { 
+                var child = children[i]
+                var contents = child.innerHTML
+                var textOnly = false;
+                if (typeof contents === 'undefined'){
+                    // handle text nodes
+                    var contents = child.textContent
+                    textOnly = true;}
+                if (increment){idx = highest+i} else {idx = highest}
+                contents = '%s' + idx + '::' + contents + '%s'
+                if (textOnly){
+                    child.textContent = contents}
+                else {
+                    child.innerHTML = contents}}
+        }
         if (typeof window.getSelection != "undefined") {
             // get selected HTML
             var sel = window.getSelection();
@@ -78,22 +95,11 @@ def onInsertMultipleClozes(self):
                 var container = document.createElement("div");
                 for (var i = 0, len = sel.rangeCount; i < len; ++i) {
                     container.appendChild(sel.getRangeAt(i).cloneContents());}
-            // wrap each topmost child with cloze tags
-            children = container.childNodes
-            for (i = 0; i < children.length; i++) { 
-                var child = children[i]
-                var contents = child.innerHTML
-                if (typeof contents === 'undefined'){
-                    // handle text nodes
-                    var contents = child.textContent
-                    var textOnly = true;}
-                if (increment){idx = highest+i} else {idx = highest}
-                contents = '%s' + idx + '::' + contents + '%s'
-                if (textOnly){
-                    children[i].textContent = contents}
-                else {
-                    children[i].innerHTML = contents}}
-            document.execCommand('insertHTML', false, container.innerHTML);
+            // wrap each topmost child with cloze tags; TODO: Recursion
+            clozeChildren(container);
+            // workaround for duplicate list items:
+            var clozed = container.innerHTML.replace(/^(<li>)/, "")
+            document.execCommand('insertHTML', false, clozed);
             saveField('key');
         }}
         """ % (increment, highest, wrap_pre, wrap_post))
