@@ -31,7 +31,7 @@ class ClozeGenerator(object):
             self.total = length
             self.start = self.prompt
         if self.total > self.maxfields:
-            return None, None
+            return None, None, self.total
 
         fields = []
 
@@ -49,12 +49,12 @@ class ClozeGenerator(object):
 
             field = self.formatSnippets(snippets, original, keys)
             fields.append(field)
-
+        nr = len(fields)
         if self.maxfields > self.total: # delete contents of unused fields
             fields = fields + [""] * (self.maxfields - len(fields))
         fullsnippet = self.formatCloze(items, self.maxfields + 1)
         full = self.formatSnippets(fullsnippet, original, keys)
-        return fields, full
+        return fields, full, nr
 
     def formatCloze(self, items, nr):
         """Apply cloze deletion syntax to item"""
@@ -91,7 +91,7 @@ class ClozeGenerator(object):
     def getBeforeStart(self, idx, start_c):
         """Determine start index of preceding context"""
         if (self.before == 0 or start_c < 1 
-          or (self.before and self.options[2] and idx == self.total)):
+          or (self.before and self.options[1] and idx == self.total)):
             return None
         if self.before is None or self.before > start_c:
             return 0

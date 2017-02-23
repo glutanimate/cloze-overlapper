@@ -23,7 +23,8 @@ default_conf = {
     "dflto": [False, False, False],
     "flds": OLC_FLDS,
     "nosib": [True, False],
-    "version": 0.21
+    "olmdls": [OLC_MODEL],
+    "version": 0.22
 }
 
 def loadConfig():
@@ -42,7 +43,6 @@ def loadConfig():
                 conf['olcloze'][key] = default[key]
         conf['olcloze']['version'] = default['version']
         # insert other update actions here:
-        conf['olcloze'] = default # DEBUG ONLY completely replace existing conf 
         mw.col.setMod()
 
     return mw.col.conf['olcloze']
@@ -74,6 +74,7 @@ class ClozeOverlapperOptions(QDialog):
         self.sb_cloze.setValue(prompt)
         self.cb_ns_new.setChecked(config["nosib"][0])
         self.cb_ns_rev.setChecked(config["nosib"][1])
+        self.le_model.setText(",".join(config["olmdls"]))
         for idx, cb in enumerate((self.cb_ncf, self.cb_ncl, self.cb_incr)):
             cb.setChecked(config["dflto"][idx])
         for key, fnedit in self.fndict:
@@ -99,6 +100,7 @@ class ClozeOverlapperOptions(QDialog):
         config['nosib'][1] = self.cb_ns_rev.isChecked()
         config["dflto"] = [i.isChecked() for i in (
                 self.cb_ncf, self.cb_ncl, self.cb_incr)]
+        config["olmdls"] = self.le_model.text().split(",")
         mw.col.setMod()
         if modified:
             mw.reset()

@@ -54,7 +54,7 @@ class ClozeOverlapper(object):
         self.ed.web.eval("saveField('key');") # save field
         original = self.note[self.flds["og"]]
         if not original:
-            tooltip(u"Please enter some text in the %s field" % self.flds["og"])
+            tooltip(u"<b>Reminder</b>: Please enter some text in the '%s' field" % self.flds["og"])
             return False
 
         matches = re.findall(self.creg, original)
@@ -65,10 +65,10 @@ class ClozeOverlapper(object):
             items = self.getLineItems(original)
 
         if not items:
-            tooltip("Could not find items to cloze.<br>Please check your input.")
+            tooltip("<b>Warning</b>: Could not find items to cloze.<br>Please check your input.")
             return False
         if len(items) < 3:
-            tooltip("Please enter at least three items to cloze.")
+            tooltip("<b>Reminder</b>: Please enter at least three items to cloze.")
             return False
 
         setopts = self.getNoteSettings()
@@ -77,21 +77,27 @@ class ClozeOverlapper(object):
             return None
 
         gen = ClozeGenerator(setopts, maxfields)
-        fields, full = gen.generate(items, self.formstr, self.keys)
+        fields, full, total = gen.generate(items, self.formstr, self.keys)
 
         if not fields:
-            tooltip("Warning: More clozes than the note type can handle.")
+            tooltip("<b>Warning</b>: This would generate <b>%d</b> overlapping clozes,<br>"
+                "The note type can only handle a maximum of <b>%d</b> with<br>"
+                "the current number of %s fields" % (total, maxfields, self.flds["tx"]))
             return False
 
         self.updateNote(fields, full, setopts)
+
+        tooltip("<b>Info</b>: Generated %d overlapping clozes" % total, period=1000)
 
         self.ed.loadNote()
         self.ed.web.eval("focusField(%d);" % self.ed.currentField)
 
     def checkIntegrity(self):
         """Sanity checks for the model and fields"""
-        if self.model["name"] != OLC_MODEL:
-            tooltip(u"Can only generate overlapping clozes <br> on '%s' note type" % OLC_MODEL)
+        if self.model["name"] not in self.config["olmdls"]:
+            tooltip(u"Can only generate overlapping clozes <br>"
+                "on the following note types:<br>"
+                "%s" % ", ".join("'{0}'".format(i) for i in self.config["olmdls"]))
             return False
 
         fields = [f['name'] for f in self.model['flds']]
@@ -99,8 +105,10 @@ class ClozeOverlapper(object):
             if fid == "tx":
                 continue
             if self.flds[fid] not in fields:
-                warnUser("Note Type", "Fields not configured properly.<br>Please make "
-                    "sure you didn't remove or rename any of the default fields.")
+                warnUser("Note Type", "Looks like your not type is not configured properly. "
+                    "Please make sure that the fields list includes "
+                    "all of these fields:<br><br><i>%s</i>" % ", ".join(
+                    self.flds[fid] if fid != "tx" else "Text1-TextN" for fid in OLC_FIDS_PRIV))
                 return False
 
         return True

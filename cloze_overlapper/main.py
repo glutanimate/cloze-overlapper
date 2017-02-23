@@ -21,7 +21,7 @@ from anki.sched import Scheduler
 
 from .consts import *
 from .template import addModel
-from .config import ClozeOverlapperOptions
+from .config import ClozeOverlapperOptions, loadConfig
 from .overlapper import ClozeOverlapper
 
 # Editor
@@ -33,7 +33,7 @@ def onOlClozeButton(self, markup=None):
 
 def onInsertCloze(self, _old):
     """Handles cloze-wraps when the add-on model is active"""
-    if self.note.model()["name"] != OLC_MODEL:
+    if self.note.model()["name"] not in mw.col.conf["olcloze"]["olmdls"]:
         return _old(self)
     # find the highest existing cloze
     highest = 0
@@ -50,7 +50,7 @@ def onInsertCloze(self, _old):
 
 def onInsertMultipleClozes(self):
     """Wraps each line in a separate cloze"""
-    if self.note.model()["name"] == OLC_MODEL:
+    if self.note.model()["name"] in mw.col.conf["olcloze"]["olmdls"]:
         cloze_re = "\[\[oc(\d+)::"
         wrap_pre, wrap_post = "[[oc", "]]"
     else:
@@ -124,7 +124,7 @@ def onCgOptions(mw):
 
 def myBurySiblings(self, card, _old):
     """Skip same-day spacing for new cards if sibling burying disabled"""
-    if card.model()["name"] != OLC_MODEL:
+    if card.model()["name"] not in mw.col.conf["olcloze"]["olmdls"]:
         return _old(self,card)
     nosib_conf = mw.col.conf["olcloze"].get("nosib", [False, False])
     override_new, override_review = nosib_conf
@@ -168,9 +168,9 @@ def setupAddon():
     """Prepare note type and apply scheduler modifications"""
     """can only be performed after the profile has been loaded"""
     model = mw.col.models.byName(OLC_MODEL)
+    loadConfig()
     if not model:
         model = addModel(mw.col)
-        loadConfig()
     Scheduler._burySiblings = wrap(
         Scheduler._burySiblings, myBurySiblings, "around")
 
