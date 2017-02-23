@@ -104,13 +104,14 @@ def onInsertMultipleClozes(self):
         }}
         """ % (increment, highest, wrap_pre, wrap_post))
 
-def checkModel(model):
+def checkModel(model, notify=True):
     """Sanity checks for the model and fields"""
     config = mw.col.conf["olcloze"]
     if model["name"] not in config["olmdls"]:
-        showTT("Reminder", u"Can only generate overlapping clozes<br>"
-            "on the following note types:<br><br>"
-            "%s" % ", ".join("'{0}'".format(i) for i in config["olmdls"]))
+        if notify:
+            showTT("Reminder", u"Can only generate overlapping clozes<br>"
+                "on the following note types:<br><br>"
+                "%s" % ", ".join("'{0}'".format(i) for i in config["olmdls"]))
         return False
     fields = [f['name'] for f in model['flds']]
     complete = True
@@ -169,7 +170,7 @@ def onSetupButtons(self):
 def onAddCards(self, _old):
     """Automatically generate overlapping clozes before adding cards"""
     note = self.editor.note
-    if not note or not checkModel(note.model()):
+    if not note or not checkModel(note.model(), notify=False):
         return _old(self)
     overlapper = ClozeOverlapper(self.editor, silent=True)
     ret, msg = overlapper.add()
@@ -183,7 +184,7 @@ def onAddCards(self, _old):
 def onEditCurrent(self, _old):
     """Automatically update overlapping clozes before updating cards"""
     note = self.editor.note
-    if not note or not checkModel(note.model()):
+    if not note or not checkModel(note.model(), notify=False):
         return _old(self)
     overlapper = ClozeOverlapper(self.editor, silent=True)
     ret, msg = overlapper.add()
