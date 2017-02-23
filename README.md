@@ -14,6 +14,10 @@ Description
 
 ### Screenshots
 
+![](screenshots/cloze-overlapper-virus.gif?raw=true)
+
+![](screenshots/cloze-overlapper-shakespeare.png?raw=true) ![](screenshots/cloze-overlapper-melatonin.png?raw=true)
+
 
 ### Video Demonstration
 
