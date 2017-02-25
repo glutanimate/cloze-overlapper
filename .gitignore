@@ -1,9 +1,10 @@
 *.pyo
 *.pyc
-.hidden
-.directory
 *.sublime-project
 *.sublime-workspace
+.hidden
+.directory
 design-spec.md
 cloze_overlapper/ui_options.py
-test.py
+cloze_overlapper/forms
+tools/test.py
