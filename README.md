@@ -42,6 +42,6 @@ For more information please check out [the add-on description](./ANKIWEB.md).
 
 ### Credits and License
 
-*Copyright (c) 2016-2017 [Glutanimate](https://github.com/Glutanimate)*
+*Copyright (c) 2016-2017 [Aristotelis P.](https://github.com/Glutanimate)*
 
 Licensed under the [GNU GPL v3](http://www.gnu.de/documents/gpl-3.0.en.html). 

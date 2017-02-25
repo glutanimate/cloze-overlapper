@@ -147,13 +147,15 @@ def onOlClozeButton(self, markup=None, parent=None):
 
 def onSetupButtons(self):
     """Add buttons and hotkeys to the editor widget"""
-    b =self._addButton("Cloze Overlapper", self.onOlClozeButton,
-        _("Alt+Shift+C"), "Generate Overlapping Clozes (Alt+Shift+C)", 
+    b = self._addButton("Cloze Overlapper", self.onOlClozeButton,
+        _("Alt+Shift+C"),
+        "Generate Overlapping Clozes (Alt+Shift+C)", 
         text="[.]]", size=True)
     b.setFixedWidth(24)
 
     b = self._addButton("Cloze Overlapper Note Settings", self.onOlOptionsButton,
-        _("Alt+Shift+O"), "Customize Overlapping Cloze Generation Settings", 
+        _("Alt+Shift+O"), 
+        "Overlapping Cloze Generation Settings (Alt+Shift+O)", 
         text="[O]", size=True)
     b.setFixedWidth(24)
     

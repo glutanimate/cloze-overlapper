@@ -110,7 +110,7 @@ class OlcNoteSettings(QDialog):
         super(OlcNoteSettings, self).__init__(parent=parent)
         # load qt-designer form:
         uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__))
-            , "forms", "notesettings.ui"), self)
+            , "forms", "settings_note.ui"), self)
         self.buttonBox.accepted.connect(self.onAccept)
         self.buttonBox.rejected.connect(self.onReject)
         self.parent = parent
@@ -163,7 +163,8 @@ class OlcOptions(QDialog):
         super(OlcOptions, self).__init__(parent=mw)
         # load qt-designer form:
         uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__))
-            , "forms", "options.ui"), self)
+            , "forms", "settings_global.ui"), self)
+        self.textBrowser.setOpenExternalLinks(True); 
         self.buttonBox.accepted.connect(self.onAccept)
         self.buttonBox.rejected.connect(self.onReject)
         self.buttonBox.button(
