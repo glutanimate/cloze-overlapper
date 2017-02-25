@@ -42,9 +42,9 @@ class ClozeGenerator(object):
             end_a = self.getAfterEnd(idx)
 
             if start_b is not None:
-                snippets[start_b:start_c] = items[start_b:start_c]
+                snippets[start_b:start_c] = self.removeHints(items[start_b:start_c])
             if end_a is not None:
-                snippets[idx:end_a] = items[idx:end_a]
+                snippets[idx:end_a] = self.removeHints(items[idx:end_a])
             snippets[start_c:idx] = self.formatCloze(items[start_c:idx], idx-self.start+1)
 
             field = self.formatSnippets(snippets, original, keys)
@@ -66,6 +66,15 @@ class ClozeGenerator(object):
                 res.append([self.cformat % (nr, i) for i in item])
         return res
 
+    def removeHints(self, items):
+        res = []
+        for item in items:
+            if not hasattr(item, "__iter__"): # not an iterable
+                res.append(item.split("::")[0])
+            else:
+                res.append([i.split("::")[0] for i in item])
+        return res
+
     def formatSnippets(self, snippets, original, keys):
         """Insert snippets back into original text, if available"""
         html = original
@@ -74,8 +83,7 @@ class ClozeGenerator(object):
         for nr, phrase in zip(keys, snippets):
             if phrase == "...": # placeholder, replace all instances
                 html = html.replace("{{" + nr + "}}", phrase)
-                continue
-            if not hasattr(phrase, "__iter__"): # not an iterable
+            elif not hasattr(phrase, "__iter__"): # not an iterable
                 html = html.replace("{{" + nr + "}}", phrase, 1)
             else:
                 for item in phrase:
