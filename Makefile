@@ -1,17 +1,13 @@
 # builds zip file for AnkiWeb (among other things)
 
-VERSION = $(git describe HEAD --tags --abbrev=0)
+VERSION = `git describe HEAD --tags --abbrev=0`
 ADDON = "cloze-overlapper"
 
-release: ui zip clean_dist
+all: ui zip
 
-clean: clean_zip clean_dist
-
-clean_zip:
-	rm $(ADDON)-*.zip
-
-clean_dist:
+clean:
 	rm -rf dist
+	rm $(ADDON)-*.zip
 
 ui:
 	rm -rf $(ADDON)/forms
@@ -24,4 +20,15 @@ zip:
 	cp *.py dist/
 	./tools/build_ui.sh
 	cp -r cloze_overlapper dist/
-	cd dist && zip -r ../$(ADDON)-$(VERSION).zip *
+	cd dist && zip -r ../$(ADDON)-current.zip *
+	rm -rf dist
+
+release:
+	rm -rf dist
+	mkdir -p dist
+	find . -name '*.pyc' -delete
+	git archive --format tar $(VERSION) | tar -x -C dist/
+	cd dist &&  \
+		../tools/build_ui.sh &&\
+		zip -r ../$(ADDON)-release-$(VERSION).zip cloze_overlapper *.py
+	rm -rf dist
