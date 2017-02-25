@@ -52,7 +52,7 @@ def parseNoteSettings(html, config):
     """Return note settings. Fall back to defaults if necessary."""
     options, settings, opts, sets = None, None, None, None
     dflt_set, dflt_opt = config["dflts"], config["dflto"]
-    field = stripHTML(html)
+    field = stripHTML(html.encode("utf-8"))
 
     lines = field.replace(" ", "").split("|")
     if not lines:
@@ -102,7 +102,7 @@ def createNoteSettings(setopts):
     """Create plain text settings string"""
     settings_string = ",".join(str(i) if i is not None else "all" for i in setopts[0])
     options_string = ",".join("y" if i else "n" for i in setopts[1])
-    return settings_string + " | " + options_string
+    return unicode(settings_string + " | " + options_string, "utf-8")
 
 class OlcNoteSettings(QDialog):
     """Note-specific options dialog"""
