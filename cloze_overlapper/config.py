@@ -10,13 +10,13 @@ License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 """
 
 import os
-from PyQt4 import uic
 
 from aqt.qt import *
 from aqt import mw
 from anki.utils import stripHTML
 
-from consts import *
+from .forms import settings_global, settings_note
+from .consts import *
 
 # dflto: no-context-first, no-context-last, gradual ends
 default_conf = {
@@ -105,14 +105,14 @@ def createNoteSettings(setopts):
     return settings_string + " | " + options_string
 
 class OlcNoteSettings(QDialog):
-    """Note-specific settings"""
+    """Note-specific options dialog"""
     def __init__(self, parent):
         super(OlcNoteSettings, self).__init__(parent=parent)
         # load qt-designer form:
-        uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__))
-            , "forms", "settings_note.ui"), self)
-        self.buttonBox.accepted.connect(self.onAccept)
-        self.buttonBox.rejected.connect(self.onReject)
+        self.form = settings_note.Ui_Dialog()
+        self.form.setupUi(self)
+        self.form.buttonBox.accepted.connect(self.onAccept)
+        self.form.buttonBox.rejected.connect(self.onReject)
         self.parent = parent
         self.ed = parent.editor
         self.note = self.ed.note
@@ -129,23 +129,24 @@ class OlcNoteSettings(QDialog):
             before = -1
         if after is None:
             after = -1
-        self.sb_before.setValue(before)
-        self.sb_after.setValue(after)
-        self.sb_cloze.setValue(prompt)
-        for idx, cb in enumerate((self.cb_ncf, self.cb_ncl, self.cb_incr)):
+        self.form.sb_before.setValue(before)
+        self.form.sb_after.setValue(after)
+        self.form.sb_cloze.setValue(prompt)
+        for idx, cb in enumerate(
+          (self.form.cb_ncf, self.form.cb_ncl, self.form.cb_incr)):
             cb.setChecked(options[idx])
 
     def onAccept(self):
-        before = self.sb_before.value()
-        after = self.sb_after.value()
-        prompt = self.sb_cloze.value()
+        before = self.form.sb_before.value()
+        after = self.form.sb_after.value()
+        prompt = self.form.sb_cloze.value()
         if before == -1:
             before = None
         if after == -1:
             after = None
         settings = [before, prompt, after]
         options = [i.isChecked() for i in (
-                self.cb_ncf, self.cb_ncl, self.cb_incr)]
+            self.form.cb_ncf, self.form.cb_ncl, self.form.cb_incr)]
         setopts = (settings, options)
         settings_fld = createNoteSettings(setopts)
         self.note[self.flds["st"]] = settings_fld
@@ -158,18 +159,19 @@ class OlcNoteSettings(QDialog):
         self.close()
 
 class OlcOptions(QDialog):
-    """Options Menu"""
+    """Global options dialog"""
     def __init__(self, mw):
         super(OlcOptions, self).__init__(parent=mw)
         # load qt-designer form:
-        uic.loadUi(os.path.join(os.path.dirname(os.path.abspath(__file__))
-            , "forms", "settings_global.ui"), self)
-        self.textBrowser.setOpenExternalLinks(True); 
-        self.buttonBox.accepted.connect(self.onAccept)
-        self.buttonBox.rejected.connect(self.onReject)
-        self.buttonBox.button(
+        self.form = settings_global.Ui_Dialog()
+        self.form.setupUi(self)
+        self.form.textBrowser.setOpenExternalLinks(True); 
+        self.form.buttonBox.accepted.connect(self.onAccept)
+        self.form.buttonBox.rejected.connect(self.onReject)
+        self.form.buttonBox.button(
             QDialogButtonBox.RestoreDefaults).clicked.connect(self.onRestore)
-        fnedits = [self.le_og, self.le_st, self.le_tx, self.le_fl]
+        fnedits = [self.form.le_og, self.form.le_st, 
+                        self.form.le_tx, self.form.le_fl]
         self.fndict = zip(OLC_FIDS_PRIV, fnedits)
         config = loadConfig()
         self.setupValues(config)
@@ -180,13 +182,14 @@ class OlcOptions(QDialog):
             before = -1
         if after is None:
             after = -1
-        self.sb_before.setValue(before)
-        self.sb_after.setValue(after)
-        self.sb_cloze.setValue(prompt)
-        self.cb_ns_new.setChecked(config["nosib"][0])
-        self.cb_ns_rev.setChecked(config["nosib"][1])
-        self.le_model.setText(",".join(config["olmdls"]))
-        for idx, cb in enumerate((self.cb_ncf, self.cb_ncl, self.cb_incr)):
+        self.form.sb_before.setValue(before)
+        self.form.sb_after.setValue(after)
+        self.form.sb_cloze.setValue(prompt)
+        self.form.cb_ns_new.setChecked(config["nosib"][0])
+        self.form.cb_ns_rev.setChecked(config["nosib"][1])
+        self.form.le_model.setText(",".join(config["olmdls"]))
+        for idx, cb in enumerate(
+          (self.form.cb_ncf, self.form.cb_ncl, self.form.cb_incr)):
             cb.setChecked(config["dflto"][idx])
         for key, fnedit in self.fndict:
             fnedit.setText(config["flds"][key])
@@ -199,19 +202,19 @@ class OlcOptions(QDialog):
             print "Field rename action aborted"
             return
         config = mw.col.conf['olcloze']
-        before = self.sb_before.value()
-        after = self.sb_after.value()
-        prompt = self.sb_cloze.value()
+        before = self.form.sb_before.value()
+        after = self.form.sb_after.value()
+        prompt = self.form.sb_cloze.value()
         if before == -1:
             before = None
         if after == -1:
             after = None
         config['dflts'] = [before, prompt, after]
-        config['nosib'][0] = self.cb_ns_new.isChecked()
-        config['nosib'][1] = self.cb_ns_rev.isChecked()
+        config['nosib'][0] = self.form.cb_ns_new.isChecked()
+        config['nosib'][1] = self.form.cb_ns_rev.isChecked()
         config["dflto"] = [i.isChecked() for i in (
-                self.cb_ncf, self.cb_ncl, self.cb_incr)]
-        config["olmdls"] = self.le_model.text().split(",")
+            self.form.cb_ncf, self.form.cb_ncl, self.form.cb_incr)]
+        config["olmdls"] = self.form.le_model.text().split(",")
         mw.col.setMod()
         if modified:
             mw.reset()
