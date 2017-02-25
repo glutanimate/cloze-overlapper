@@ -4,8 +4,8 @@
 *.sublime-workspace
 .hidden
 .directory
-design-spec.md
 cloze_overlapper/ui_options.py
 cloze_overlapper/forms
 tools/test.py
+docs/todo.md
 cloze-overlapper-*.zip
