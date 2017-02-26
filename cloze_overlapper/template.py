@@ -41,15 +41,6 @@ card_front = """\
      <div>{{Remarks}}</div>
      <div>{{Sources}}</div>
   </div>
-  <script>
-    // scroll to cloze (based on a post by /u/Gear5th on Reddit)
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(function(){
-        var mycloze = document.getElementsByClassName("cloze")[0];
-        mycloze.scrollIntoView(false);
-      }, 1);
-    }, false);
-  </script>
 </div>\
 """
 
@@ -102,7 +93,7 @@ card_back = """\
   document.addEventListener('DOMContentLoaded', function() {
     setTimeout(function(){
       var mycloze = document.getElementsByClassName("cloze")[0];
-      mycloze.scrollIntoView(false);
+      mycloze.scrollIntoView();
     }, 1);
   }, false);
 </script>\
