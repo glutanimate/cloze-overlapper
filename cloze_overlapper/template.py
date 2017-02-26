@@ -36,6 +36,11 @@ card_front = """\
   {{cloze:Text19}}
   {{cloze:Text20}}
   {{cloze:Full}}
+  <div class="hidden">
+     <div>{{Original}}</div>  
+     <div>{{Remarks}}</div>
+     <div>{{Sources}}</div>
+  </div>
 </div>\
 """
 
@@ -63,6 +68,7 @@ card_back = """\
   {{cloze:Text19}}
   {{cloze:Text20}}
   {{cloze:Full}}
+  <div class="hidden">{{Original}}</div>
   <hr>
   <span class="fullhint">{{hint:Original}}</span>
   <div class="extra">
@@ -87,15 +93,41 @@ card_back = """\
 """
 
 card_css = """\
-/* general styling */
+/* general card style */
 
 .card {
-  /* general card style */
   font-family: "Helvetica LT Std", Helvetica, Arial, Sans;
   font-size: 150%;
-  text-align: left;
+  text-align: center;
   color: black;
   background-color: white;
+}
+
+/* general layout */
+
+.front, .back {
+  /* center left-aligned text on card */
+  display: inline-block;
+  align: center;
+  text-align: left;
+  margin: auto;
+  max-width: 40em;
+}
+
+.hidden {
+  /* guarantees a consistent width across front and back */
+  display: block;
+  line-height:0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 1em;
+  text-align: center;
 }
 
 /* clozes */
@@ -103,13 +135,7 @@ card_css = """\
 .cloze {
   /* regular cloze deletion */
   font-weight: bold;
-  color: #6200FF;
-}
-
-.title {
-  font-weight: bold;
-  font-size: 1.05em;
-  margin-bottom: 0.5em;
+  color: #0048FF;
 }
 
 /* original text reveal hint */
@@ -119,10 +145,11 @@ card_css = """\
 }
 
 .fullhint a {
-  color: #6200FF;
+  color: #0048FF;
 }
 
 .card21 .fullhint{
+  /* no need to display hint on last card */
   display:none;
 }
 

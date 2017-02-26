@@ -16,6 +16,7 @@ from aqt import mw
 from anki.utils import stripHTML
 
 from .forms import settings_global, settings_note
+from .template import updateTemplate
 from .consts import *
 
 # dflto: no-context-first, no-context-last, gradual ends
@@ -25,7 +26,7 @@ default_conf = {
     "flds": OLC_FLDS,
     "nosib": [True, False],
     "olmdls": [OLC_MODEL],
-    "version": 0.22
+    "version": 0.23
 }
 
 def loadConfig():
@@ -44,6 +45,7 @@ def loadConfig():
                 conf['olcloze'][key] = default[key]
         conf['olcloze']['version'] = default['version']
         # insert other update actions here:
+        updateTemplate(mw.col)
         mw.col.setMod()
 
     return mw.col.conf['olcloze']
