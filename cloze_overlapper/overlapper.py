@@ -92,6 +92,7 @@ class ClozeOverlapper(object):
 
         self.ed.loadNote()
         self.ed.web.eval("focusField(%d);" % self.ed.currentField)
+        
         return True, msg
 
     def getClozeItems(self, matches):

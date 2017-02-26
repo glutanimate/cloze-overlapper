@@ -17,6 +17,7 @@ from aqt import mw
 from aqt.editor import Editor
 from aqt.addcards import AddCards
 from aqt.editcurrent import EditCurrent
+from aqt.utils import tooltip, showInfo
 
 from anki.hooks import addHook, wrap
 from anki.utils import ids2str, intTime
@@ -31,9 +32,45 @@ from .utils import warnUser, showTT
 
 # Editor
 
+js_multi_cloze = """
+var increment = %s;
+var highest = %d;
+function clozeChildren(container) {
+    children = container.childNodes
+    for (i = 0; i < children.length; i++) { 
+        var child = children[i]
+        var contents = child.innerHTML
+        var textOnly = false;
+        if (typeof contents === 'undefined'){
+            // handle text nodes
+            var contents = child.textContent
+            textOnly = true;}
+        if (increment){idx = highest+i} else {idx = highest}
+        contents = '%s' + idx + '::' + contents + '%s'
+        if (textOnly){
+            child.textContent = contents}
+        else {
+            child.innerHTML = contents}}
+}
+if (typeof window.getSelection != "undefined") {
+    // get selected HTML
+    var sel = window.getSelection();
+    if (sel.rangeCount) {
+        var container = document.createElement("div");
+        for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+            container.appendChild(sel.getRangeAt(i).cloneContents());}
+    // wrap each topmost child with cloze tags; TODO: Recursion
+    clozeChildren(container);
+    // workaround for duplicate list items:
+    var clozed = container.innerHTML.replace(/^(<li>)/, "")
+    document.execCommand('insertHTML', false, clozed);
+    saveField('key');
+}}
+"""
+
 def onInsertCloze(self, _old):
     """Handles cloze-wraps when the add-on model is active"""
-    if self.note.model()["name"] not in mw.col.conf["olcloze"]["olmdls"]:
+    if not checkModel(self.note.model(), fields=False, notify=False):
         return _old(self)
     # find the highest existing cloze
     highest = 0
@@ -50,7 +87,18 @@ def onInsertCloze(self, _old):
 
 def onInsertMultipleClozes(self):
     """Wraps each line in a separate cloze"""
-    if self.note.model()["name"] in mw.col.conf["olcloze"]["olmdls"]:
+    model = self.note.model()
+    # check that the model is set up for cloze deletion
+    if not re.search('{{(.*:)*cloze:',model['tmpls'][0]['qfmt']):
+        if self.addMode:
+            tooltip(_("Warning, cloze deletions will not work until "
+            "you switch the type at the top to Cloze."))
+        else:
+            showInfo(_("""\
+To make a cloze deletion on an existing note, you need to change it \
+to a cloze type first, via Edit>Change Note Type."""))
+            return
+    if checkModel(model, fields=False, notify=False):
         cloze_re = "\[\[oc(\d+)::"
         wrap_pre, wrap_post = "[[oc", "]]"
     else:
@@ -68,60 +116,32 @@ def onInsertMultipleClozes(self):
         increment = "true"
     highest = max(1, highest)
     # process selected text
-    self.web.eval("""
-        var increment = %s;
-        var highest = %d;
-        function clozeChildren(container) {
-            children = container.childNodes
-            for (i = 0; i < children.length; i++) { 
-                var child = children[i]
-                var contents = child.innerHTML
-                var textOnly = false;
-                if (typeof contents === 'undefined'){
-                    // handle text nodes
-                    var contents = child.textContent
-                    textOnly = true;}
-                if (increment){idx = highest+i} else {idx = highest}
-                contents = '%s' + idx + '::' + contents + '%s'
-                if (textOnly){
-                    child.textContent = contents}
-                else {
-                    child.innerHTML = contents}}
-        }
-        if (typeof window.getSelection != "undefined") {
-            // get selected HTML
-            var sel = window.getSelection();
-            if (sel.rangeCount) {
-                var container = document.createElement("div");
-                for (var i = 0, len = sel.rangeCount; i < len; ++i) {
-                    container.appendChild(sel.getRangeAt(i).cloneContents());}
-            // wrap each topmost child with cloze tags; TODO: Recursion
-            clozeChildren(container);
-            // workaround for duplicate list items:
-            var clozed = container.innerHTML.replace(/^(<li>)/, "")
-            document.execCommand('insertHTML', false, clozed);
-            saveField('key');
-        }}
-        """ % (increment, highest, wrap_pre, wrap_post))
+    self.web.eval(js_multi_cloze % (
+            increment, highest, wrap_pre, wrap_post))
 
-def checkModel(model, notify=True):
+def checkModel(model, fields=True, notify=True):
     """Sanity checks for the model and fields"""
     config = mw.col.conf["olcloze"]
-    if model["name"] not in config["olmdls"]:
-        if notify:
-            showTT("Reminder", u"Can only generate overlapping clozes<br>"
-                "on the following note types:<br><br>"
-                "%s" % ", ".join("'{0}'".format(i) for i in config["olmdls"]))
-        return False
-    fields = [f['name'] for f in model['flds']]
+    mname = model["name"]
+    is_olc = False
+    # account for custom and imported note types:
+    if mname in config["olmdls"] or mname.startswith(OLC_MODEL):
+        is_olc = True
+    if notify and not is_olc:
+        showTT("Reminder", u"Can only generate overlapping clozes<br>"
+            "on the following note types:<br><br>"
+            "%s" % ", ".join("'{0}'".format(i) for i in config["olmdls"]))
+    if not is_olc or not fields:
+        return is_olc
+    flds = [f['name'] for f in model['flds']]
     complete = True
     for fid in OLC_FIDS_PRIV:
         fname = config["flds"][fid] 
         if fid == "tx":
             # should have at least 3 text fields
-            complete = all(fname + str(i) in fields for i in range(1,4))
+            complete = all(fname + str(i) in flds for i in range(1,4))
         else:
-            complete = fname in fields
+            complete = fname in flds
         if not complete:
             break
     if not complete:
@@ -203,7 +223,7 @@ def onEditCurrent(self, _old):
 
 def myBurySiblings(self, card, _old):
     """Skip sibling burying for our note type if so configured"""
-    if card.model()["name"] not in mw.col.conf["olcloze"]["olmdls"]:
+    if not checkModel(card.model(), fields=False, notify=False):
         return _old(self,card)
     nosib_conf = mw.col.conf["olcloze"].get("nosib", [False, False])
     override_new, override_review = nosib_conf
