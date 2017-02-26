@@ -12,7 +12,7 @@ License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 class ClozeGenerator(object):
     """Cloze generator"""
 
-    cformat = u"{{c%i::%s}}"
+    cformat = "{{c%i::%s}}"
 
     def __init__(self, setopts, maxfields):
         self.maxfields = maxfields

@@ -15,7 +15,6 @@ from itertools import groupby
 from BeautifulSoup import BeautifulSoup
 
 from aqt import mw
-from aqt.utils import tooltip, showWarning
 from anki.utils import stripHTML
 
 from .consts import *
@@ -194,6 +193,6 @@ class ClozeOverlapper(object):
         else:
             tag_start = '<{0}>'.format(markup)
             tag_end = '</{0}>'.format(markup)
-            tag_items = u"<li>{0}</li>"
+            tag_items = "<li>{0}</li>"
         lines = "".join(tag_items.format(line.encode("utf-8")) for line in field)
         return unicode(tag_start + lines + tag_end, "utf-8")
