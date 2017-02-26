@@ -41,6 +41,15 @@ card_front = """\
      <div>{{Remarks}}</div>
      <div>{{Sources}}</div>
   </div>
+  <script>
+    // scroll to cloze (based on a post by /u/Gear5th on Reddit)
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function(){
+        var mycloze = document.getElementsByClassName("cloze")[0];
+        mycloze.scrollIntoView(false);
+      }, 1);
+    }, false);
+  </script>
 </div>\
 """
 
@@ -89,6 +98,13 @@ card_back = """\
   var hint = document.querySelector('.fullhint>[id^="hint"]')
   var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg, "$2")
   hint.innerHTML = html
+  // scroll to cloze (based on a post by /u/Gear5th on Reddit)
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function(){
+      var mycloze = document.getElementsByClassName("cloze")[0];
+      mycloze.scrollIntoView(false);
+    }, 1);
+  }, false);
 </script>\
 """
 
