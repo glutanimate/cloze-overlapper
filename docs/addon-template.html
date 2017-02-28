@@ -1,18 +1,5 @@
-# -*- coding: utf-8 -*-
+<!-- ### HTML ### -->
 
-"""
-This file is part of the Cloze Overlapper add-on for Anki
-
-Note Type Handler
-
-Copyright: Glutanimate 2016-2017
-License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
-"""
-
-from anki.consts import *
-from .consts import *
-
-card_front = """\
 <div class="front">
   {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
   <div class="text">
@@ -41,10 +28,9 @@ card_front = """\
        <div>{{Original}}</div>
     </div>
   </div>
-</div>\
-"""
+</div>
 
-card_back = """\
+
 <div class="back">
   {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
   <div class="text">
@@ -86,28 +72,12 @@ card_back = """\
     {{/Sources}}
   </div>
 </div>
-<script>
-  // remove cloze syntax from revealed hint
-  var hint = document.querySelector('.fullhint>[id^="hint"]')
-  var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg, "$2")
-  hint.innerHTML = html
-  // scroll to cloze
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function(){
-      const cloze1 = document.getElementsByClassName("cloze")[0];
-      const rect = cloze1.getBoundingClientRect();
-      const absTop = rect.top + window.pageYOffset;
-      const absBot = rect.bottom + window.pageYOffset;
-      if (absBot >= window.innerHeight) {
-        const height = rect.top - rect.bottom
-        const middle = absTop - (window.innerHeight/2) - (height/2);
-        window.scrollTo(0, middle);};
-    }, 1);
-  }, false);
-</script>\
-"""
 
-card_css = """\
+
+<!-- ### CSS ### -->
+
+
+<style>
 /* general card style */
 
 html {
@@ -188,45 +158,81 @@ html {
   margin-bottom: 0.2em;
   font-weight: bold;
   font-size: 1em;
-}\
-"""
+}
+</style>
 
-def addModel(col):
-    """Add add-on note type to collection"""
-    models = col.models
-    model = models.new(OLC_MODEL)
-    model['type'] = MODEL_CLOZE
-    # Add fields:
-    for i in OLC_FLDS_IDS:
-        if i == "tx":
-            for i in range(1, OLC_MAX+1):
-                fld = models.newField(OLC_FLDS["tx"]+str(i))
-                fld["size"] = 12
-                models.addField(model, fld)
-            continue
-        fld = models.newField(OLC_FLDS[i])
-        if i == "st":
-            fld["sticky"] = True
-        if i == "fl":
-            fld["size"] = 12
-        models.addField(model, fld)
-    # Add template
-    template = models.newTemplate(OLC_CARD)
-    template['qfmt'] = card_front
-    template['afmt'] = card_back
-    model['css'] = card_css
-    model['sortf'] = 1 # set sortfield to title
-    models.addTemplate(model, template)
-    models.add(model)
-    return model
 
-def updateTemplate(col):
-    """Update add-on card templates"""
-    print "Updating %s card template" % OLC_MODEL
-    model = col.models.byName(OLC_MODEL)
-    template = model['tmpls'][0]
-    template['qfmt'] = card_front
-    template['afmt'] = card_back
-    model['css'] = card_css
-    col.models.save()
-    return model
+<!-- ### JAVASCRIPT ### -->
+
+<!-- old script: -->
+
+<script>
+  // remove cloze syntax from revealed hint
+  var hint = document.querySelector('.fullhint>[id^="hint"]')
+  var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg, "$2")
+  hint.innerHTML = html
+  // scroll to cloze (based on a post by /u/Gear5th on Reddit)
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function(){
+      var mycloze = document.getElementsByClassName("cloze")[0];
+      mycloze.scrollIntoView();
+    }, 1);
+  }, false);
+</script>
+
+<!-- new script: -->
+
+<script>
+  // remove cloze syntax from revealed hint
+  var hint = document.querySelector('.fullhint>[id^="hint"]')
+  var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg, "$2")
+  hint.innerHTML = html
+  // scroll to cloze
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function(){
+      const cloze1 = document.getElementsByClassName("cloze")[0];
+      const rect = cloze1.getBoundingClientRect();
+      const absTop = rect.top + window.pageYOffset;
+      const absBot = rect.bottom + window.pageYOffset;
+      if (absBot >= window.innerHeight) {
+        const height = rect.top - rect.bottom
+        const middle = absTop - (window.innerHeight/2) - (height/2);
+        window.scrollTo(0, middle);};
+    }, 1);
+  }, false);
+</script>
+
+<!-- testground: -->
+
+<script>
+  function isVisible(elm, rect) {
+    console.log(rect.bottom + window.pageYOffset >= window.innerHeight);
+    return rect.bottom + window.pageYOffset < window.innerHeight;
+  }
+  const clozes = document.getElementsByClassName("cloze");
+  const cloze1 = clozes[0];
+  const clozeN = clozes[clozes.length-1];
+  const rect1 = cloze1.getBoundingClientRect();
+  var elm; var rect;
+  if (! isVisible(cloze1, rect1)){
+    elm = cloze1;
+    rect = rect1;
+  } else {
+    rectN = clozeN.getBoundingClientRect();
+    if (! isVisible(clozeN, rectN)){
+      elm = clozeN;
+      rect = rectN
+    }
+  }
+  console.log("element:")
+  console.log(elm);
+  console.log(window.innerHeight);
+  if (elm !== undefined) {
+    console.log(rect.bottom);
+    const absElmTop = rect.top + window.pageYOffset;
+    const elmHeight = rect.top - rect.bottom
+    const middle = absElmTop - (window.innerHeight/2) - (elmHeight/2);
+    window.scrollTo(0, middle);
+  }
+</script>
+
