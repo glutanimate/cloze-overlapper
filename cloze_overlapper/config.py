@@ -14,6 +14,7 @@ import os
 from aqt.qt import *
 from aqt import mw
 from anki.utils import stripHTML
+from anki.errors import AnkiError
 
 from .forms import settings_global, settings_note
 from .template import updateTemplate
