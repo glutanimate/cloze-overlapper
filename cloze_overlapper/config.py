@@ -27,7 +27,7 @@ default_conf = {
     "flds": OLC_FLDS,
     "nosib": [True, False],
     "olmdls": [OLC_MODEL],
-    "version": 0.23
+    "version": 0.25
 }
 
 def loadConfig():
