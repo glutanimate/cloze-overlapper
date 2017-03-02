@@ -33,14 +33,15 @@ from .utils import warnUser, showTT
 
 olc_hotkey_generate = "Alt+Shift+C" # Cloze generation/preview
 olc_hotkey_settings = "Alt+Shift+O" # Note-specific settings
+olc_hotkey_cremove = "Alt+Shift+R" # Remove selected clozes
 olc_hotkey_olist = "Ctrl+Alt+Shift+." # Toggle ordered list
 olc_hotkey_ulist = "Ctrl+Alt+Shift+," # Toggle unordered list
 olc_hotkey_mcloze = "Ctrl+Shift+D" # Multi-line cloze
 olc_hotkey_mclozealt = "Ctrl+Alt+Shift+D" # Multi-line cloze alt
 
-# Editor
+# Javascript
 
-js_multi_cloze = """
+js_cloze_multi = """
 var increment = %s;
 var highest = %d;
 function clozeChildren(container) {
@@ -66,15 +67,48 @@ if (typeof window.getSelection != "undefined") {
     if (sel.rangeCount) {
         var container = document.createElement("div");
         for (var i = 0, len = sel.rangeCount; i < len; ++i) {
-            container.appendChild(sel.getRangeAt(i).cloneContents());}
+            container.appendChild(sel.getRangeAt(i).cloneContents());}}
     // wrap each topmost child with cloze tags; TODO: Recursion
     clozeChildren(container);
     // workaround for duplicate list items:
     var clozed = container.innerHTML.replace(/^(<li>)/, "")
     document.execCommand('insertHTML', false, clozed);
     saveField('key');
-}}
+}
 """
+
+js_cloze_remove = """
+function getSelectionHtml() {
+    // Based on an SO answer by Tim Down
+    var html = "";
+    if (typeof window.getSelection != "undefined") {
+        var sel = window.getSelection();
+        if (sel.rangeCount) {
+            var container = document.createElement("div");
+            for (var i = 0, len = sel.rangeCount; i < len; ++i) {
+                container.appendChild(sel.getRangeAt(i).cloneContents());
+            }
+            html = container.innerHTML;
+        }
+    } else if (typeof document.selection != "undefined") {
+        if (document.selection.type == "Text") {
+            html = document.selection.createRange().htmlText;
+        }
+    }
+    return html;
+}
+if (typeof window.getSelection != "undefined") {
+    // get selected HTML
+    var sel = getSelectionHtml();
+    sel = sel.replace(/%s/mg, "$2");
+    // workaround for duplicate list items:
+    var sel = sel.replace(/^(<li>)/, "")
+    document.execCommand('insertHTML', false, sel);
+    saveField('key');
+}
+"""
+
+# Editor
 
 def onInsertCloze(self, _old):
     """Handles cloze-wraps when the add-on model is active"""
@@ -124,11 +158,16 @@ to a cloze type first, via Edit>Change Note Type."""))
         increment = "true"
     highest = max(1, highest)
     # process selected text
-    self.web.eval(js_multi_cloze % (
+    self.web.eval(js_cloze_multi % (
             increment, highest, wrap_pre, wrap_post))
 
 def onRemoveClozes(self):
-    pass
+    """Remove cloze markers and hints from selected text"""
+    if checkModel(self.note.model(), fields=False, notify=False):
+        cloze_re = r"\[\[oc(\d+)::(.*?)(::(.*?))?\]\]"
+    else:
+        cloze_re = r"\{\{c(\d+)::(.*?)(::(.*?))?\}\}"
+    self.web.eval(js_cloze_remove % cloze_re)
 
 def checkModel(model, fields=True, notify=True):
     """Sanity checks for the model and fields"""
@@ -179,15 +218,21 @@ def onOlClozeButton(self, markup=None, parent=None):
 def onSetupButtons(self):
     """Add buttons and hotkeys to the editor widget"""
 
-    b = self._addButton("Cloze Overlapper", self.onOlClozeButton,
-        _(olc_hotkey_generate),
-        "Generate Overlapping Clozes (%s)" % olc_hotkey_generate, 
+    b = self._addButton("Remove Clozes",
+        self.onRemoveClozes, _(olc_hotkey_cremove), 
+        "Remove all cloze markers<br>in selected text (%s)" % _(olc_hotkey_cremove), 
+        text="RC", size=True)
+    b.setFixedWidth(24)
+
+    b = self._addButton("Cloze Overlapper",
+        self.onOlClozeButton, _(olc_hotkey_generate),
+        "Generate overlapping clozes (%s)" % _(olc_hotkey_generate), 
         text="[.]]", size=True)
     b.setFixedWidth(24)
 
-    b = self._addButton("Cloze Overlapper Note Settings", self.onOlOptionsButton,
-        _(olc_hotkey_settings), 
-        "Overlapping Cloze Generation Settings (%s)" % olc_hotkey_settings, 
+    b = self._addButton("Cloze Overlapper Note Settings",
+        self.onOlOptionsButton, _(olc_hotkey_settings), 
+        "Overlapping cloze generation settings (%s)" % _(olc_hotkey_settings), 
         text="[O]", size=True)
     b.setFixedWidth(24)
     
@@ -200,6 +245,9 @@ def onSetupButtons(self):
     mult_cloze_cut1.activated.connect(self.onInsertMultipleClozes)
     mult_cloze_cut2 = QShortcut(QKeySequence(_(olc_hotkey_mclozealt)), self.parentWindow)
     mult_cloze_cut2.activated.connect(self.onInsertMultipleClozes)
+
+
+# AddCards and EditCurrent windows
 
 def onAddCards(self, _old):
     """Automatically generate overlapping clozes before adding cards"""
@@ -304,6 +352,7 @@ addHook("setupEditorButtons", onSetupButtons)
 Editor.onOlClozeButton = onOlClozeButton
 Editor.onOlOptionsButton = onOlOptionsButton
 Editor.onInsertMultipleClozes = onInsertMultipleClozes
+Editor.onRemoveClozes = onRemoveClozes
 Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
 
 AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
