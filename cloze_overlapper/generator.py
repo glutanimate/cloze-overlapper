@@ -69,6 +69,7 @@ class ClozeGenerator(object):
         return res
 
     def removeHints(self, items):
+        """Removes cloze hints from items"""
         res = []
         for item in items:
             if not hasattr(item, "__iter__"): # not an iterable

@@ -29,6 +29,14 @@ from .config import OlcOptions, OlcNoteSettings, loadConfig
 from .overlapper import ClozeOverlapper
 from .utils import warnUser, showTT
 
+# Hotkey definitions
+
+olc_hotkey_generate = "Alt+Shift+C" # Cloze generation/preview
+olc_hotkey_settings = "Alt+Shift+O" # Note-specific settings
+olc_hotkey_olist = "Ctrl+Alt+Shift+." # Toggle ordered list
+olc_hotkey_ulist = "Ctrl+Alt+Shift+," # Toggle unordered list
+olc_hotkey_mcloze = "Ctrl+Shift+D" # Multi-line cloze
+olc_hotkey_mclozealt = "Ctrl+Alt+Shift+D" # Multi-line cloze alt
 
 # Editor
 
@@ -170,26 +178,27 @@ def onOlClozeButton(self, markup=None, parent=None):
 
 def onSetupButtons(self):
     """Add buttons and hotkeys to the editor widget"""
+
     b = self._addButton("Cloze Overlapper", self.onOlClozeButton,
-        _("Alt+Shift+C"),
-        "Generate Overlapping Clozes (Alt+Shift+C)", 
+        _(olc_hotkey_generate),
+        "Generate Overlapping Clozes (%s)" % olc_hotkey_generate, 
         text="[.]]", size=True)
     b.setFixedWidth(24)
 
     b = self._addButton("Cloze Overlapper Note Settings", self.onOlOptionsButton,
-        _("Alt+Shift+O"), 
-        "Overlapping Cloze Generation Settings (Alt+Shift+O)", 
+        _(olc_hotkey_settings), 
+        "Overlapping Cloze Generation Settings (%s)" % olc_hotkey_settings, 
         text="[O]", size=True)
     b.setFixedWidth(24)
     
-    add_ol_cut = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+.")), self.parentWindow)
+    add_ol_cut = QShortcut(QKeySequence(_(olc_hotkey_olist)), self.parentWindow)
     add_ol_cut.activated.connect(lambda o="ol": self.onOlClozeButton(o))
-    add_ul_cut = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+,")), self.parentWindow)
+    add_ul_cut = QShortcut(QKeySequence(_(olc_hotkey_ulist)), self.parentWindow)
     add_ul_cut.activated.connect(lambda o="ul": self.onOlClozeButton(o))
 
-    mult_cloze_cut1 = QShortcut(QKeySequence(_("Ctrl+Shift+D")), self.parentWindow)
+    mult_cloze_cut1 = QShortcut(QKeySequence(_(olc_hotkey_mcloze)), self.parentWindow)
     mult_cloze_cut1.activated.connect(self.onInsertMultipleClozes)
-    mult_cloze_cut2 = QShortcut(QKeySequence(_("Ctrl+Alt+Shift+D")), self.parentWindow)
+    mult_cloze_cut2 = QShortcut(QKeySequence(_(olc_hotkey_mclozealt)), self.parentWindow)
     mult_cloze_cut2.activated.connect(self.onInsertMultipleClozes)
 
 def onAddCards(self, _old):
