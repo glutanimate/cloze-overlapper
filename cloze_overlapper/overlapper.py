@@ -89,14 +89,13 @@ class ClozeOverlapper(object):
 
         self.updateNote(fields, full, setopts)
 
-        msg = "Generated %d overlapping clozes" % total
         if not self.silent:
-            self.showTT("Info", msg, period=1000)
+            self.showTT("Info", "Generated %d overlapping clozes" % total, period=1000)
 
         self.ed.loadNote()
         self.ed.web.eval("focusField(%d);" % self.ed.currentField)
         
-        return True, msg
+        return True, total
 
     def getClozeItems(self, matches):
         """Returns a list of items that were clozed by the user"""

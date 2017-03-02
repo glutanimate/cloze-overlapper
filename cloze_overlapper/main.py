@@ -195,12 +195,12 @@ def onAddCards(self, _old):
     if not note or not checkModel(note.model(), notify=False):
         return _old(self)
     overlapper = ClozeOverlapper(self.editor, silent=True)
-    ret, msg = overlapper.add()
+    ret, total = overlapper.add()
     if not ret:
         return
     oldret = _old(self)
-    if msg:
-        showTT("Info", msg, period=1000)
+    if total:
+        showTT("Info", "Added %d overlapping cloze cards" % total, period=1000)
     return oldret
 
 def onEditCurrent(self, _old):
@@ -209,13 +209,13 @@ def onEditCurrent(self, _old):
     if not note or not checkModel(note.model(), notify=False):
         return _old(self)
     overlapper = ClozeOverlapper(self.editor, silent=True)
-    ret, msg = overlapper.add()
+    ret, total = overlapper.add()
     # returning here won't stop the window from being rejected, so we simply
     # accept whatever changes the user performed, even if the generator
     # did not fire
     oldret = _old(self)
-    if msg:
-        showTT("info", msg, period=1000)
+    if total:
+        showTT("Info", "Updated %d overlapping cloze cards" % total, period=1000)
     return oldret
 
 
