@@ -35,9 +35,6 @@ class ClozeOverlapper(object):
         self.dflts = self.config["dflts"]
         self.flds = self.config["flds"]
         self.markup = markup
-        self.update = markup
-        self.formstr = None
-        self.keys = None
         self.silent = silent
         self.parent = parent
 
@@ -52,13 +49,18 @@ class ClozeOverlapper(object):
             self.showTT("Reminder",
                 u"Please enter some text in the '%s' field" % self.flds["og"])
             return False, None
+        if self.markup:
+            original = self.applyMarkup()
 
         matches = re.findall(self.creg, original)
         if matches:
-            self.formstr = re.sub(self.creg, "{{\\1}}", original)
-            items = self.getClozeItems(matches)
+            custom = True
+            formstr = re.sub(self.creg, "{{\\1}}", original)
+            items, keys = self.getClozeItems(matches)
         else:
-            items = self.getLineItems(original)
+            custom = False
+            formstr = None
+            items, keys = self.getLineItems(original)
 
         if not items:
             self.showTT("Warning",
@@ -75,7 +77,7 @@ class ClozeOverlapper(object):
             return False, None
 
         gen = ClozeGenerator(setopts, maxfields)
-        fields, full, total = gen.generate(items, self.formstr, self.keys)
+        fields, full, total = gen.generate(items, formstr, keys)
 
         if fields is None:
             self.showTT("Warning", "This would generate <b>%d</b> overlapping clozes,<br>"
@@ -87,7 +89,7 @@ class ClozeOverlapper(object):
                 "Please check your cloze-generation settings")
             return False, None
 
-        self.updateNote(fields, full, setopts)
+        self.updateNote(fields, full, setopts, custom)
 
         if not self.silent:
             self.showTT("Info", "Generated %d overlapping clozes" % total, period=1000)
@@ -110,24 +112,22 @@ class ClozeOverlapper(object):
                 items.append(phrases[0])
             else:
                 items.append(phrases)
-        self.keys = keys
-        return items
+        return items, keys
 
     def getLineItems(self, html):
         """Detects HTML list markups and returns a list of plaintext lines"""
         soup = BeautifulSoup(html)
         text = soup.getText("\n") # will need to be updated for bs4
-        if not self.markup:
-            if soup.findAll("ol"):
-                self.markup = "ol"
-            elif soup.findAll("ul"):
-                self.markup = "ul"
-            else:
-                self.markup = "div"
+        if soup.findAll("ol"):
+            self.markup = "ol"
+        elif soup.findAll("ul"):
+            self.markup = "ul"
+        else:
+            self.markup = "div"
         # remove empty lines:
         lines = re.sub(r"^(&nbsp;)+$", "", text, flags=re.MULTILINE).splitlines()
         items = [line for line in lines if line.strip() != ''] 
-        return items
+        return items, None
 
     def getMaxFields(self):
         """Determine number of text fields available for cloze sequences"""
@@ -157,7 +157,7 @@ class ClozeOverlapper(object):
             return False
         return actual
 
-    def updateNote(self, fields, full, setopts):
+    def updateNote(self, fields, full, setopts, custom):
         """Write changes to note"""
         note = self.note
         for idx, field in enumerate(fields):
@@ -165,31 +165,30 @@ class ClozeOverlapper(object):
             if name not in note:
                 print "Missing field. Should never happen."
                 continue
-            note[name] = self.processField(field)
+            note[name] = field if custom else self.processField(field)
 
-        note[self.flds["fl"]] = self.processField(full)
+        note[self.flds["fl"]] = full if custom else self.processField(full)
         note[self.flds["st"]] = createNoteSettings(setopts)
 
-        if self.update:
-            # update original field markup
-            field_map = mw.col.models.fieldMap(self.model)
-            ogfld = field_map[self.flds["og"]][0]
-            if self.markup == "ul":
-                mode = "insertUnorderedList"
-            else:
-                mode = "insertOrderedList"
-            self.ed.web.eval("""
-                focusField(%d);
-                document.execCommand('selectAll')
-                document.execCommand('%s');
-                saveField('key');
-                """ % (ogfld, mode))
+    def applyMarkup(self):
+        """Update original field markup"""
+        field_map = mw.col.models.fieldMap(self.model)
+        ogfld = field_map[self.flds["og"]][0]
+        if self.markup == "ul":
+            mode = "insertUnorderedList"
+        else:
+            mode = "insertOrderedList"
+        self.ed.web.eval("""
+            focusField(%d);
+            document.execCommand('selectAll')
+            document.execCommand('%s');
+            saveField('key');
+            """ % (ogfld, mode))
+        return self.note[self.flds["og"]]
 
     def processField(self, field):
         """Convert field contents back to HTML based on previous markup"""
         markup = self.markup
-        if not markup:
-            return field
         if markup == "div":
             tag_start, tag_end = "", ""
             tag_items = "<div>{0}</div>"

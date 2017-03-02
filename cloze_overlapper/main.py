@@ -119,6 +119,9 @@ to a cloze type first, via Edit>Change Note Type."""))
     self.web.eval(js_multi_cloze % (
             increment, highest, wrap_pre, wrap_post))
 
+def onRemoveClozes(self):
+    pass
+
 def checkModel(model, fields=True, notify=True):
     """Sanity checks for the model and fields"""
     config = mw.col.conf["olcloze"]
