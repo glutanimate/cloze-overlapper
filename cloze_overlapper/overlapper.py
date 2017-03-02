@@ -77,10 +77,14 @@ class ClozeOverlapper(object):
         gen = ClozeGenerator(setopts, maxfields)
         fields, full, total = gen.generate(items, self.formstr, self.keys)
 
-        if not fields:
+        if fields is None:
             self.showTT("Warning", "This would generate <b>%d</b> overlapping clozes,<br>"
                 "The note type can only handle a maximum of <b>%d</b> with<br>"
                 "the current number of %s fields" % (total, maxfields, self.flds["tx"]))
+            return False, None
+        if fields == 0:
+            self.showTT("Warning", "This would generate no overlapping clozes at all<br>"
+                "Please check your cloze-generation settings")
             return False, None
 
         self.updateNote(fields, full, setopts)

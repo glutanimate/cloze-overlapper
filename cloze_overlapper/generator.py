@@ -24,6 +24,8 @@ class ClozeGenerator(object):
     def generate(self, items, original=None, keys=None):
         """Returns an array of lists with overlapping cloze deletions"""
         length = len(items)
+        if self.prompt > length:
+            return 0, None, None
         if self.options[2]:
             self.total = length + self.prompt - 1
             self.start = 1
