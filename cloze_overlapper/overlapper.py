@@ -71,7 +71,7 @@ class ClozeOverlapper(object):
             return False, None
 
         setopts = parseNoteSettings(self.note[self.flds["st"]], self.config)
-        maxfields = self.getMaxFields()
+        maxfields = self.getMaxFields(self.model, self.flds["tx"])
         if not maxfields:
             return False, None
 
@@ -128,10 +128,10 @@ class ClozeOverlapper(object):
         items = [line for line in lines if line.strip() != ''] 
         return items, None
 
-    def getMaxFields(self):
+    @staticmethod
+    def getMaxFields(model, prefix):
         """Determine number of text fields available for cloze sequences"""
-        prefix = self.flds["tx"]
-        m = self.model
+        m = model
         fields = [f['name'] for f in m['flds'] if f['name'].startswith(prefix)]
         last = 0
         for f in fields:

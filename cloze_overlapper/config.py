@@ -20,7 +20,9 @@ from .forms import settings_global, settings_note
 from .template import updateTemplate
 from .consts import *
 
-# dflto: no-context-first, no-context-last, gradual ends
+# dflts: before, prompt, after
+# dflto: no-context-first, no-context-last, gradual ends, generate full cloze
+# sched: no-siblings new, no-siblings review, auto-suspend full cloze
 default_conf = {
     "dflts": [1,1,0],
     "dflto": [False, False, False, True],
@@ -107,9 +109,9 @@ def parseNoteSettings(html, config):
 
 def createNoteSettings(setopts):
     """Create plain text settings string"""
-    settings_string = ",".join(str(i) if i is not None else "all" for i in setopts[0])
-    options_string = ",".join("y" if i else "n" for i in setopts[1])
-    return unicode(settings_string + " | " + options_string, "utf-8")
+    set_str = ",".join(str(i) if i is not None else "all" for i in setopts[0])
+    opt_str = ",".join("y" if i else "n" for i in setopts[1])
+    return unicode(set_str + " | " + opt_str, "utf-8")
 
 class OlcNoteSettings(QDialog):
     """Note-specific options dialog"""
@@ -186,11 +188,10 @@ class OlcOptions(QDialog):
         self.setupValues(config)
 
     def setupValues(self, config):
+        """Set widget values"""
         before, prompt, after = config["dflts"]
-        if before is None:
-            before = -1
-        if after is None:
-            after = -1
+        before = before if before is not None else -1
+        after = after if after is not None else -1
         self.f.sb_before.setValue(before)
         self.f.sb_after.setValue(after)
         self.f.sb_cloze.setValue(prompt)
@@ -206,17 +207,14 @@ class OlcOptions(QDialog):
         modified = False
         try:
             modified = self.renameFields()
-        except AnkiError:
-            print "Field rename action aborted"
+        except AnkiError: # rejected full sync warning
             return
         config = mw.col.conf['olcloze']
         before = self.f.sb_before.value()
         after = self.f.sb_after.value()
         prompt = self.f.sb_cloze.value()
-        if before == -1:
-            before = None
-        if after == -1:
-            after = None
+        before = before if before != -1 else None
+        after = after if after != -1 else None
         config['dflts'] = [before, prompt, after]
         config['sched'] = [i.isChecked() for i in self.fsched]
         config["dflto"] = [i.isChecked() for i in self.fopts]

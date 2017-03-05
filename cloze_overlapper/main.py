@@ -285,10 +285,10 @@ def myBurySiblings(self, card, _old):
     """Skip sibling burying for our note type if so configured"""
     if not checkModel(card.model(), fields=False, notify=False):
         return _old(self, card)
-    sched_conf = mw.col.conf["olcloze"].get("sched")
+    sched_conf = mw.col.conf["olcloze"].get("sched", None)
     if not sched_conf:
         return _old(self, card)
-    override_new, override_review, _ = sched_conf
+    override_new, override_review, bury_full = sched_conf
     if override_new and override_review:
         # sibling burying disabled entirely
         return
@@ -326,15 +326,19 @@ and (queue=0 or (queue=2 and due<=?))""",
         self.col.log(toBury)
 
 
-def setupAddon():
-    """Prepare note type and apply scheduler modifications"""
-    """can only be performed after the profile has been loaded"""
-    model = mw.col.models.byName(OLC_MODEL)
-    loadConfig()
-    if not model:
-        model = addModel(mw.col)
-    Scheduler._burySiblings = wrap(
-        Scheduler._burySiblings, myBurySiblings, "around")
+def onAddNote(self, note, _old):
+    """Bury full cloze card if option active"""
+    oldret = _old(self, note)
+    if not checkModel(note.model(), fields=False, notify=False):
+        return oldret
+    config = mw.col.conf["olcloze"]
+    if not config["sched"][2]:
+        return oldret
+    maxfields = ClozeOverlapper.getMaxFields(note.model(), config["flds"]["tx"])
+    last = note.cards()[-1]
+    if last.ord == maxfields: # is full cloze (ord starts at 0)
+        mw.col.sched.buryCards([last.id])
+    return oldret
 
 # Menus
 
@@ -349,6 +353,16 @@ mw.form.menuTools.addAction(options_action)
 
 # Hooks
 
+def setupAddon():
+    """Prepare note type and apply scheduler modifications"""
+    """can only be performed after the profile has been loaded"""
+    model = mw.col.models.byName(OLC_MODEL)
+    loadConfig()
+    if not model:
+        model = addModel(mw.col)
+    Scheduler._burySiblings = wrap(
+        Scheduler._burySiblings, myBurySiblings, "around")
+
 addHook("profileLoaded", setupAddon)
 addHook("setupEditorButtons", onSetupButtons)
 Editor.onOlClozeButton = onOlClozeButton
@@ -358,4 +372,5 @@ Editor.onRemoveClozes = onRemoveClozes
 Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
 
 AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
+AddCards.addNote = wrap(AddCards.addNote, onAddNote, "around")
 EditCurrent.onSave = wrap(EditCurrent.onSave, onEditCurrent, "around")
