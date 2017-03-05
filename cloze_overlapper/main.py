@@ -284,9 +284,11 @@ def onEditCurrent(self, _old):
 def myBurySiblings(self, card, _old):
     """Skip sibling burying for our note type if so configured"""
     if not checkModel(card.model(), fields=False, notify=False):
-        return _old(self,card)
-    nosib_conf = mw.col.conf["olcloze"].get("nosib", [False, False])
-    override_new, override_review = nosib_conf
+        return _old(self, card)
+    sched_conf = mw.col.conf["olcloze"].get("sched")
+    if not sched_conf:
+        return _old(self, card)
+    override_new, override_review, _ = sched_conf
     if override_new and override_review:
         # sibling burying disabled entirely
         return

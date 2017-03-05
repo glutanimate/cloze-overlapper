@@ -23,11 +23,11 @@ from .consts import *
 # dflto: no-context-first, no-context-last, gradual ends
 default_conf = {
     "dflts": [1,1,0],
-    "dflto": [False, False, False],
+    "dflto": [False, False, False, True],
     "flds": OLC_FLDS,
-    "nosib": [True, False],
+    "sched": [True, False, False],
     "olmdls": [OLC_MODEL],
-    "version": 0.25
+    "version": 0.26
 }
 
 def loadConfig():
@@ -44,9 +44,13 @@ def loadConfig():
         for key in list(default.keys()):
             if key not in conf['olcloze']:
                 conf['olcloze'][key] = default[key]
+        oldversion = conf['olcloze']['version']
         conf['olcloze']['version'] = default['version']
         # insert other update actions here:
-        updateTemplate(mw.col)
+        if oldversion <= 0.25:
+            conf['olcloze']['sched'] = conf['olcloze']['nosib'] + [default['sched'][2]]
+            del conf['olcloze']['nosib']
+            conf['olcloze']['dflto'].append(default['dflto'][3])
         mw.col.setMod()
 
     return mw.col.conf['olcloze']
@@ -90,14 +94,14 @@ def parseNoteSettings(html, config):
         opts = dflt_opt
     else:
         opts = []
-        for i in range(3):
+        for i in range(4):
             try: 
                 if options[i] == "y":
                     opts.append(True)
                 else:
                     opts.append(False)
             except IndexError:
-                opts.append(False)
+                opts.append(dflt_opt[i])
 
     return (sets, opts)
 
@@ -112,10 +116,10 @@ class OlcNoteSettings(QDialog):
     def __init__(self, parent):
         super(OlcNoteSettings, self).__init__(parent=parent)
         # load qt-designer form:
-        self.form = settings_note.Ui_Dialog()
-        self.form.setupUi(self)
-        self.form.buttonBox.accepted.connect(self.onAccept)
-        self.form.buttonBox.rejected.connect(self.onReject)
+        self.f = settings_note.Ui_Dialog()
+        self.f.setupUi(self)
+        self.f.buttonBox.accepted.connect(self.onAccept)
+        self.f.buttonBox.rejected.connect(self.onReject)
         self.parent = parent
         self.ed = parent.editor
         self.note = self.ed.note
@@ -132,24 +136,25 @@ class OlcNoteSettings(QDialog):
             before = -1
         if after is None:
             after = -1
-        self.form.sb_before.setValue(before)
-        self.form.sb_after.setValue(after)
-        self.form.sb_cloze.setValue(prompt)
-        for idx, cb in enumerate(
-          (self.form.cb_ncf, self.form.cb_ncl, self.form.cb_incr)):
+        self.f.sb_before.setValue(before)
+        self.f.sb_after.setValue(after)
+        self.f.sb_cloze.setValue(prompt)
+        for idx, cb in enumerate((self.f.cb_ncf, self.f.cb_ncl, 
+          self.f.cb_incr, self.f.cb_gfc)):
             cb.setChecked(options[idx])
 
     def onAccept(self):
-        before = self.form.sb_before.value()
-        after = self.form.sb_after.value()
-        prompt = self.form.sb_cloze.value()
+        before = self.f.sb_before.value()
+        after = self.f.sb_after.value()
+        prompt = self.f.sb_cloze.value()
         if before == -1:
             before = None
         if after == -1:
             after = None
         settings = [before, prompt, after]
         options = [i.isChecked() for i in (
-            self.form.cb_ncf, self.form.cb_ncl, self.form.cb_incr)]
+            self.f.cb_ncf, self.f.cb_ncl, 
+            self.f.cb_incr, self.f.cb_gfc)]
         setopts = (settings, options)
         settings_fld = createNoteSettings(setopts)
         self.note[self.flds["st"]] = settings_fld
@@ -166,16 +171,17 @@ class OlcOptions(QDialog):
     def __init__(self, mw):
         super(OlcOptions, self).__init__(parent=mw)
         # load qt-designer form:
-        self.form = settings_global.Ui_Dialog()
-        self.form.setupUi(self)
-        self.form.textBrowser.setOpenExternalLinks(True); 
-        self.form.buttonBox.accepted.connect(self.onAccept)
-        self.form.buttonBox.rejected.connect(self.onReject)
-        self.form.buttonBox.button(
+        self.f = settings_global.Ui_Dialog()
+        self.f.setupUi(self)
+        self.f.textBrowser.setOpenExternalLinks(True); 
+        self.f.buttonBox.accepted.connect(self.onAccept)
+        self.f.buttonBox.rejected.connect(self.onReject)
+        self.f.buttonBox.button(
             QDialogButtonBox.RestoreDefaults).clicked.connect(self.onRestore)
-        fnedits = [self.form.le_og, self.form.le_st, 
-                        self.form.le_tx, self.form.le_fl]
-        self.fndict = zip(OLC_FIDS_PRIV, fnedits)
+        self.fndict = zip(OLC_FIDS_PRIV, 
+            [self.f.le_og, self.f.le_st, self.f.le_tx, self.f.le_fl])
+        self.fsched = (self.f.cb_ns_new, self.f.cb_ns_rev, self.f.cb_sfc)
+        self.fopts = (self.f.cb_ncf, self.f.cb_ncl, self.f.cb_incr, self.f.cb_gfc)
         config = loadConfig()
         self.setupValues(config)
 
@@ -185,14 +191,13 @@ class OlcOptions(QDialog):
             before = -1
         if after is None:
             after = -1
-        self.form.sb_before.setValue(before)
-        self.form.sb_after.setValue(after)
-        self.form.sb_cloze.setValue(prompt)
-        self.form.cb_ns_new.setChecked(config["nosib"][0])
-        self.form.cb_ns_rev.setChecked(config["nosib"][1])
-        self.form.le_model.setText(",".join(config["olmdls"]))
-        for idx, cb in enumerate(
-          (self.form.cb_ncf, self.form.cb_ncl, self.form.cb_incr)):
+        self.f.sb_before.setValue(before)
+        self.f.sb_after.setValue(after)
+        self.f.sb_cloze.setValue(prompt)
+        self.f.le_model.setText(",".join(config["olmdls"]))
+        for idx, cb in enumerate(self.fsched):
+            cb.setChecked(config["sched"][idx])
+        for idx, cb in enumerate(self.fopts):
             cb.setChecked(config["dflto"][idx])
         for key, fnedit in self.fndict:
             fnedit.setText(config["flds"][key])
@@ -205,19 +210,17 @@ class OlcOptions(QDialog):
             print "Field rename action aborted"
             return
         config = mw.col.conf['olcloze']
-        before = self.form.sb_before.value()
-        after = self.form.sb_after.value()
-        prompt = self.form.sb_cloze.value()
+        before = self.f.sb_before.value()
+        after = self.f.sb_after.value()
+        prompt = self.f.sb_cloze.value()
         if before == -1:
             before = None
         if after == -1:
             after = None
         config['dflts'] = [before, prompt, after]
-        config['nosib'][0] = self.form.cb_ns_new.isChecked()
-        config['nosib'][1] = self.form.cb_ns_rev.isChecked()
-        config["dflto"] = [i.isChecked() for i in (
-            self.form.cb_ncf, self.form.cb_ncl, self.form.cb_incr)]
-        config["olmdls"] = self.form.le_model.text().split(",")
+        config['sched'] = [i.isChecked() for i in self.fsched]
+        config["dflto"] = [i.isChecked() for i in self.fopts]
+        config["olmdls"] = self.f.le_model.text().split(",")
         mw.col.setMod()
         if modified:
             mw.reset()

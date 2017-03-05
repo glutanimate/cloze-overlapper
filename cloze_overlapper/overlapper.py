@@ -32,7 +32,6 @@ class ClozeOverlapper(object):
         self.note = self.ed.note
         self.model = self.note.model()
         self.config = loadConfig()
-        self.dflts = self.config["dflts"]
         self.flds = self.config["flds"]
         self.markup = markup
         self.silent = silent
@@ -160,6 +159,7 @@ class ClozeOverlapper(object):
     def updateNote(self, fields, full, setopts, custom):
         """Write changes to note"""
         note = self.note
+        options = setopts[1]
         for idx, field in enumerate(fields):
             name = self.flds["tx"] + str(idx+1)
             if name not in note:
@@ -167,7 +167,11 @@ class ClozeOverlapper(object):
                 continue
             note[name] = field if custom else self.processField(field)
 
-        note[self.flds["fl"]] = full if custom else self.processField(full)
+        if options[3]:
+            full = full if custom else self.processField(full)
+        else:
+            full = ""
+        note[self.flds["fl"]] = full
         note[self.flds["st"]] = createNoteSettings(setopts)
 
     def applyMarkup(self):

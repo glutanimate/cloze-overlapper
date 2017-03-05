@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>385</width>
-    <height>205</height>
+    <width>390</width>
+    <height>210</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>385</width>
-    <height>205</height>
+    <width>390</width>
+    <height>210</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>385</width>
-    <height>205</height>
+    <width>390</width>
+    <height>210</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>170</y>
+     <y>176</y>
      <width>371</width>
      <height>31</height>
     </rect>
@@ -46,7 +46,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>368</width>
+     <width>371</width>
      <height>158</height>
     </rect>
    </property>
@@ -155,7 +155,7 @@
       <item row="0" column="0" colspan="2">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Handling of First and Last Items&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other Cloze Generation Options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -175,7 +175,17 @@
          <string>For notes that have multiple clozes revealed per card,&lt;br&gt;gradually build up to full reveal count at the start,&lt;br&gt;and vice-versa in the end</string>
         </property>
         <property name="text">
-         <string>Start and end gradually</string>
+         <string>Gradual build-up/-down</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="cb_gfc">
+        <property name="toolTip">
+         <string>Don't provide any context cues for first cloze item</string>
+        </property>
+        <property name="text">
+         <string>Generate full cloze card</string>
         </property>
        </widget>
       </item>
