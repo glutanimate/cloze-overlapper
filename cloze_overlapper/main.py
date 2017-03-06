@@ -327,7 +327,7 @@ and (queue=0 or (queue=2 and due<=?))""",
 
 
 def onAddNote(self, note, _old):
-    """Bury full cloze card if option active"""
+    """Suspend full cloze card if option active"""
     oldret = _old(self, note)
     if not checkModel(note.model(), fields=False, notify=False):
         return oldret
@@ -337,7 +337,7 @@ def onAddNote(self, note, _old):
     maxfields = ClozeOverlapper.getMaxFields(note.model(), config["flds"]["tx"])
     last = note.cards()[-1]
     if last.ord == maxfields: # is full cloze (ord starts at 0)
-        mw.col.sched.buryCards([last.id])
+        mw.col.sched.suspendCards([last.id])
     return oldret
 
 # Menus
