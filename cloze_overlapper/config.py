@@ -205,11 +205,11 @@ class OlcOptions(QDialog):
 
     def onAccept(self):
         modified = False
+        config = loadConfig()
         try:
-            modified = self.renameFields()
+            modified = self.renameFields(config)
         except AnkiError: # rejected full sync warning
             return
-        config = mw.col.conf['olcloze']
         before = self.f.sb_before.value()
         after = self.f.sb_after.value()
         prompt = self.f.sb_cloze.value()
@@ -232,7 +232,7 @@ class OlcOptions(QDialog):
     def onReject(self):
         self.close()
 
-    def renameFields(self):
+    def renameFields(self, config):
         """Check for modified names and rename fields accordingly"""
         modified = False
         model = mw.col.models.byName(OLC_MODEL)
@@ -241,7 +241,7 @@ class OlcOptions(QDialog):
             if not fnedit.isModified():
                 continue
             name = fnedit.text()
-            oldname = mw.col.conf['olcloze']['flds'][key]
+            oldname = config['flds'][key]
             if name is None or not name.strip() or name == oldname:
                 continue
             idx = mw.col.models.fieldNames(model).index(oldname)
@@ -250,6 +250,6 @@ class OlcOptions(QDialog):
                 # rename note type fields
                 mw.col.models.renameField(model, fld, name)
                 # update olcloze field-id <-> field-name assignment
-                mw.col.conf['olcloze']['flds'][key] = name
+                config['flds'][key] = name
                 modified = True
         return modified

@@ -171,7 +171,7 @@ def onRemoveClozes(self):
 
 def checkModel(model, fields=True, notify=True):
     """Sanity checks for the model and fields"""
-    config = mw.col.conf["olcloze"]
+    config = loadConfig()
     mname = model["name"]
     is_olc = False
     # account for custom and imported note types:
@@ -332,7 +332,8 @@ def onAddNote(self, note, _old):
     if not checkModel(note.model(), fields=False, notify=False):
         return oldret
     config = mw.col.conf["olcloze"]
-    if not config["sched"][2]:
+    sched_conf = config.get("sched", None)
+    if not sched_conf or not sched_conf[2]:
         return oldret
     maxfields = ClozeOverlapper.getMaxFields(note.model(), config["flds"]["tx"])
     last = note.cards()[-1]
