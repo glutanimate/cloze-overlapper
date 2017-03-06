@@ -185,7 +185,7 @@
          <string>Don't provide any context cues for first cloze item</string>
         </property>
         <property name="text">
-         <string>Generate full cloze card</string>
+         <string>Don't generate full cloze</string>
         </property>
        </widget>
       </item>

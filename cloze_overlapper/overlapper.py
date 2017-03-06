@@ -167,10 +167,10 @@ class ClozeOverlapper(object):
                 continue
             note[name] = field if custom else self.processField(field)
 
-        if options[3]:
-            full = full if custom else self.processField(full)
-        else:
+        if options[3]: # no full clozes
             full = ""
+        else:
+            full = full if custom else self.processField(full)
         note[self.flds["fl"]] = full
         note[self.flds["st"]] = createNoteSettings(setopts)
 

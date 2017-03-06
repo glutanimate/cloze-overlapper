@@ -25,11 +25,11 @@ from .consts import *
 # sched: no-siblings new, no-siblings review, auto-suspend full cloze
 default_conf = {
     "dflts": [1,1,0],
-    "dflto": [False, False, False, True],
+    "dflto": [False, False, False, False],
     "flds": OLC_FLDS,
     "sched": [True, False, False],
     "olmdls": [OLC_MODEL],
-    "version": 0.26
+    "version": 0.261
 }
 
 def loadConfig():
