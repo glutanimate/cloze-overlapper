@@ -328,18 +328,18 @@ and (queue=0 or (queue=2 and due<=?))""",
 
 def onAddNote(self, note, _old):
     """Suspend full cloze card if option active"""
-    oldret = _old(self, note)
-    if not checkModel(note.model(), fields=False, notify=False):
-        return oldret
+    note = _old(self, note)
+    if not note or not checkModel(note.model(), fields=False, notify=False):
+        return note
     config = mw.col.conf["olcloze"]
     sched_conf = config.get("sched", None)
     if not sched_conf or not sched_conf[2]:
-        return oldret
+        return note
     maxfields = ClozeOverlapper.getMaxFields(note.model(), config["flds"]["tx"])
     last = note.cards()[-1]
     if last.ord == maxfields: # is full cloze (ord starts at 0)
         mw.col.sched.suspendCards([last.id])
-    return oldret
+    return note
 
 # Menus
 
