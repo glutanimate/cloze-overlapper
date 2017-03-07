@@ -380,7 +380,7 @@
        <x>-2</x>
        <y>-2</y>
        <width>431</width>
-       <height>341</height>
+       <height>351</height>
       </rect>
      </property>
      <property name="html">
@@ -391,11 +391,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:40px; margin-bottom:0px; margin-left:10px; margin-right:10px; -qt-block-indent:0; text-indent:0px; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:12px; margin-left:10px; margin-right:10px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600;&quot;&gt;Credits and License&lt;/span&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:10px; margin-right:10px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-style:italic;&quot;&gt;Cloze Overlapper&lt;/span&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt; is copyright © 2016-2017 &lt;/span&gt;&lt;a href=&quot;https://github.com/Glutanimate&quot;&gt;&lt;span style=&quot; font-size:11pt; text-decoration: underline; color:#0000ff;&quot;&gt;Aristotelis P.&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:10px; margin-right:10px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;This add-on is licensed under the GNU GPLv3. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:10px; margin-right:10px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;This add-on is licensed under the GNU AGPLv3. &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:14px; margin-bottom:12px; margin-left:10px; margin-right:10px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600;&quot;&gt;Help and Support&lt;/span&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 0;&quot;&gt;&lt;li style=&quot; font-size:11pt;&quot; style=&quot; margin-top:12px; margin-bottom:10px; margin-left:35px; margin-right:10px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://github.com/Glutanimate/cloze-overlapper/wiki&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Cloze Overlapper Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:11pt;&quot; style=&quot; margin-top:0px; margin-bottom:10px; margin-left:35px; margin-right:10px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://www.youtube.com/playlist?list=PL3MozITKTz5Y9owI163AJMYqKwhFrTKcT&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Video Tutorials on YouTube&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:11pt; text-decoration: underline; color:#0000ff;&quot; style=&quot; margin-top:0px; margin-bottom:10px; margin-left:35px; margin-right:10px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://anki.tenderapp.com/discussions/add-ons/9407-cloze-overlapper-official-thread&quot;&gt;&lt;span style=&quot; color:#2980b9;&quot;&gt;Official Support Thread&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;li style=&quot; font-size:11pt; text-decoration: underline;&quot; style=&quot; margin-top:0px; margin-bottom:10px; margin-left:35px; margin-right:10px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;https://anki.tenderapp.com/discussions/add-ons/9407-cloze-overlapper-official-thread&quot;&gt;&lt;span style=&quot; color:#0000ff;&quot;&gt;Official Support Thread&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </widget>
