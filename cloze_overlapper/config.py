@@ -6,7 +6,7 @@ This file is part of the Cloze Overlapper add-on for Anki
 Configuration
 
 Copyright: Glutanimate 2016-2017
-License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
+License: GNU AGPL, version 3 or later; https://www.gnu.org/licenses/agpl-3.0.en.html
 """
 
 import os
@@ -21,7 +21,7 @@ from .template import updateTemplate
 from .consts import *
 
 # dflts: before, prompt, after
-# dflto: no-context-first, no-context-last, gradual ends, generate full cloze
+# dflto: no-context-first, no-context-last, gradual ends, don't generate full cloze
 # sched: no-siblings new, no-siblings review, auto-suspend full cloze
 default_conf = {
     "dflts": [1,1,0],
