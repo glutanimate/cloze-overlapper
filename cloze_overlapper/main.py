@@ -33,7 +33,7 @@ from .utils import warnUser, showTT
 
 olc_hotkey_generate = "Alt+Shift+C" # Cloze generation/preview
 olc_hotkey_settings = "Alt+Shift+O" # Note-specific settings
-olc_hotkey_cremove = "Alt+Shift+R" # Remove selected clozes
+olc_hotkey_cremove = "Alt+Shift+U" # Remove selected clozes
 olc_hotkey_olist = "Ctrl+Alt+Shift+." # Toggle ordered list
 olc_hotkey_ulist = "Ctrl+Alt+Shift+," # Toggle unordered list
 olc_hotkey_mcloze = "Ctrl+Shift+D" # Multi-line cloze
@@ -218,12 +218,6 @@ def onOlClozeButton(self, markup=None, parent=None):
 def onSetupButtons(self):
     """Add buttons and hotkeys to the editor widget"""
 
-    b = self._addButton("Remove Clozes",
-        self.onRemoveClozes, _(olc_hotkey_cremove), 
-        "Remove all cloze markers<br>in selected text (%s)" % _(olc_hotkey_cremove), 
-        text="RC", size=True)
-    b.setFixedWidth(24)
-
     b = self._addButton("Cloze Overlapper",
         self.onOlClozeButton, _(olc_hotkey_generate),
         "Generate overlapping clozes (%s)" % _(olc_hotkey_generate), 
@@ -234,6 +228,12 @@ def onSetupButtons(self):
         self.onOlOptionsButton, _(olc_hotkey_settings), 
         "Overlapping cloze generation settings (%s)" % _(olc_hotkey_settings), 
         text="[O]", size=True)
+    b.setFixedWidth(24)
+
+    b = self._addButton("Remove Clozes",
+        self.onRemoveClozes, _(olc_hotkey_cremove), 
+        "Remove all cloze markers<br>in selected text (%s)" % _(olc_hotkey_cremove), 
+        text="rc", size=True)
     b.setFixedWidth(24)
     
     add_ol_cut = QShortcut(QKeySequence(_(olc_hotkey_olist)), self.parentWindow)
