@@ -113,7 +113,7 @@
       <item row="2" column="1">
        <widget class="QCheckBox" name="cb_gfc">
         <property name="toolTip">
-         <string>Don't provide any context cues for first cloze item</string>
+         <string>Disable cards that prompt you for all items at once</string>
         </property>
         <property name="text">
          <string>Don't generate full cloze</string>
