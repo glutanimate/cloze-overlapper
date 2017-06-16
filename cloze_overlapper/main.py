@@ -36,8 +36,8 @@ olc_hotkey_settings = "Alt+Shift+O" # Note-specific settings
 olc_hotkey_cremove = "Alt+Shift+U" # Remove selected clozes
 olc_hotkey_olist = "Ctrl+Alt+Shift+." # Toggle ordered list
 olc_hotkey_ulist = "Ctrl+Alt+Shift+," # Toggle unordered list
-olc_hotkey_mcloze = "Ctrl+Shift+D" # Multi-line cloze
-olc_hotkey_mclozealt = "Ctrl+Alt+Shift+D" # Multi-line cloze alt
+olc_hotkey_mcloze = "Ctrl+Shift+K" # Multi-line cloze
+olc_hotkey_mclozealt = "Ctrl+Alt+Shift+K" # Multi-line cloze alt
 
 # Javascript
 
