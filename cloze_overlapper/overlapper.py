@@ -65,9 +65,9 @@ class ClozeOverlapper(object):
             self.showTT("Warning",
                 "Could not find any items to cloze.<br>Please check your input.",)
             return False, None
-        if len(items) < 2:
+        if len(items) < 1:
             self.showTT("Reminder",
-                "Please enter at least 2 items to cloze.")
+                "Please enter at least 1 item to cloze.")
             return False, None
 
         setopts = parseNoteSettings(self.note[self.flds["st"]], self.config)
