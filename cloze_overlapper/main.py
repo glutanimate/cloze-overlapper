@@ -17,6 +17,7 @@ from aqt import mw
 from aqt.editor import Editor
 from aqt.addcards import AddCards
 from aqt.editcurrent import EditCurrent
+from aqt.reviewer import Reviewer
 from aqt.utils import tooltip, showInfo
 
 from anki.hooks import addHook, wrap
@@ -341,6 +342,14 @@ def onAddNote(self, note, _old):
         mw.col.sched.suspendCards([last.id])
     return note
 
+
+# Reviewer
+
+def newKeyHandler(self, evt):
+    """Bind mask reveal to a hotkey"""
+    if (self.state == "answer" and evt.key() == Qt.Key_G):
+        self.web.eval('olToggle()')
+
 # Menus
 
 def onOlcOptions(mw):
@@ -375,3 +384,5 @@ Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
 AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
 AddCards.addNote = wrap(AddCards.addNote, onAddNote, "around")
 EditCurrent.onSave = wrap(EditCurrent.onSave, onEditCurrent, "around")
+
+Reviewer._keyHandler = wrap(Reviewer._keyHandler, newKeyHandler, "before")
