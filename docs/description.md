@@ -54,11 +54,10 @@ Simply follow the generic instructions listed below this add-on description.
 
 **DOCUMENTATION**
 
-The use of this add-on is documented in the [official Wiki](https://github.com/Glutanimate/cloze-overlapper/wiki) and a [series of video tutorials on YouTube](https://www.youtube.com/playlist?list=PL3MozITKTz5Y9owI163AJMYqKwhFrTKcT).
+The use of this add-on is documented in the [official Wiki](https://github.com/Glutanimate/cloze-overlapper/wiki) and a [series of video tutorials on YouTube](https://www.youtube.com/playlist?list=PL3MozITKTz5Y9owI163AJMYqKwhFrTKcT). Please make sure to check out the [FAQ](https://github.com/Glutanimate/cloze-overlapper/wiki/FAQ) and [Tips](https://github.com/Glutanimate/cloze-overlapper/wiki/Tips) sections in particular. They contain some valuable advice on how and when to use this add-on. You should also familiarize yourself with the following sections on card scheduling:
 
-Please make sure to check out the [FAQ](https://github.com/Glutanimate/cloze-overlapper/wiki/FAQ) and [Tips](https://github.com/Glutanimate/cloze-overlapper/wiki/Tips) sections in particular. They contain some valuable advice on how and when to use this add-on.
-
-If you are planning on using this add-on with AnkiMobile / AnkiDroid / AnkiWeb you should also read through [this section on the card introduction order on mobile clients](https://github.com/glutanimate/cloze-overlapper/wiki/Troubleshooting#wrong-card-introduction-order-on-ankimobileankidroidankiweb).
+- [Random Review Order](https://github.com/glutanimate/cloze-overlapper/wiki/Troubleshooting#random-review-order)
+- [Card Introduction Order on AnkiMobile / AnkiDroid / AnkiWeb](https://github.com/glutanimate/cloze-overlapper/wiki/Troubleshooting#card-introduction-order-on-ankimobile--ankidroid--ankiweb)
 
 **HELP**
 
@@ -68,14 +67,12 @@ Bug reports and suggestions are always welcome, but it might take me a while to 
 
 **CREDITS AND LICENSE**
 
-I would like to extend my heartfelt thanks to everyone who has helped with testing, provided suggestions, or contributed in any other way!
+*Cloze Overlapper* is *Copyright © 2016-2017 [Aristotelis P.](https://glutanimate.com)*
 
-I would also like to thank:
+I would like to extend my heartfelt thanks to everyone who has helped with testing, provided suggestions, or contributed in any other way! I would also like to thank:
 
 - [Piotr Wozniak](https://www.supermemo.com/english/company/wozniak.htm) for laying the theoretical groundwork for overlapping cloze deletions with his [20 rules of formulating knowledge](https://www.supermemo.com/en/articles/20rules)
 - [Soren Bjornstad](https://github.com/sobjornstad) for giving me the inspiration for this add-on with his project [AnkiLPCG](https://github.com/sobjornstad/AnkiLPCG), back when it was still a standalone module
-
-*Cloze Overlapper* is *Copyright © 2016-2017 [Aristotelis P.](https://glutanimate.com)*
 
 Licensed under the [GNU AGPL v3](https://www.gnu.org/licenses/agpl.html). The code for this add-on is available on [![GitHub icon](https://glutanimate.com/logos/github.svg) GitHub](https://github.com/Glutanimate/cloze-overlapper).
 
@@ -102,7 +99,7 @@ New to Anki? Make sure to check out my YouTube channel where I post weekly tutor
 
 ============================================
 
-**HOW TO SUPPORT THIS ADD-ON**
+**SUPPORT THIS ADD-ON**
 
 Writing, supporting, and maintaining Anki add-ons like these takes a lot of time and effort. If *Cloze Overlapper* has been a valuable asset in your studies, please consider using one of the buttons below to support my efforts by buying me a **coffee**, **sandwich**, **meal**, or anything else you'd like:
 
