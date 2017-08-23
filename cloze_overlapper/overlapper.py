@@ -9,15 +9,21 @@ Copyright: Glutanimate 2016-2017
 License: GNU AGPL, version 3 or later; https://www.gnu.org/licenses/agpl-3.0.en.html
 """
 
+from .consts import *
+
 import re
 from operator import itemgetter
 from itertools import groupby
-from BeautifulSoup import BeautifulSoup
+
+if isAnki20:
+    from BeautifulSoup import BeautifulSoup
+else:
+    from bs4 import BeautifulSoup
+
 
 from aqt import mw
 from anki.utils import stripHTML
 
-from .consts import *
 from .config import loadConfig, parseNoteSettings, createNoteSettings
 from .generator import ClozeGenerator
 from .utils import warnUser, showTT
@@ -163,7 +169,7 @@ class ClozeOverlapper(object):
         for idx, field in enumerate(fields):
             name = self.flds["tx"] + str(idx+1)
             if name not in note:
-                print "Missing field. Should never happen."
+                print("Missing field. Should never happen.")
                 continue
             note[name] = field if custom else self.processField(field)
 

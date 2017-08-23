@@ -5,7 +5,7 @@
 .hidden
 .directory
 cloze_overlapper/ui_options.py
-cloze_overlapper/forms
+cloze_overlapper/forms*
 tools/test.py
 docs/todo.md
 cloze-overlapper-*.zip

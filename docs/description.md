@@ -54,10 +54,7 @@ Simply follow the generic instructions listed below this add-on description.
 
 **DOCUMENTATION**
 
-The use of this add-on is documented in the [official Wiki](https://github.com/Glutanimate/cloze-overlapper/wiki) and a [series of video tutorials on YouTube](https://www.youtube.com/playlist?list=PL3MozITKTz5Y9owI163AJMYqKwhFrTKcT). Please make sure to check out the [FAQ](https://github.com/Glutanimate/cloze-overlapper/wiki/FAQ) and [Tips](https://github.com/Glutanimate/cloze-overlapper/wiki/Tips) sections in particular. They contain some valuable advice on how and when to use this add-on. You should also familiarize yourself with the following sections on card scheduling:
-
-- [Random Review Order](https://github.com/glutanimate/cloze-overlapper/wiki/Troubleshooting#random-review-order)
-- [Card Introduction Order on AnkiMobile / AnkiDroid / AnkiWeb](https://github.com/glutanimate/cloze-overlapper/wiki/Troubleshooting#card-introduction-order-on-ankimobile--ankidroid--ankiweb)
+The use of this add-on is documented in the [official Wiki](https://github.com/Glutanimate/cloze-overlapper/wiki) and a [series of video tutorials on YouTube](https://www.youtube.com/playlist?list=PL3MozITKTz5Y9owI163AJMYqKwhFrTKcT). Please make sure to check out the [FAQ](https://github.com/Glutanimate/cloze-overlapper/wiki/FAQ) and [Tips](https://github.com/Glutanimate/cloze-overlapper/wiki/Tips) sections in particular. They contain some valuable advice on how and when to use this add-on. You should also familiarize yourself with all of the [sections on card scheduling](https://github.com/glutanimate/cloze-overlapper/wiki/FAQ#card-scheduling).
 
 **HELP**
 

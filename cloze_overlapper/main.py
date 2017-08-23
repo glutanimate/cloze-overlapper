@@ -9,6 +9,8 @@ Copyright: Glutanimate 2016-2017
 License: GNU AGPL, version 3 or later; https://www.gnu.org/licenses/agpl-3.0.en.html
 """
 
+from .consts import *
+
 import re
 
 from aqt.qt import *
@@ -24,7 +26,6 @@ from anki.hooks import addHook, wrap
 from anki.utils import ids2str, intTime
 from anki.sched import Scheduler
 
-from .consts import *
 from .template import addModel
 from .config import OlcOptions, OlcNoteSettings, loadConfig
 from .overlapper import ClozeOverlapper
@@ -343,13 +344,6 @@ def onAddNote(self, note, _old):
     return note
 
 
-# Reviewer
-
-def newKeyHandler(self, evt):
-    """Bind mask reveal to a hotkey"""
-    if (self.state == "answer" and evt.key() == Qt.Key_G):
-        self.web.eval('olToggle()')
-
 # Menus
 
 def onOlcOptions(mw):
@@ -383,6 +377,8 @@ Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
 
 AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
 AddCards.addNote = wrap(AddCards.addNote, onAddNote, "around")
-EditCurrent.onSave = wrap(EditCurrent.onSave, onEditCurrent, "around")
 
-Reviewer._keyHandler = wrap(Reviewer._keyHandler, newKeyHandler, "before")
+if isAnki20:
+    EditCurrent.onSave = wrap(EditCurrent.onSave, onEditCurrent, "around")
+else:
+    EditCurrent._saveAndClose = wrap(EditCurrent._saveAndClose, onEditCurrent, "around")

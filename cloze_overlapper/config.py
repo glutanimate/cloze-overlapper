@@ -16,9 +16,14 @@ from aqt import mw
 from anki.utils import stripHTML
 from anki.errors import AnkiError
 
-from .forms import settings_global, settings_note
-from .template import updateTemplate
 from .consts import *
+
+if isAnki20:
+    from .forms4 import settings_global, settings_note
+else:
+    from .forms5 import settings_global, settings_note
+
+from .template import updateTemplate
 
 # dflts: before, prompt, after
 # dflto: no-context-first, no-context-last, gradual ends, don't generate full cloze
