@@ -182,7 +182,7 @@ def checkModel(model, fields=True, notify=True):
     if notify and not is_olc:
         showTT("Reminder", u"Can only generate overlapping clozes<br>"
             "on the following note types:<br><br>"
-            "%s" % ", ".join("'{0}'".format(i) for i in config["olmdls"]))
+            "%s" % ", ".join(u"'{0}'".format(i) for i in config["olmdls"]))
     if not is_olc or not fields:
         return is_olc
     flds = [f['name'] for f in model['flds']]
