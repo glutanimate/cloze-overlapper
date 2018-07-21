@@ -64,7 +64,7 @@ Bug reports and suggestions are always welcome, but it might take me a while to 
 
 **CREDITS AND LICENSE**
 
-*Cloze Overlapper* is *Copyright © 2016-2017 [Aristotelis P.](https://glutanimate.com)*
+*Cloze Overlapper* is *Copyright © 2016-2018 [Aristotelis P.](https://glutanimate.com)*
 
 I would like to extend my heartfelt thanks to everyone who has helped with testing, provided suggestions, or contributed in any other way! I would also like to thank:
 

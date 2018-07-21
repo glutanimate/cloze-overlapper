@@ -41,7 +41,7 @@ The installation and use of the add-on is documented in the [Wiki section](https
 
 ### Credits and License
 
-*Cloze Overlapper* is *Copyright © 2016-2017 [Aristotelis P.](https://glutanimate.com)*
+*Cloze Overlapper* is *Copyright © 2016-2018 [Aristotelis P.](https://glutanimate.com)*
 
 I would like to extend my heartfelt thanks to everyone who has helped with testing, provided suggestions, or contributed in any other way!
 
