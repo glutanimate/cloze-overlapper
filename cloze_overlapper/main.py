@@ -248,6 +248,26 @@ def onSetupButtons(self):
     mult_cloze_cut2 = QShortcut(QKeySequence(_(olc_hotkey_mclozealt)), self.parentWindow)
     mult_cloze_cut2.activated.connect(self.onInsertMultipleClozes)
 
+def onSetupEditorButtons(buttons, editor):
+    """Add buttons and hotkeys"""
+    
+    b = editor.addButton("", "OlCloze", onOlClozeButton,
+        "Generate overlapping clozes (%s)" % _(olc_hotkey_generate),
+        "[.]]", keys=olc_hotkey_generate)
+    buttons.append(b)
+    
+    b = editor.addButton("", "OlOptions", onOlOptionsButton,
+        "Overlapping cloze generation settings (%s)" % _(olc_hotkey_settings),
+        "[O]", keys=olc_hotkey_settings)
+    buttons.append(b)
+    
+    b = editor.addButton("", "RemoveClozes", onRemoveClozes,
+        "Remove all cloze markers in selected text (%s)" % _(olc_hotkey_cremove),
+        "rc", keys=olc_hotkey_cremove)
+    buttons.append(b)
+    
+    return buttons
+
 
 # AddCards and EditCurrent windows
 
@@ -368,7 +388,7 @@ def setupAddon():
         Scheduler._burySiblings, myBurySiblings, "around")
 
 addHook("profileLoaded", setupAddon)
-addHook("setupEditorButtons", onSetupButtons)
+addHook("setupEditorButtons", onSetupEditorButtons)
 Editor.onOlClozeButton = onOlClozeButton
 Editor.onOlOptionsButton = onOlOptionsButton
 Editor.onInsertMultipleClozes = onInsertMultipleClozes
