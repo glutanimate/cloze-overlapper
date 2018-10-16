@@ -100,7 +100,10 @@ class ClozeOverlapper(object):
             self.showTT("Info", "Generated %d overlapping clozes" % total, period=1000)
 
         self.ed.loadNote()
-        self.ed.web.eval("focusField(%d);" % self.ed.currentField)
+        if not self.ed.currentField is None:
+            self.ed.web.eval("focusField(%d);" % self.ed.currentField)
+        else:
+            self.ed.web.eval("focusField(1);")
         
         return True, total
 
