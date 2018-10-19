@@ -217,37 +217,6 @@ def onOlClozeButton(self, markup=None, parent=None):
     overlapper = ClozeOverlapper(self, markup=markup, parent=parent)
     overlapper.add()
 
-def onSetupButtons(self):
-    """Add buttons and hotkeys to the editor widget"""
-
-    b = self._addButton("Cloze Overlapper",
-        self.onOlClozeButton, _(olc_hotkey_generate),
-        "Generate overlapping clozes (%s)" % _(olc_hotkey_generate), 
-        text="[.]]", size=True)
-    b.setFixedWidth(24)
-
-    b = self._addButton("Cloze Overlapper Note Settings",
-        self.onOlOptionsButton, _(olc_hotkey_settings), 
-        "Overlapping cloze generation settings (%s)" % _(olc_hotkey_settings), 
-        text="[O]", size=True)
-    b.setFixedWidth(24)
-
-    b = self._addButton("Remove Clozes",
-        self.onRemoveClozes, _(olc_hotkey_cremove), 
-        "Remove all cloze markers<br>in selected text (%s)" % _(olc_hotkey_cremove), 
-        text="rc", size=True)
-    b.setFixedWidth(24)
-    
-    add_ol_cut = QShortcut(QKeySequence(_(olc_hotkey_olist)), self.parentWindow)
-    add_ol_cut.activated.connect(lambda o="ol": self.onOlClozeButton(o))
-    add_ul_cut = QShortcut(QKeySequence(_(olc_hotkey_ulist)), self.parentWindow)
-    add_ul_cut.activated.connect(lambda o="ul": self.onOlClozeButton(o))
-
-    mult_cloze_cut1 = QShortcut(QKeySequence(_(olc_hotkey_mcloze)), self.parentWindow)
-    mult_cloze_cut1.activated.connect(self.onInsertMultipleClozes)
-    mult_cloze_cut2 = QShortcut(QKeySequence(_(olc_hotkey_mclozealt)), self.parentWindow)
-    mult_cloze_cut2.activated.connect(self.onInsertMultipleClozes)
-
 def onSetupEditorButtons(buttons, editor):
     """Add buttons and hotkeys"""
     
@@ -265,6 +234,16 @@ def onSetupEditorButtons(buttons, editor):
         "Remove all cloze markers in selected text (%s)" % _(olc_hotkey_cremove),
         "rc", keys=olc_hotkey_cremove)
     buttons.append(b)
+    
+    add_ol_cut = QShortcut(QKeySequence(_(olc_hotkey_olist)), editor.widget)
+    add_ol_cut.activated.connect(lambda o="ol": onOlClozeButton(editor, o))
+    add_ul_cut = QShortcut(QKeySequence(_(olc_hotkey_ulist)), editor.widget)
+    add_ul_cut.activated.connect(lambda o="ul": onOlClozeButton(editor, o))
+
+    mult_cloze_cut1 = QShortcut(QKeySequence(_(olc_hotkey_mcloze)), editor.widget)
+    mult_cloze_cut1.activated.connect(lambda: onInsertMultipleClozes(editor))
+    mult_cloze_cut2 = QShortcut(QKeySequence(_(olc_hotkey_mclozealt)), editor.widget)
+    mult_cloze_cut2.activated.connect(lambda: onInsertMultipleClozes(editor))
     
     return buttons
 
