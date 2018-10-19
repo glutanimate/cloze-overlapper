@@ -103,7 +103,7 @@ class ClozeOverlapper(object):
         if not self.ed.currentField is None:
             self.ed.web.eval("focusField(%d);" % self.ed.currentField)
         else:
-            self.ed.web.eval("focusField(1);")
+            self.ed.web.eval("focusField(0);")
         
         return True, total
 
