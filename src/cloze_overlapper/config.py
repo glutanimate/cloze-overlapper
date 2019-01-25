@@ -47,10 +47,7 @@ from anki.errors import AnkiError
 
 from .consts import *
 
-if isAnki20:
-    from .forms4 import settings_global, settings_note
-else:
-    from .forms5 import settings_global, settings_note
+from .gui.forms import settings_global, settings_note
 
 from .template import updateTemplate
 
