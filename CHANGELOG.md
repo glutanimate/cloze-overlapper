@@ -12,6 +12,10 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [Unreleased]
 
+## [0.4.0-dev.1] - 2019-01-25
+
+### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.1)
+
 ### Added
 
 - Preliminary support for Anki 2.1 (thanks to @zjosua for his help with this!)
