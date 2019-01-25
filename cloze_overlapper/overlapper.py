@@ -100,7 +100,10 @@ class ClozeOverlapper(object):
             self.showTT("Info", "Generated %d overlapping clozes" % total, period=1000)
 
         self.ed.loadNote()
-        self.ed.web.eval("focusField(%d);" % self.ed.currentField)
+        if not self.ed.currentField is None:
+            self.ed.web.eval("focusField(%d);" % self.ed.currentField)
+        else:
+            self.ed.web.eval("focusField(0);")
         
         return True, total
 
@@ -121,7 +124,7 @@ class ClozeOverlapper(object):
 
     def getLineItems(self, html):
         """Detects HTML list markups and returns a list of plaintext lines"""
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, "html.parser")
         text = soup.getText("\n") # will need to be updated for bs4
         if soup.findAll("ol"):
             self.markup = "ol"
@@ -206,5 +209,5 @@ class ClozeOverlapper(object):
             tag_start = '<{0}>'.format(markup)
             tag_end = '</{0}>'.format(markup)
             tag_items = "<li>{0}</li>"
-        lines = "".join(tag_items.format(line.encode("utf-8")) for line in field)
-        return unicode(tag_start + lines + tag_end, "utf-8")
+        lines = "".join(tag_items.format(line) for line in field)
+        return tag_start + lines + tag_end
