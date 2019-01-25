@@ -1,8 +1,9 @@
 # Exclude files from deployment:
 .gitattributes export-ignore
 .gitignore export-ignore
+.github export-ignore
 docs export-ignore
-/screenshots export-ignore
-/tools export-ignore
+screenshots export-ignore
 # Adjust GitHub linguist settings:
 ANKIWEB.md linguist-documentation
+README.md linguist-documentation

@@ -1,11 +1,50 @@
+# Byte-compiled / optimized / DLL files
 *.pyo
 *.pyc
+__pycache__/
+# Anki
+src/*/meta.json
+# Build files
+build
+src/*/gui/forms/anki*
+src/*/gui/forms/LICENSE*
+src/*/gui/resources/anki*
+src/*/gui/resources/LICENSE*
+src/*/data/patrons.py
+*-anki2*.zip
+# Python
+.python-version
+.mypy_cache/
+.ropeproject
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+# Javascript
+node_modules
+# IDEs
 *.sublime-project
 *.sublime-workspace
+.sublime-backup/
+.idea/
+.vscode/
+# Dev tools
+addon.json
+.bumpversion.cfg
+# Temp
+.gitold
+obsolete
+research
+# Linux FM
 .hidden
 .directory
-cloze_overlapper/ui_options.py
-cloze_overlapper/forms*
-tools/test.py
+# Docs
+docs/specs.md
 docs/todo.md
-cloze-overlapper-*.zip
+docs/description.html
+todo
+# Assets
+resources/icons/optional
