@@ -1,17 +1,17 @@
-## Cloze Overlapper Add-on for Anki
+## Cloze Overlapper Add-on for Anki <!-- omit in toc -->
 
-Facilitates **memorizing enumerations**, lists, or any other type of sequential information by breaking the sequence up into cards where each item serves as the context cue for the next:
+This is an add-on for the spaced-repetition flashcard app [Anki](https://apps.ankiweb.net/). It facilitates **memorizing enumerations**, lists, or any other type of sequential information by breaking the sequence up into cards where each item serves as the context cue for the next:
 
 ![](screenshots/demo1.gif)
 
-### Table of Contents
+### Table of Contents <!-- omit in toc -->
 
 <!-- MarkdownTOC -->
 
 - [Background](#background)
 - [The Add-on](#the-add-on)
 - [Documentation](#documentation)
-- [Credits and License](#credits-and-license)
+- [License and Credits](#license-and-credits)
 
 <!-- /MarkdownTOC -->
 
@@ -39,9 +39,9 @@ Due to working with the formatting tools that Anki provides itself, the cards ge
 
 The installation and use of the add-on is documented in the [Wiki section](https://github.com/Glutanimate/cloze-overlapper/wiki) and a [series of video tutorials on YouTube](https://www.youtube.com/watch?v=QzBoDe3PgAc&list=PL3MozITKTz5Y9owI163AJMYqKwhFrTKcT). More information may also be found in the [AnkiWeb description](docs/description.md).
 
-### Credits and License
+### License and Credits
 
-*Cloze Overlapper* is *Copyright © 2016-2018 [Aristotelis P.](https://glutanimate.com)*
+*Cloze Overlapper* is *Copyright © 2016-2019 [Aristotelis P.](https://glutanimate.com/)*
 
 With contributions by: [zjosua](https://github.com/zjosua), (Thank you!)
 
@@ -52,4 +52,6 @@ I'd also like to thank:
 - [Piotr Wozniak](https://www.supermemo.com/english/company/wozniak.htm) for laying the theoretical groundwork for overlapping cloze deletions with his [20 rules of formulating knowledge](https://www.supermemo.com/en/articles/20rules)
 - [Soren Bjornstad](https://github.com/sobjornstad) for giving me the inspiration for this add-on with his project [AnkiLPCG](https://github.com/sobjornstad/AnkiLPCG), back when it was still a standalone module
 
-Licensed under the [GNU AGPL v3](https://www.gnu.org/licenses/agpl.html).
+Cloze Overlapper is free and open-source software. The add-on code that runs within Anki is released under the GNU AGPLv3 license, extended by a number of additional terms. For more information please see the accompanied license file.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY. Please see the license file for more details.
