@@ -20,6 +20,17 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 - Preliminary support for Anki 2.1 (thanks to @zjosua for his help with this!)
 
+### Changed
+
+- Changed the following hotkeys to avoid conflicts with global shortcuts and
+  other popular add-ons:
+  - Multi-line cloze: Ctrl+Shift+K
+  - Multi-line cloze alternate: Ctrl+Alt+Shift+K
+  - Remove Clozes: Alt+Shift+U
+- Reduced cloze item limit to one. This allows using the Overlapping Cloze note
+  type like a regular Cloze note type when only one item is clozed.
+
+
 ## [0.3.0] - 2017-03-07
 
 ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.3.0)
