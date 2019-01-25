@@ -43,6 +43,8 @@ The installation and use of the add-on is documented in the [Wiki section](https
 
 *Cloze Overlapper* is *Copyright © 2016-2018 [Aristotelis P.](https://glutanimate.com)*
 
+With contributions by: [zjosua](https://github.com/zjosua), (Thank you!)
+
 I would like to extend my heartfelt thanks to everyone who has helped with testing, provided suggestions, or contributed in any other way!
 
 I'd also like to thank:
