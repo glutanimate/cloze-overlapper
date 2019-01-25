@@ -62,7 +62,7 @@ class ClozeGenerator(object):
         """Apply cloze deletion syntax to item"""
         res = []
         for item in items:
-            if not type(item) is tuple:
+            if not hasattr(item, "__iter__"): # not an iterable:
                 res.append(self.cformat % (nr, item))
             else:
                 res.append([self.cformat % (nr, i) for i in item])
@@ -72,7 +72,7 @@ class ClozeGenerator(object):
         """Removes cloze hints from items"""
         res = []
         for item in items:
-            if not type(item) is tuple:
+            if not hasattr(item, "__iter__"): # not an iterable:
                 res.append(item.split("::")[0])
             else:
                 res.append([i.split("::")[0] for i in item])
@@ -86,7 +86,7 @@ class ClozeGenerator(object):
         for nr, phrase in zip(keys, snippets):
             if phrase == "...": # placeholder, replace all instances
                 html = html.replace("{{" + nr + "}}", phrase)
-            elif not type(phrase) is list:
+            elif not hasattr(phrase, "__iter__"): # not an iterable:
                 html = html.replace("{{" + nr + "}}", phrase, 1)
             else:
                 for item in phrase:
