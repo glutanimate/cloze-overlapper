@@ -39,7 +39,7 @@ import re
 from operator import itemgetter
 from itertools import groupby
 
-if isAnki20:
+if not ANKI21:
     from BeautifulSoup import BeautifulSoup
 else:
     from bs4 import BeautifulSoup

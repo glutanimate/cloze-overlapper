@@ -404,7 +404,7 @@ Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
 AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
 AddCards.addNote = wrap(AddCards.addNote, onAddNote, "around")
 
-if isAnki20:
+if not ANKI21:
     EditCurrent.onSave = wrap(EditCurrent.onSave, onEditCurrent, "around")
 else:
     EditCurrent._saveAndClose = wrap(EditCurrent._saveAndClose, onEditCurrent, "around")
