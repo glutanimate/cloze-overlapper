@@ -39,3 +39,5 @@ if ANKI21:
     from .anki21 import *  # noqa: F401
 else:
     from .anki20 import *  # noqa: F401
+
+QRC_PREFIX = "cloze_overlapper"
