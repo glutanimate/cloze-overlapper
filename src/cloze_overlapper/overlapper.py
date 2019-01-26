@@ -79,8 +79,6 @@ class ClozeOverlapper(object):
             self.showTT("Reminder",
                         u"Please enter some text in the '%s' field" % self.flds["og"])
             return False, None
-        if self.markup:
-            original = self.applyMarkup()
 
         matches = re.findall(self.creg, original)
         if matches:
@@ -212,22 +210,6 @@ class ClozeOverlapper(object):
             full = full if custom else self.processField(full)
         note[self.flds["fl"]] = full
         note[self.flds["st"]] = createNoteSettings(setopts)
-
-    def applyMarkup(self):
-        """Update original field markup"""
-        field_map = mw.col.models.fieldMap(self.model)
-        ogfld = field_map[self.flds["og"]][0]
-        if self.markup == "ul":
-            mode = "insertUnorderedList"
-        else:
-            mode = "insertOrderedList"
-        self.ed.web.eval("""
-            focusField(%d);
-            document.execCommand('selectAll')
-            document.execCommand('%s');
-            saveField('key');
-            """ % (ogfld, mode))
-        return self.note[self.flds["og"]]
 
     def processField(self, field):
         """Convert field contents back to HTML based on previous markup"""

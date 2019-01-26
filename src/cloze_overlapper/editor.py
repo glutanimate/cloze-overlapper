@@ -41,6 +41,7 @@ import re
 from anki.hooks import wrap, addHook
 
 from aqt.qt import *
+from aqt import mw
 from aqt.editor import Editor
 from aqt.addcards import AddCards
 from aqt.editcurrent import EditCurrent
@@ -134,24 +135,53 @@ if (typeof window.getSelection != "undefined") {
 }
 """
 
+js_apply_markup = """
+focusField(%d);
+document.execCommand('selectAll')
+document.execCommand('%s');
+saveField('key');
+"""
+
+
 # EDITOR
 
-# Button callbacks
+# anki21: Button callback wrappers
 
 # anki21 executes JS asynchronously. In order to assure that we are working
 # with the most recent field contents, we use a decorator to fire the
-# button/hotkey callback after performing a manual save:
-
+# button/hotkey callback after evaluating the pertinent JS:
 
 def editorSaveThen(callback):
     if ANKI20:
         return callback
 
     def onSaved(editor, *args, **kwargs):
+        # uses evalWithCallback
         editor.saveNow(lambda: callback(editor, *args, **kwargs))
 
     return onSaved
 
+def applyMarkupThen(editor, markup, callback):
+    if markup == "ul":
+        cmd = "insertUnorderedList"
+    elif markup == "ol":
+        cmd = "insertOrderedList"
+    else:
+        return callback()
+
+    field_map = mw.col.models.fieldMap(editor.note.model())
+    og_fld_name = config["synced"]["flds"]["og"]
+    og_fld_idx = field_map[og_fld_name][0]
+
+    js = js_apply_markup % (og_fld_idx, cmd)
+    
+    if ANKI20:
+        editor.web.eval(js)
+        callback()
+    else:
+        editor.web.evalWithCallback(js, lambda res: callback())
+
+# Button callbacks
 
 def onInsertCloze(self, _old):
     """Handles cloze-wraps when the add-on model is active"""
@@ -227,12 +257,21 @@ def onOlOptionsButton(self):
 
 
 @editorSaveThen
-def onOlClozeButton(self, markup=None, parent=None):
+def onOlClozeButton(editor, markup=None, parent=None):
     """Invokes an instance of the main add-on class"""
-    if not checkModel(self.note.model()):
+    if not checkModel(editor.note.model()):
         return False
-    overlapper = ClozeOverlapper(self, markup=markup, parent=parent)
-    overlapper.add()
+    
+    def onMarkupApplied():
+        overlapper = ClozeOverlapper(editor, markup=markup,
+                                     parent=parent)
+        overlapper.add()
+    
+    # JS-based, thus run asynchronously on anki21
+    if markup:
+        return applyMarkupThen(editor, markup, onMarkupApplied)
+    
+    onMarkupApplied()
 
 
 # Patching buttons in
