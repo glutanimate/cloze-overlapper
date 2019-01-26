@@ -138,6 +138,18 @@ if (typeof window.getSelection != "undefined") {
 
 # Button callbacks
 
+# anki21 executes JS asynchronously. In order to assure that we are working
+# with the most recent field contents, we use a decorator to fire the
+# button/hotkey callback after performing a manual save:
+def editorSaveThen(callback):
+    if ANKI20:
+        return callback
+    
+    def onSaved(editor, *args, **kwargs):
+        editor.saveNow(lambda: callback(editor, *args, **kwargs))
+    
+    return onSaved
+
 
 def onInsertCloze(self, _old):
     """Handles cloze-wraps when the add-on model is active"""
@@ -157,6 +169,7 @@ def onInsertCloze(self, _old):
     self.web.eval("wrap('[[oc%d::', ']]');" % highest)
 
 
+@editorSaveThen
 def onInsertMultipleClozes(self):
     """Wraps each line in a separate cloze"""
     model = self.note.model()
@@ -191,7 +204,7 @@ to a cloze type first, via Edit>Change Note Type."""))
     self.web.eval(js_cloze_multi % (
         increment, highest, wrap_pre, wrap_post))
 
-
+@editorSaveThen
 def onRemoveClozes(self):
     """Remove cloze markers and hints from selected text"""
     if checkModel(self.note.model(), fields=False, notify=False):
@@ -200,7 +213,7 @@ def onRemoveClozes(self):
         cloze_re = r"\{\{c(\d+)::(.*?)(::(.*?))?\}\}"
     self.web.eval(js_cloze_remove % cloze_re)
 
-
+@editorSaveThen
 def onOlOptionsButton(self):
     """Invoke note-specific options dialog"""
     if not checkModel(self.note.model()):
@@ -208,7 +221,7 @@ def onOlOptionsButton(self):
     options = OlcOptionsNote(self.parentWindow)
     options.exec_()
 
-
+@editorSaveThen
 def onOlClozeButton(self, markup=None, parent=None):
     """Invokes an instance of the main add-on class"""
     if not checkModel(self.note.model()):
@@ -293,6 +306,21 @@ def onSetupEditorButtons21(buttons, editor):
 
 # Callbacks
 
+def onAddCards20(self, _old):
+    """Automatically generate overlapping clozes before adding cards"""
+    note = self.editor.note
+    if not note or not checkModel(note.model(), notify=False):
+        return _old(self)
+    overlapper = ClozeOverlapper(self.editor, silent=True)
+    ret, total = overlapper.add()
+    if not ret:
+        return
+    oldret = _old(self)
+    if total:
+        showTT("Info", "Added %d overlapping cloze cards" % total, period=1000)
+    return oldret
+
+
 def onAddCards(self, _old):
     """Automatically generate overlapping clozes before adding cards"""
     note = self.editor.note
@@ -356,10 +384,12 @@ def initializeEditor():
         addHook("setupEditorButtons", onSetupEditorButtons21)
 
     # AddCard / EditCurrent windows
-    AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
     AddCards.addNote = wrap(AddCards.addNote, onAddNote, "around")
     if ANKI20:
+        AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
         EditCurrent.onSave = wrap(EditCurrent.onSave, onEditCurrent, "around")
     else:
+        # always use the methods that are fired on editor save:
+        AddCards._addCards = wrap(AddCards._addCards, onAddCards, "around")
         EditCurrent._saveAndClose = wrap(EditCurrent._saveAndClose,
                                          onEditCurrent, "around")
