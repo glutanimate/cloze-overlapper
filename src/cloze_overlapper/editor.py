@@ -135,7 +135,9 @@ if (typeof window.getSelection != "undefined") {
 }
 """
 
-# Editor
+# EDITOR
+
+# Button callbacks
 
 
 def onInsertCloze(self, _old):
@@ -216,7 +218,50 @@ def onOlClozeButton(self, markup=None, parent=None):
     overlapper.add()
 
 
-def onSetupEditorButtons(buttons, editor):
+# Patching buttons in
+
+def setupAdditionalHotkeys(editor):
+    add_ol_cut = QShortcut(QKeySequence(_(olc_hotkey_olist)), editor.widget)
+    add_ol_cut.activated.connect(lambda o="ol": onOlClozeButton(editor, o))
+    add_ul_cut = QShortcut(QKeySequence(_(olc_hotkey_ulist)), editor.widget)
+    add_ul_cut.activated.connect(lambda o="ul": onOlClozeButton(editor, o))
+
+    mult_cloze_cut1 = QShortcut(QKeySequence(
+        _(olc_hotkey_mcloze)), editor.widget)
+    mult_cloze_cut1.activated.connect(lambda: onInsertMultipleClozes(editor))
+    mult_cloze_cut2 = QShortcut(QKeySequence(
+        _(olc_hotkey_mclozealt)), editor.widget)
+    mult_cloze_cut2.activated.connect(lambda: onInsertMultipleClozes(editor))
+
+
+def onSetupEditorButtons20(editor):
+    """Add buttons and hotkeys to the editor widget"""
+
+    b = editor._addButton("Cloze Overlapper",
+                          editor.onOlClozeButton, _(olc_hotkey_generate),
+                          "Generate overlapping clozes (%s)" % _(
+                              olc_hotkey_generate),
+                          text="[.]]", size=True)
+    b.setFixedWidth(24)
+
+    b = editor._addButton("Cloze Overlapper Note Settings",
+                          editor.onOlOptionsButton, _(olc_hotkey_settings),
+                          "Overlapping cloze generation settings (%s)" % _(
+                              olc_hotkey_settings),
+                          text="[O]", size=True)
+    b.setFixedWidth(24)
+
+    b = editor._addButton("Remove Clozes",
+                          editor.onRemoveClozes, _(olc_hotkey_cremove),
+                          "Remove all cloze markers<br>in selected text (%s)" % _(
+                              olc_hotkey_cremove),
+                          text="rc", size=True)
+    b.setFixedWidth(24)
+
+    setupAdditionalHotkeys(editor)
+
+
+def onSetupEditorButtons21(buttons, editor):
     """Add buttons and hotkeys"""
 
     b = editor.addButton("", "OlCloze", onOlClozeButton,
@@ -237,22 +282,14 @@ def onSetupEditorButtons(buttons, editor):
                          "rc", keys=olc_hotkey_cremove)
     buttons.append(b)
 
-    add_ol_cut = QShortcut(QKeySequence(_(olc_hotkey_olist)), editor.widget)
-    add_ol_cut.activated.connect(lambda o="ol": onOlClozeButton(editor, o))
-    add_ul_cut = QShortcut(QKeySequence(_(olc_hotkey_ulist)), editor.widget)
-    add_ul_cut.activated.connect(lambda o="ul": onOlClozeButton(editor, o))
-
-    mult_cloze_cut1 = QShortcut(QKeySequence(
-        _(olc_hotkey_mcloze)), editor.widget)
-    mult_cloze_cut1.activated.connect(lambda: onInsertMultipleClozes(editor))
-    mult_cloze_cut2 = QShortcut(QKeySequence(
-        _(olc_hotkey_mclozealt)), editor.widget)
-    mult_cloze_cut2.activated.connect(lambda: onInsertMultipleClozes(editor))
+    setupAdditionalHotkeys(editor)
 
     return buttons
 
 
-# AddCards and EditCurrent windows
+# ADDCARDS / EDITCURRENT
+
+# Callbacks
 
 def onAddCards(self, _old):
     """Automatically generate overlapping clozes before adding cards"""
@@ -301,15 +338,21 @@ def onAddNote(self, note, _old):
         mw.col.sched.suspendCards([last.id])
     return note
 
+# MAIN
+
 
 def initializeEditor():
     # Editor widget
-    addHook("setupEditorButtons", onSetupEditorButtons)
-    Editor.onOlClozeButton = onOlClozeButton
-    Editor.onOlOptionsButton = onOlOptionsButton
-    Editor.onInsertMultipleClozes = onInsertMultipleClozes
-    Editor.onRemoveClozes = onRemoveClozes
     Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
+    if not ANKI21:
+        Editor.onOlClozeButton = onOlClozeButton
+        Editor.onOlOptionsButton = onOlOptionsButton
+        Editor.onInsertMultipleClozes = onInsertMultipleClozes
+        Editor.onRemoveClozes = onRemoveClozes
+        addHook("setupEditorButtons", onSetupEditorButtons20)
+    else:
+        addHook("setupEditorButtons", onSetupEditorButtons21)
+
     # AddCard / EditCurrent windows
     AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
     AddCards.addNote = wrap(AddCards.addNote, onAddNote, "around")
