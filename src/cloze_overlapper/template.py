@@ -33,6 +33,9 @@
 Manages note type and templates
 """
 
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+
 from anki.consts import MODEL_CLOZE
 
 from aqt import mw
