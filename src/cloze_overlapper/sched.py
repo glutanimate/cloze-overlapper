@@ -33,12 +33,23 @@
 Modifications to Anki's scheduling
 """
 
-from anki.sched import Scheduler
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+
+from .libaddon.platform import ANKI21
+
+from anki.sched import Scheduler as SchedulerV1
+
+if ANKI21:
+    from anki.schedv2 import Scheduler as SchedulerV2
+    SCHEDULERS = (SchedulerV1, SchedulerV2)
+else:
+    SCHEDULERS = (SchedulerV1, )
+
 from anki.utils import ids2str, intTime
 from anki.hooks import wrap
 
 from aqt import mw
-
 from .template import checkModel
 
 
@@ -46,6 +57,7 @@ from .template import checkModel
 
 def myBurySiblings(self, card, _old):
     """Skip sibling burying for our note type if so configured"""
+    # --- MODIFICATION START ---
     if not checkModel(card.model(), fields=False, notify=False):
         return _old(self, card)
     sched_conf = mw.col.conf["olcloze"].get("sched", None)
@@ -55,17 +67,19 @@ def myBurySiblings(self, card, _old):
     if override_new and override_review:
         # sibling burying disabled entirely
         return
+    # --- MODIFICATION END ---
     toBury = []
     nconf, rconf = self._newConf(card), self._revConf(card)
     buryNew, buryRev = nconf.get("bury", True), rconf.get("bury", True)
     # loop through and remove from queues
     for cid, queue in self.col.db.execute("""
 select id, queue from cards where nid=? and id!=?
-and (queue=0 or (queue=2 and due<=?))""",
-                                          card.nid, card.id, self.today):
+and (queue=0 or (queue=2 and due<=?))""", card.nid, card.id, self.today):
         if queue == 2:
+            # --- MODIFICATION START ---
             if override_review:
                 continue
+            # --- MODIFICATION END ---
             if buryRev:
                 toBury.append(cid)
             try:
@@ -73,8 +87,10 @@ and (queue=0 or (queue=2 and due<=?))""",
             except ValueError:
                 pass
         else:
+            # --- MODIFICATION START ---
             if override_new:
                 continue
+            # --- MODIFICATION END ---
             if buryNew:
                 toBury.append(cid)
             try:
@@ -83,13 +99,19 @@ and (queue=0 or (queue=2 and due<=?))""",
                 pass
     # then bury
     if toBury:
-        self.col.db.execute(
-            "update cards set queue=-2,mod=?,usn=? where id in " +
-            ids2str(toBury),
-            intTime(), self.col.usn())
-        self.col.log(toBury)
+        # --- MODIFICATION START ---
+        if mw.col.schedVer() == 1:
+            self.col.db.execute(
+                "update cards set queue=-2,mod=?,usn=? where id in " +
+                ids2str(toBury),
+                intTime(), self.col.usn())
+            self.col.log(toBury)
+        elif mw.col.schedVer() == 2:
+            self.buryCards(toBury, manual=False)
+        # --- MODIFICATION END ---
 
 
 def initializeScheduler():
-    Scheduler._burySiblings = wrap(
-        Scheduler._burySiblings, myBurySiblings, "around")
+    for scheduler in SCHEDULERS:
+        scheduler._burySiblings = wrap(
+            scheduler._burySiblings, myBurySiblings, "around")
