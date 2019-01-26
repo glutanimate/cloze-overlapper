@@ -55,14 +55,14 @@ LINKS = {
     "help": "https://github.com/glutanimate/cloze-overlapper/wiki"
 }
 LICENSE = "GNU AGPLv3"
-LIBRARIES = ()
-AUTHORS = (
-    {"name": "Aristotelis P. <https//glutanimate.com/>", "years": "2016-2019",
-     "contact": "https://glutanimate.com"},
-)  # trailing comma required for single-element tuples
+LIBRARIES = []
+AUTHORS = [
+    {"name": "Aristotelis P. (Glutanimate)", "years": "2016-2019",
+     "contact": "https://glutanimate.com"}
+]
 # automatically sorted:
-CONTRIBUTORS = ("zjosua")
-SPONSORS = ()
+CONTRIBUTORS = ["zjosua"]
+SPONSORS = []
 
 
 # OLC
