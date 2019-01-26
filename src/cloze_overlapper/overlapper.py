@@ -33,7 +33,7 @@
 Adds overlapping clozes
 """
 
-from .consts import *
+from .libaddon.platform import ANKI21
 
 import re
 from operator import itemgetter
@@ -44,11 +44,9 @@ if not ANKI21:
 else:
     from bs4 import BeautifulSoup
 
-
 from aqt import mw
-from anki.utils import stripHTML
 
-from .config import loadConfig, parseNoteSettings, createNoteSettings
+from .config import config, parseNoteSettings, createNoteSettings
 from .generator import ClozeGenerator
 from .utils import warnUser, showTT
 
@@ -61,8 +59,7 @@ class ClozeOverlapper(object):
         self.ed = ed
         self.note = self.ed.note
         self.model = self.note.model()
-        self.config = loadConfig()
-        self.flds = self.config["flds"]
+        self.flds = config["synced"]["flds"]
         self.markup = markup
         self.silent = silent
         self.parent = parent
@@ -72,7 +69,7 @@ class ClozeOverlapper(object):
 
     def add(self):
         """Add overlapping clozes to note"""
-        self.ed.web.eval("saveField('key');") # save field
+        self.ed.web.eval("saveField('key');")  # save field
         original = self.note[self.flds["og"]]
         if not original:
             self.showTT("Reminder",
@@ -100,7 +97,7 @@ class ClozeOverlapper(object):
                 "Please enter at least 1 item to cloze.")
             return False, None
 
-        setopts = parseNoteSettings(self.note[self.flds["st"]], self.config)
+        setopts = parseNoteSettings(self.note[self.flds["st"]])
         maxfields = self.getMaxFields(self.model, self.flds["tx"])
         if not maxfields:
             return False, None

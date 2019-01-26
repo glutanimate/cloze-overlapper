@@ -33,7 +33,7 @@
 Qt resources
 """
 
-from ...consts import ANKI21
+from ...libaddon.platform import ANKI21
 
 if ANKI21:
     from .anki21 import *  # noqa: F401

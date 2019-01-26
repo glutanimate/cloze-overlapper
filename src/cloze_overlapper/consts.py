@@ -31,24 +31,41 @@
 
 """
 Addon-wide constants
-
-FIXME: temporary
 """
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
-import sys
-import os
-from anki import version
+from ._version import __version__
 
-ANKI21 = version.startswith("2.1.")
-sys_encoding = sys.getfilesystemencoding()
+__all__ = [
+    "ADDON_NAME", "ADDON_ID", "ADDON_VERSION", "LINKS",
+    "LICENSE", "LIBRARIES", "AUTHORS", "CONTRIBUTORS",
+    "SPONSORS",
+    "OLC_MODEL", "OLC_CARD", "OLC_MAX",
+    "OLC_FLDS", "OLC_FLDS_IDS", "OLC_FIDS_PRIV"
+]
 
-if ANKI21:
-    addon_path = os.path.dirname(__file__)
-else:
-    addon_path = os.path.dirname(__file__).decode(sys_encoding)
+# ADD-ON
+
+ADDON_NAME = "Cloze Overlapper"
+ADDON_ID = "969733775"
+ADDON_VERSION = __version__
+LINKS = {
+    "help": "https://github.com/glutanimate/cloze-overlapper/wiki"
+}
+LICENSE = "GNU AGPLv3"
+LIBRARIES = ()
+AUTHORS = (
+    {"name": "Aristotelis P. <https//glutanimate.com/>", "years": "2016-2019",
+     "contact": "https://glutanimate.com"},
+)  # trailing comma required for single-element tuples
+# automatically sorted:
+CONTRIBUTORS = ("zjosua")
+SPONSORS = ()
+
+
+# OLC
 
 # default model
 OLC_MODEL = "Cloze (overlapping)"
@@ -57,13 +74,14 @@ OLC_MAX = 20
 
 # default fields
 OLC_FLDS = {
-    'og': u"Original",
-    'tt': u"Title",
-    'rk': u"Remarks",
-    'sc': u"Sources",
-    'st': u"Settings",
-    'tx': u"Text",
-    'fl': u"Full"
+    'og': "Original",
+    'tt': "Title",
+    'rk': "Remarks",
+    'sc': "Sources",
+    'st': "Settings",
+    'tx': "Text",
+    'fl': "Full"
 }
 OLC_FLDS_IDS = ['og', 'tt', 'rk', 'sc', 'st', 'tx', 'fl']
-OLC_FIDS_PRIV = ['og', 'st', 'tx', 'fl'] # non-user editable
+OLC_FIDS_PRIV = ['og', 'st', 'tx', 'fl']  # non-user editable
+
