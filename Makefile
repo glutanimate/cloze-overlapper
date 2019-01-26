@@ -36,8 +36,8 @@
 SHELL := /bin/bash
 
 # Add-on info
-ADDON = $(shell basename $$(git rev-parse --show-toplevel))
-ADDONDIR = $(shell basename $$(find src -mindepth 1 -maxdepth 1 -type d | tail -1))
+ADDON = cloze-overlapper
+ADDONDIR = cloze_overlapper
 
 # Build tools
 PYENV20 = anki20tools
