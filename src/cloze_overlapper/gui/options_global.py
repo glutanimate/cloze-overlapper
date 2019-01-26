@@ -41,6 +41,8 @@ from anki.errors import AnkiError
 from aqt.qt import *
 from aqt import mw
 
+from ..libaddon.gui.about import get_about_string
+
 from ..config import config
 from ..consts import *
 
@@ -55,17 +57,21 @@ class OlcOptionsGlobal(QDialog):
         # load qt-designer form:
         self.f = settings_global.Ui_Dialog()
         self.f.setupUi(self)
-        self.f.textBrowser.setOpenExternalLinks(True)
-        self.f.buttonBox.accepted.connect(self.onAccept)
-        self.f.buttonBox.rejected.connect(self.onReject)
-        self.f.buttonBox.button(
-            QDialogButtonBox.RestoreDefaults).clicked.connect(self.onRestore)
+        self.setupUI()
         self.fndict = zip(OLC_FIDS_PRIV,
                           [self.f.le_og, self.f.le_st, self.f.le_tx, self.f.le_fl])
         self.fsched = (self.f.cb_ns_new, self.f.cb_ns_rev, self.f.cb_sfc)
         self.fopts = (self.f.cb_ncf, self.f.cb_ncl,
                       self.f.cb_incr, self.f.cb_gfc)
         self.setupValues(config["synced"])
+
+    def setupUI(self):
+        self.f.buttonBox.accepted.connect(self.onAccept)
+        self.f.buttonBox.rejected.connect(self.onReject)
+        self.f.buttonBox.button(
+            QDialogButtonBox.RestoreDefaults).clicked.connect(self.onRestore)
+        about_string = get_about_string()
+        self.f.htmlAbout.setHtml(about_string)
 
     def setupValues(self, values):
         """Set widget values"""
