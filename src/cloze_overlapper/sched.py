@@ -36,15 +36,15 @@ Modifications to Anki's scheduling
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
-from .libaddon.platform import ANKI21
+from .libaddon.platform import ANKI20
 
 from anki.sched import Scheduler as SchedulerV1
 
-if ANKI21:
+if ANKI20:
+    SCHEDULERS = (SchedulerV1, )
+else:
     from anki.schedv2 import Scheduler as SchedulerV2
     SCHEDULERS = (SchedulerV1, SchedulerV2)
-else:
-    SCHEDULERS = (SchedulerV1, )
 
 from anki.utils import ids2str, intTime
 from anki.hooks import wrap

@@ -36,13 +36,13 @@ Adds overlapping clozes
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
-from .libaddon.platform import ANKI21
+from .libaddon.platform import ANKI20
 
 import re
 from operator import itemgetter
 from itertools import groupby
 
-if not ANKI21:
+if ANKI20:
     from BeautifulSoup import BeautifulSoup
 else:
     from bs4 import BeautifulSoup
@@ -148,8 +148,11 @@ class ClozeOverlapper(object):
 
     def getLineItems(self, html):
         """Detects HTML list markups and returns a list of plaintext lines"""
-        soup = BeautifulSoup(html, "html.parser")
-        text = soup.getText("\n") # will need to be updated for bs4
+        if ANKI20:
+            soup = BeautifulSoup(html)
+        else:
+            soup = BeautifulSoup(html, "html.parser")
+        text = soup.getText("\n")  # will need to be updated for bs4
         if soup.findAll("ol"):
             self.markup = "ol"
         elif soup.findAll("ul"):

@@ -33,11 +33,11 @@
 Qt resources
 """
 
-from ...libaddon.platform import ANKI21
+from ...libaddon.platform import ANKI20
 
-if ANKI21:
-    from .anki21 import *  # noqa: F401
-else:
+if ANKI20:
     from .anki20 import *  # noqa: F401
+else:
+    from .anki21 import *  # noqa: F401
 
 QRC_PREFIX = "cloze_overlapper"

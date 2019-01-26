@@ -46,7 +46,7 @@ from aqt.addcards import AddCards
 from aqt.editcurrent import EditCurrent
 from aqt.utils import tooltip, showInfo
 
-from .libaddon.platform import ANKI21
+from .libaddon.platform import ANKI20
 
 from .overlapper import ClozeOverlapper
 from .gui.options_note import OlcOptionsNote
@@ -343,7 +343,7 @@ def onAddNote(self, note, _old):
 def initializeEditor():
     # Editor widget
     Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
-    if not ANKI21:
+    if ANKI20:
         Editor.onOlClozeButton = onOlClozeButton
         Editor.onOlOptionsButton = onOlOptionsButton
         Editor.onInsertMultipleClozes = onInsertMultipleClozes
@@ -355,7 +355,7 @@ def initializeEditor():
     # AddCard / EditCurrent windows
     AddCards.addCards = wrap(AddCards.addCards, onAddCards, "around")
     AddCards.addNote = wrap(AddCards.addNote, onAddNote, "around")
-    if not ANKI21:
+    if ANKI20:
         EditCurrent.onSave = wrap(EditCurrent.onSave, onEditCurrent, "around")
     else:
         EditCurrent._saveAndClose = wrap(EditCurrent._saveAndClose,
