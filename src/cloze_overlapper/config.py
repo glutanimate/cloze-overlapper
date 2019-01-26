@@ -109,7 +109,7 @@ config_defaults = {
         "dflts": [1, 1, 0],
         "dflto": [False, False, False, False],
         "flds": OLC_FLDS,
-        "sched": [True, False, False],
+        "sched": [True, True, False],
         "olmdls": [OLC_MODEL],
         "version": ADDON_VERSION
     }
