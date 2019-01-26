@@ -12,6 +12,10 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [Unreleased]
 
+## [0.4.0-dev.2] - 2019-01-26
+
+### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.2)
+
 ### Added
 
 ### Changed
