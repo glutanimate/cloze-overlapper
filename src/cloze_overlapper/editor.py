@@ -263,6 +263,8 @@ def onSetupEditorButtons20(editor):
 def onSetupEditorButtons21(buttons, editor):
     """Add buttons and hotkeys"""
 
+    # bind to editor.olc_hotkey_generate because anki21 passes
+    # editor instance by default
     b = editor.addButton("", "OlCloze", onOlClozeButton,
                          "Generate overlapping clozes (%s)" % _(
                              olc_hotkey_generate),
