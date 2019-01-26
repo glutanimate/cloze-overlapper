@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="-194.47278"
-     inkscape:cy="-32.88813"
+     inkscape:zoom="3.959798"
+     inkscape:cx="19.537909"
+     inkscape:cy="-10.222152"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -40,7 +40,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <dc:creator>
           <cc:Agent>
             <dc:title>Aristotelis P. (Glutanimate)</dc:title>
@@ -88,15 +88,15 @@
     </g>
     <g
        id="g913"
-       transform="matrix(0.70649896,0,0,0.70649896,18.17187,329.44134)"
-       style="stroke:#ff0000;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
+       transform="matrix(0.70649896,0,0,0.70649896,9.0804978,319.8449)"
+       style="stroke:#de8787;stroke-width:10;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">
       <path
          inkscape:connector-curvature="0"
          id="path907"
          d="M 3.0304576,1120.2468 C 56.189735,1067.0875 56.189735,1067.0875 56.189735,1067.0875"
-         style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="fill:none;fill-rule:evenodd;stroke:#de8787;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <path
-         style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:none;fill-rule:evenodd;stroke:#de8787;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="M 56.189735,1120.2468 C 3.0304576,1067.0875 3.0304576,1067.0875 3.0304576,1067.0875"
          id="path909"
          inkscape:connector-curvature="0" />
