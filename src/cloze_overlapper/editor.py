@@ -46,7 +46,7 @@ from aqt.addcards import AddCards
 from aqt.editcurrent import EditCurrent
 from aqt.utils import tooltip, showInfo
 
-from .libaddon.platform import ANKI20
+from .libaddon.platform import ANKI20, PATH_ADDON
 
 from .overlapper import ClozeOverlapper
 from .gui.options_note import OlcOptionsNote
@@ -232,6 +232,10 @@ def setupAdditionalHotkeys(editor):
         _(olc_hotkey_mclozealt)), editor.widget)
     mult_cloze_cut2.activated.connect(lambda: onInsertMultipleClozes(editor))
 
+icon_path = os.path.join(PATH_ADDON, "gui", "resources", "icons")
+icon_generate = os.path.join(icon_path, "oc_generate.svg")
+icon_options = os.path.join(icon_path, "oc_options.svg")
+icon_remove = os.path.join(icon_path, "oc_remove.svg")
 
 def onSetupEditorButtons20(editor):
     """Add buttons and hotkeys to the editor widget"""
@@ -239,22 +243,22 @@ def onSetupEditorButtons20(editor):
     b = editor._addButton("Cloze Overlapper",
                           editor.onOlClozeButton, _(olc_hotkey_generate),
                           "Generate overlapping clozes (%s)" % _(
-                              olc_hotkey_generate),
-                          text="[.]]", size=True)
+                              olc_hotkey_generate), size=True)
+    b.setIcon(QIcon(icon_generate))
     b.setFixedWidth(24)
 
     b = editor._addButton("Cloze Overlapper Note Settings",
                           editor.onOlOptionsButton, _(olc_hotkey_settings),
                           "Overlapping cloze generation settings (%s)" % _(
-                              olc_hotkey_settings),
-                          text="[O]", size=True)
+                              olc_hotkey_settings), size=True)
+    b.setIcon(QIcon(icon_options))
     b.setFixedWidth(24)
 
     b = editor._addButton("Remove Clozes",
                           editor.onRemoveClozes, _(olc_hotkey_cremove),
                           "Remove all cloze markers<br>in selected text (%s)" % _(
-                              olc_hotkey_cremove),
-                          text="rc", size=True)
+                              olc_hotkey_cremove), size=True)
+    b.setIcon(QIcon(icon_remove))
     b.setFixedWidth(24)
 
     setupAdditionalHotkeys(editor)
@@ -265,22 +269,19 @@ def onSetupEditorButtons21(buttons, editor):
 
     # bind to editor.olc_hotkey_generate because anki21 passes
     # editor instance by default
-    b = editor.addButton("", "OlCloze", onOlClozeButton,
+    b = editor.addButton(icon_generate, "OlCloze", onOlClozeButton,
                          "Generate overlapping clozes (%s)" % _(
-                             olc_hotkey_generate),
-                         "[.]]", keys=olc_hotkey_generate)
+                             olc_hotkey_generate), keys=olc_hotkey_generate)
     buttons.append(b)
 
-    b = editor.addButton("", "OlOptions", onOlOptionsButton,
+    b = editor.addButton(icon_options, "OlOptions", onOlOptionsButton,
                          "Overlapping cloze generation settings (%s)" % _(
-                             olc_hotkey_settings),
-                         "[O]", keys=olc_hotkey_settings)
+                             olc_hotkey_settings), keys=olc_hotkey_settings)
     buttons.append(b)
 
-    b = editor.addButton("", "RemoveClozes", onRemoveClozes,
+    b = editor.addButton(icon_remove, "RemoveClozes", onRemoveClozes,
                          "Remove all cloze markers in selected text (%s)" % _(
-                             olc_hotkey_cremove),
-                         "rc", keys=olc_hotkey_cremove)
+                             olc_hotkey_cremove), keys=olc_hotkey_cremove)
     buttons.append(b)
 
     setupAdditionalHotkeys(editor)

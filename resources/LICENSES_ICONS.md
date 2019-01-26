@@ -26,14 +26,13 @@ Adapted under the [Creative Commons Attribution-ShareAlike 4.0 International lic
 
 The following icons were either based off of public domain works or designed from scratch:
 
-- circle.svg
-- down.svg
-- left.svg
-- right.svg
 - options.svg
 - rate.svg
+- oc_generate.svg
+- oc_options.svg
+- oc_remove.svg
 
-They are Copyright (c) 2018 Glutanimate.
+They are Copyright (c) 2018-2019 Glutanimate.
 
 **License**
 
