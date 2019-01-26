@@ -148,7 +148,7 @@ class ClozeOverlapper(object):
 
     def getLineItems(self, html):
         """Detects HTML list markups and returns a list of plaintext lines"""
-        if ANKI20:
+        if ANKI20:  # do not supply parser to avoid AttributeError
             soup = BeautifulSoup(html)
         else:
             soup = BeautifulSoup(html, "html.parser")
