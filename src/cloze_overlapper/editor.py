@@ -343,11 +343,11 @@ def onAddNote(self, note, _old):
 def initializeEditor():
     # Editor widget
     Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
+    Editor.onOlClozeButton = onOlClozeButton
+    Editor.onOlOptionsButton = onOlOptionsButton
+    Editor.onInsertMultipleClozes = onInsertMultipleClozes
+    Editor.onRemoveClozes = onRemoveClozes
     if ANKI20:
-        Editor.onOlClozeButton = onOlClozeButton
-        Editor.onOlOptionsButton = onOlOptionsButton
-        Editor.onInsertMultipleClozes = onInsertMultipleClozes
-        Editor.onRemoveClozes = onRemoveClozes
         addHook("setupEditorButtons", onSetupEditorButtons20)
     else:
         addHook("setupEditorButtons", onSetupEditorButtons21)
