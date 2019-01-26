@@ -70,7 +70,7 @@ html_template = """\
     {title}
     <p><span style="font-weight:600;">Credits</span></p>
     {authors_string}
-    <p>With patches from: <i>{contributors_string}</i></p>
+    <p>With patches by: <i>{contributors_string}</i></p>
     {libs_string}
     
     <p><img src="qrc:/{qrc_prefix}/icons/heart_small.svg"/><span style=" font-weight:600;"> Thank you!</span></p>
