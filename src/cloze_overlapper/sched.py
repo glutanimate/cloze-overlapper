@@ -57,7 +57,7 @@ from .template import checkModel
 
 def myBurySiblings(self, card, _old):
     """Skip sibling burying for our note type if so configured"""
-    # --- MODIFICATION START ---
+    # <MODIFICATION>
     if not checkModel(card.model(), fields=False, notify=False):
         return _old(self, card)
     sched_conf = mw.col.conf["olcloze"].get("sched", None)
@@ -67,7 +67,7 @@ def myBurySiblings(self, card, _old):
     if override_new and override_review:
         # sibling burying disabled entirely
         return
-    # --- MODIFICATION END ---
+    # </MODIFICATION>
     toBury = []
     nconf, rconf = self._newConf(card), self._revConf(card)
     buryNew, buryRev = nconf.get("bury", True), rconf.get("bury", True)
@@ -76,10 +76,10 @@ def myBurySiblings(self, card, _old):
 select id, queue from cards where nid=? and id!=?
 and (queue=0 or (queue=2 and due<=?))""", card.nid, card.id, self.today):
         if queue == 2:
-            # --- MODIFICATION START ---
+            # <MODIFICATION>
             if override_review:
                 continue
-            # --- MODIFICATION END ---
+            # </MODIFICATION>
             if buryRev:
                 toBury.append(cid)
             try:
@@ -87,10 +87,10 @@ and (queue=0 or (queue=2 and due<=?))""", card.nid, card.id, self.today):
             except ValueError:
                 pass
         else:
-            # --- MODIFICATION START ---
+            # <MODIFICATION>
             if override_new:
                 continue
-            # --- MODIFICATION END ---
+            # </MODIFICATION>
             if buryNew:
                 toBury.append(cid)
             try:
@@ -99,7 +99,7 @@ and (queue=0 or (queue=2 and due<=?))""", card.nid, card.id, self.today):
                 pass
     # then bury
     if toBury:
-        # --- MODIFICATION START ---
+        # <MODIFICATION>
         if mw.col.schedVer() == 1:
             self.col.db.execute(
                 "update cards set queue=-2,mod=?,usn=? where id in " +
@@ -108,7 +108,7 @@ and (queue=0 or (queue=2 and due<=?))""", card.nid, card.id, self.today):
             self.col.log(toBury)
         elif mw.col.schedVer() == 2:
             self.buryCards(toBury, manual=False)
-        # --- MODIFICATION END ---
+        # </MODIFICATION>
 
 
 def initializeScheduler():

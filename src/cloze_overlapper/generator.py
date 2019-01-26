@@ -131,8 +131,8 @@ class ClozeGenerator(object):
 
     def getBeforeStart(self, idx, start_c):
         """Determine start index of preceding context"""
-        if (self.before == 0 or start_c < 1
-                or (self.before and self.options[1] and idx == self.total)):
+        if (self.before == 0 or start_c < 1 or
+                (self.before and self.options[1] and idx == self.total)):
             return None
         if self.before is None or self.before > start_c:
             return 0
@@ -141,8 +141,8 @@ class ClozeGenerator(object):
     def getAfterEnd(self, idx):
         """Determine end index of following context"""
         left = self.total - idx
-        if (self.after == 0 or left < 1
-                or (self.after and self.options[0] and idx == self.start)):
+        if (self.after == 0 or left < 1 or
+                (self.after and self.options[0] and idx == self.start)):
             return None
         if self.after is None or self.after > left:
             return self.total

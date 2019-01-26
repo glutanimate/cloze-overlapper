@@ -78,10 +78,10 @@ class OlcOptionsNote(QDialog):
         before = self.f.sb_before.value()
         after = self.f.sb_after.value()
         prompt = self.f.sb_cloze.value()
-        if before == -1:
-            before = None
-        if after == -1:
-            after = None
+        
+        before = before if before != -1 else None
+        after = after if after != -1 else None
+
         settings = [before, prompt, after]
         options = [i.isChecked() for i in (
             self.f.cb_ncf, self.f.cb_ncl,
@@ -89,11 +89,17 @@ class OlcOptionsNote(QDialog):
         setopts = (settings, options)
         settings_fld = createNoteSettings(setopts)
         self.note[self.flds["st"]] = settings_fld
+        
         self.ed.loadNote()
-        self.ed.web.eval("focusField(%d);" % self.ed.currentField)
+        
+        if self.ed.currentField is not None:
+            self.ed.web.eval("focusField(%d);" % self.ed.currentField)
+        else:
+            self.ed.web.eval("focusField(0);")
+        
         self.ed.onOlClozeButton(parent=self.parent)
+        
         self.close()
 
     def onReject(self):
         self.close()
-

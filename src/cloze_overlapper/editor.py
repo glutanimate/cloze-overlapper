@@ -156,7 +156,7 @@ def editorSaveThen(callback):
         return callback
 
     def onSaved(editor, *args, **kwargs):
-        # uses evalWithCallback
+        # uses evalWithCallback internally:
         editor.saveNow(lambda: callback(editor, *args, **kwargs))
 
     return onSaved
@@ -269,9 +269,9 @@ def onOlClozeButton(editor, markup=None, parent=None):
     
     # JS-based, thus run asynchronously on anki21
     if markup:
-        return applyMarkupThen(editor, markup, onMarkupApplied)
-    
-    onMarkupApplied()
+        applyMarkupThen(editor, markup, onMarkupApplied)
+    else:
+        onMarkupApplied()
 
 
 # Patching buttons in

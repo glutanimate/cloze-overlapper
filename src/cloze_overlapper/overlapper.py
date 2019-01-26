@@ -47,8 +47,6 @@ if ANKI20:
 else:
     from bs4 import BeautifulSoup
 
-from aqt import mw
-
 from .config import config, parseNoteSettings, createNoteSettings
 from .generator import ClozeGenerator
 from .utils import warnUser, showTT
@@ -124,7 +122,8 @@ class ClozeOverlapper(object):
                         total, period=1000)
 
         self.ed.loadNote()
-        if not self.ed.currentField is None:
+        
+        if self.ed.currentField is not None:
             self.ed.web.eval("focusField(%d);" % self.ed.currentField)
         else:
             self.ed.web.eval("focusField(0);")
