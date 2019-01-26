@@ -38,8 +38,11 @@ from __future__ import (absolute_import, division,
 
 from aqt.utils import showWarning, tooltip
 
+
 def warnUser(reason, text):
-    showWarning(("<b>%s Error</b>: " % reason) + text, title="Cloze Overlapper")
+    showWarning(("<b>%s Error</b>: " % reason) +
+                text, title="Cloze Overlapper")
+
 
 def showTT(title, text, period=3000, parent=None):
     tooltip(u"<b>%s</b>: %s" % (title, text), period, parent)

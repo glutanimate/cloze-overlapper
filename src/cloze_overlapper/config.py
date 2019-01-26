@@ -43,6 +43,7 @@ from .libaddon.anki.configmanager import ConfigManager
 
 from .consts import *
 
+
 def parseNoteSettings(html):
     """Return note settings. Fall back to defaults if necessary."""
     options, settings, opts, sets = None, None, None, None
@@ -92,6 +93,7 @@ def parseNoteSettings(html):
                 opts.append(dflt_opt[i])
 
     return (sets, opts)
+
 
 def createNoteSettings(setopts):
     """Create plain text settings string"""

@@ -141,13 +141,15 @@ if (typeof window.getSelection != "undefined") {
 # anki21 executes JS asynchronously. In order to assure that we are working
 # with the most recent field contents, we use a decorator to fire the
 # button/hotkey callback after performing a manual save:
+
+
 def editorSaveThen(callback):
     if ANKI20:
         return callback
-    
+
     def onSaved(editor, *args, **kwargs):
         editor.saveNow(lambda: callback(editor, *args, **kwargs))
-    
+
     return onSaved
 
 
@@ -204,6 +206,7 @@ to a cloze type first, via Edit>Change Note Type."""))
     self.web.eval(js_cloze_multi % (
         increment, highest, wrap_pre, wrap_post))
 
+
 @editorSaveThen
 def onRemoveClozes(self):
     """Remove cloze markers and hints from selected text"""
@@ -213,6 +216,7 @@ def onRemoveClozes(self):
         cloze_re = r"\{\{c(\d+)::(.*?)(::(.*?))?\}\}"
     self.web.eval(js_cloze_remove % cloze_re)
 
+
 @editorSaveThen
 def onOlOptionsButton(self):
     """Invoke note-specific options dialog"""
@@ -220,6 +224,7 @@ def onOlOptionsButton(self):
         return False
     options = OlcOptionsNote(self.parentWindow)
     options.exec_()
+
 
 @editorSaveThen
 def onOlClozeButton(self, markup=None, parent=None):
@@ -245,10 +250,12 @@ def setupAdditionalHotkeys(editor):
         _(olc_hotkey_mclozealt)), editor.widget)
     mult_cloze_cut2.activated.connect(lambda: onInsertMultipleClozes(editor))
 
+
 icon_path = os.path.join(PATH_ADDON, "gui", "resources", "icons")
 icon_generate = os.path.join(icon_path, "oc_generate.svg")
 icon_options = os.path.join(icon_path, "oc_options.svg")
 icon_remove = os.path.join(icon_path, "oc_remove.svg")
+
 
 def onSetupEditorButtons20(editor):
     """Add buttons and hotkeys to the editor widget"""
@@ -305,21 +312,6 @@ def onSetupEditorButtons21(buttons, editor):
 # ADDCARDS / EDITCURRENT
 
 # Callbacks
-
-def onAddCards20(self, _old):
-    """Automatically generate overlapping clozes before adding cards"""
-    note = self.editor.note
-    if not note or not checkModel(note.model(), notify=False):
-        return _old(self)
-    overlapper = ClozeOverlapper(self.editor, silent=True)
-    ret, total = overlapper.add()
-    if not ret:
-        return
-    oldret = _old(self)
-    if total:
-        showTT("Info", "Added %d overlapping cloze cards" % total, period=1000)
-    return oldret
-
 
 def onAddCards(self, _old):
     """Automatically generate overlapping clozes before adding cards"""

@@ -44,9 +44,11 @@ from .template import initializeModels
 from .editor import initializeEditor
 from .sched import initializeScheduler
 
+
 def delayedInit():
     initializeModels()
     initializeScheduler()
+
 
 addHook("profileLoaded", delayedInit)
 initializeOptions()

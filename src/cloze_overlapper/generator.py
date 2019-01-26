@@ -36,6 +36,7 @@ Generates cloze texts for overlapping clozes.
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
+
 class ClozeGenerator(object):
     """Cloze generator"""
 
@@ -71,15 +72,17 @@ class ClozeGenerator(object):
             end_a = self.getAfterEnd(idx)
 
             if start_b is not None:
-                snippets[start_b:start_c] = self.removeHints(items[start_b:start_c])
+                snippets[start_b:start_c] = self.removeHints(
+                    items[start_b:start_c])
             if end_a is not None:
                 snippets[idx:end_a] = self.removeHints(items[idx:end_a])
-            snippets[start_c:idx] = self.formatCloze(items[start_c:idx], idx-self.start+1)
+            snippets[start_c:idx] = self.formatCloze(
+                items[start_c:idx], idx-self.start+1)
 
             field = self.formatSnippets(snippets, original, keys)
             fields.append(field)
         nr = len(fields)
-        if self.maxfields > self.total: # delete contents of unused fields
+        if self.maxfields > self.total:  # delete contents of unused fields
             fields = fields + [""] * (self.maxfields - len(fields))
         fullsnippet = self.formatCloze(items, self.maxfields + 1)
         full = self.formatSnippets(fullsnippet, original, keys)
@@ -111,7 +114,7 @@ class ClozeGenerator(object):
         if not html:
             return snippets
         for nr, phrase in zip(keys, snippets):
-            if phrase == "...": # placeholder, replace all instances
+            if phrase == "...":  # placeholder, replace all instances
                 html = html.replace("{{" + nr + "}}", phrase)
             elif not isinstance(phrase, (list, tuple)):
                 html = html.replace("{{" + nr + "}}", phrase, 1)
@@ -124,12 +127,12 @@ class ClozeGenerator(object):
         """Determine start index of clozed items"""
         if idx < self.prompt or idx > self.total:
             return 0
-        return idx-self.prompt # looking back from current index
+        return idx-self.prompt  # looking back from current index
 
     def getBeforeStart(self, idx, start_c):
         """Determine start index of preceding context"""
-        if (self.before == 0 or start_c < 1 
-          or (self.before and self.options[1] and idx == self.total)):
+        if (self.before == 0 or start_c < 1
+                or (self.before and self.options[1] and idx == self.total)):
             return None
         if self.before is None or self.before > start_c:
             return 0
@@ -139,7 +142,7 @@ class ClozeGenerator(object):
         """Determine end index of following context"""
         left = self.total - idx
         if (self.after == 0 or left < 1
-          or (self.after and self.options[0] and idx == self.start)):
+                or (self.after and self.options[0] and idx == self.start)):
             return None
         if self.after is None or self.after > left:
             return self.total

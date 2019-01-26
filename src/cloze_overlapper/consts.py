@@ -84,4 +84,3 @@ OLC_FLDS = {
 }
 OLC_FLDS_IDS = ['og', 'tt', 'rk', 'sc', 'st', 'tx', 'fl']
 OLC_FIDS_PRIV = ['og', 'st', 'tx', 'fl']  # non-user editable
-
