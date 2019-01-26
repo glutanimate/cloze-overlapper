@@ -10,189 +10,178 @@
     <height>210</height>
    </rect>
   </property>
-  <property name="minimumSize">
-   <size>
-    <width>390</width>
-    <height>210</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>390</width>
-    <height>210</height>
-   </size>
-  </property>
   <property name="windowTitle">
    <string>Overlapping Cloze Note Settings</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>176</y>
-     <width>371</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QWidget" name="verticalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>371</width>
-     <height>158</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <layout class="QGridLayout" name="gridLayout_1">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <item row="1" column="2">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Context After</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QSpinBox" name="sb_before">
-        <property name="toolTip">
-         <string>Number of context cues before the prompt.&lt;br&gt;Set to -1/'all' to show all previous items as context</string>
-        </property>
-        <property name="specialValueText">
-         <string>all</string>
-        </property>
-        <property name="minimum">
-         <number>-1</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="sb_cloze">
-        <property name="toolTip">
-         <string>Number of items to prompt for per card</string>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Context Before</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Cloze Prompts</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QSpinBox" name="sb_after">
-        <property name="toolTip">
-         <string>Number of context cues after the prompt.&lt;br&gt;Set to -1/'all' to show all following items as context</string>
-        </property>
-        <property name="specialValueText">
-         <string>all</string>
-        </property>
-        <property name="minimum">
-         <number>-1</number>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" colspan="3">
-       <widget class="QLabel" name="label_1">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Context Cues and Prompts&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="cb_ncf">
-        <property name="toolTip">
-         <string>Don't provide any context cues for first cloze item</string>
-        </property>
-        <property name="text">
-         <string>No cues for first item</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" colspan="2">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other Cloze Generation Options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="cb_ncl">
-        <property name="toolTip">
-         <string>Don't provide any context cues for last cloze item</string>
-        </property>
-        <property name="text">
-         <string>No cues for last item</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QCheckBox" name="cb_incr">
-        <property name="toolTip">
-         <string>For notes that have multiple clozes revealed per card,&lt;br&gt;gradually build up to full reveal count at the start,&lt;br&gt;and vice-versa in the end</string>
-        </property>
-        <property name="text">
-         <string>Gradual build-up/-down</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="cb_gfc">
-        <property name="toolTip">
-         <string>Disable cards that prompt you for all items at once</string>
-        </property>
-        <property name="text">
-         <string>Don't generate full cloze</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QGridLayout" name="gridLayout_1">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Context After</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QSpinBox" name="sb_before">
+         <property name="toolTip">
+          <string>Number of context cues before the prompt.&lt;br&gt;Set to -1/'all' to show all previous items as context</string>
+         </property>
+         <property name="specialValueText">
+          <string>all</string>
+         </property>
+         <property name="minimum">
+          <number>-1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QSpinBox" name="sb_cloze">
+         <property name="toolTip">
+          <string>Number of items to prompt for per card</string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Context Before</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Cloze Prompts</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QSpinBox" name="sb_after">
+         <property name="toolTip">
+          <string>Number of context cues after the prompt.&lt;br&gt;Set to -1/'all' to show all following items as context</string>
+         </property>
+         <property name="specialValueText">
+          <string>all</string>
+         </property>
+         <property name="minimum">
+          <number>-1</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QLabel" name="label_1">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Context Cues and Prompts&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="cb_ncf">
+         <property name="toolTip">
+          <string>Don't provide any context cues for first cloze item</string>
+         </property>
+         <property name="text">
+          <string>No cues for first item</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Other Cloze Generation Options&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="cb_ncl">
+         <property name="toolTip">
+          <string>Don't provide any context cues for last cloze item</string>
+         </property>
+         <property name="text">
+          <string>No cues for last item</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="cb_incr">
+         <property name="toolTip">
+          <string>For notes that have multiple clozes revealed per card,&lt;br&gt;gradually build up to full reveal count at the start,&lt;br&gt;and vice-versa in the end</string>
+         </property>
+         <property name="text">
+          <string>Gradual build-up/-down</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="cb_gfc">
+         <property name="toolTip">
+          <string>Disable cards that prompt you for all items at once</string>
+         </property>
+         <property name="text">
+          <string>Don't generate full cloze</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <tabstops>
   <tabstop>sb_before</tabstop>
