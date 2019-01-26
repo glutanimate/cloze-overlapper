@@ -45,7 +45,7 @@ from anki.hooks import addHook, runHook
 from .._vendor.packaging import version
 
 from ..utils import deepMergeDicts
-from ..platform import ANKI21, PATH_ADDON, MODULE_ADDON
+from ..platform import ANKI20, PATH_ADDON, MODULE_ADDON
 
 DEFAULT_LOCAL_CONFIG_PATH = os.path.join(PATH_ADDON, "config.json")
 DEFAULT_LOCAL_META_PATH = os.path.join(PATH_ADDON, "meta.json")
@@ -136,7 +136,7 @@ class ConfigManager(object):
             self._storages["local"]["default"] = self._getLocalDefaults()
             self._setupLocalHooks()
         self._setupSaveHooks()
-        if ANKI21 and conf_action:
+        if not ANKI20 and conf_action:
             self.setConfigAction(conf_action)
         if preload:
             self._maybeLoad()
@@ -325,7 +325,7 @@ class ConfigManager(object):
         Arguments:
             action {function} -- Function to call
         """
-        if not ANKI21:
+        if ANKI20:
             return False
         self._conf_action = action
         self._setupConfigButtonHook(action)
@@ -405,7 +405,7 @@ class ConfigManager(object):
         Returns:
             dict -- Dictionary of config values
         """
-        if ANKI21:
+        if not ANKI20:
             return self.mw.addonManager.getConfig(MODULE_ADDON)
         else:
             config = self._addonConfigDefaults20()
@@ -421,7 +421,7 @@ class ConfigManager(object):
         Returns:
             dict -- Dictionary of default config values
         """
-        if ANKI21:
+        if not ANKI20:
             return self.mw.addonManager.addonConfigDefaults(MODULE_ADDON)
         else:
             return self._addonConfigDefaults20()
@@ -433,7 +433,7 @@ class ConfigManager(object):
         Arguments:
             dict -- Dictionary of local config values
         """
-        if ANKI21:
+        if not ANKI20:
             self.mw.addonManager.writeConfig(MODULE_ADDON, config)
         else:
             self._writeAddonMeta20({"config": config})

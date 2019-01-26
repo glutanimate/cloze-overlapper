@@ -40,9 +40,9 @@ from ..consts import (ADDON_NAME, LICENSE, LIBRARIES,
                       AUTHORS, CONTRIBUTORS, MEMBERS_CREDITED, MEMBERS_TOP,
                       QRC_PREFIX)
 
-from ..platform import ANKI21
+from ..platform import ANKI20
 
-if ANKI21:
+if not ANKI20:
     string = str
 else:
     import string
