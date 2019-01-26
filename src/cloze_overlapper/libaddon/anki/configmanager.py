@@ -199,7 +199,7 @@ class ConfigManager(object):
             self._config[name] = getter()
             self._storages[name]["loaded"] = True
 
-    def save(self, storage_name=None, profile_unload=False):
+    def save(self, storage_name=None, profile_unload=False, reset=False):
         """
         Write config values to their corresponding storages.
 
@@ -208,6 +208,10 @@ class ConfigManager(object):
         Keyword Arguments:
             storage_name {str} -- Storage to save. Saves all storages if
                                   left blank (default: {None}).
+            profile_unload {bool} -- whether save has been triggered on profile
+                                     unload
+            reset {bool} -- whether to reset mw upon save (overwrites
+                            reset_req instance attribute)
         """
         for name in ([storage_name] if storage_name else self._storages):
             self._checkStorage(name)
@@ -215,7 +219,7 @@ class ConfigManager(object):
             saver(self._config[name])
             self._storages[name]["dirty"] = True
 
-        if self._reset_req and not profile_unload:
+        if (self._reset_req or reset) and not profile_unload:
             self.mw.reset()
         
         if not profile_unload:
@@ -521,7 +525,7 @@ class ConfigManager(object):
         
         storage_dict = storage_obj[conf_key]
         dict_version = str(storage_dict.get("version", "0.0.0"))
-        default_version = default_dict["version"]
+        default_version = str(default_dict["version"])
 
         # Upgrade config version if necessary
         if (version.parse(dict_version) < version.parse(default_version)):
