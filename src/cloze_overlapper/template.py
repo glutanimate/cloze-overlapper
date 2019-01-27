@@ -232,10 +232,10 @@ def checkModel(model, fields=True, notify=True):
     if mname in config["synced"]["olmdls"] or mname.startswith(OLC_MODEL):
         is_olc = True
     if notify and not is_olc:
+        olc_types = sorted(set([OLC_MODEL] + config["synced"]["olmdls"]))
         showTT("Reminder", "Can only generate overlapping clozes<br>"
                "on the following note types:<br><br>{}".format(
-                   ", ".join(u"'{0}'".format(i)
-                             for i in config["synced"]["olmdls"]))
+                   ", ".join("'{0}'".format(i) for i in olc_types))
                )
     if not is_olc or not fields:
         return is_olc

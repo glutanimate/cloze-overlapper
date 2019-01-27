@@ -58,8 +58,8 @@ class OlcOptionsGlobal(QDialog):
         self.f = settings_global.Ui_Dialog()
         self.f.setupUi(self)
         self.setupUI()
-        self.fndict = zip(OLC_FIDS_PRIV,
-                          [self.f.le_og, self.f.le_st, self.f.le_tx, self.f.le_fl])
+        self.fndict = list(zip((i for i in OLC_FIDS_PRIV if i != "tx"),
+            [self.f.le_og, self.f.le_st, self.f.le_fl]))
         self.fsched = (self.f.cb_ns_new, self.f.cb_ns_rev, self.f.cb_sfc)
         self.fopts = (self.f.cb_ncf, self.f.cb_ncl,
                       self.f.cb_incr, self.f.cb_gfc)
