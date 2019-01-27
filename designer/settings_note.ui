@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>390</width>
-    <height>210</height>
+    <height>217</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -190,6 +190,7 @@
   <tabstop>cb_ncf</tabstop>
   <tabstop>cb_ncl</tabstop>
   <tabstop>cb_incr</tabstop>
+  <tabstop>cb_gfc</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>

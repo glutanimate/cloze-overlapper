@@ -365,11 +365,16 @@
   <tabstop>cb_ncf</tabstop>
   <tabstop>cb_ncl</tabstop>
   <tabstop>cb_incr</tabstop>
+  <tabstop>cb_gfc</tabstop>
+  <tabstop>cb_ns_new</tabstop>
+  <tabstop>cb_ns_rev</tabstop>
+  <tabstop>cb_sfc</tabstop>
   <tabstop>le_og</tabstop>
   <tabstop>le_st</tabstop>
   <tabstop>le_fl</tabstop>
   <tabstop>le_model</tabstop>
   <tabstop>buttonBox</tabstop>
+  <tabstop>htmlAbout</tabstop>
  </tabstops>
  <resources/>
  <connections>
