@@ -46,17 +46,13 @@ from .consts import *
 
 card_front = """\
 <!--template
-##################################################
 ######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
-##################################################
 -->
 
 <!--
-PLEASE DO NOT MODIFY THE TEMPLATE SECTIONS in this or any of the
-two fields below. Any changes between the template markers
-will be lost once the add-on updates its template.
-
-Please add your customizations after the default section.
+PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS. 
+Any changes between the 'template 'markers will be lost once
+the add-on updates its template.
 
 Copyright (C) 2016-2019 Aristotelis P. <https://glutanimate.com/>
 
@@ -100,9 +96,7 @@ https://ankiweb.net/shared/info/969733775
 </div>
 
 <!--
-/* ################################################### */
-/* ######### CLOZE OVERLAPPER DEFAULT TEMPLATE END ######### */
-/* ################################################### */
+/* ######## CLOZE OVERLAPPER DEFAULT TEMPLATE END ######## */
 /*template-->
 
 <!-- Add your customizations here: -->\
@@ -110,9 +104,13 @@ https://ankiweb.net/shared/info/969733775
 
 card_back = """\
 <!--template
-##################################################
 ######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
-##################################################
+-->
+
+<!--
+PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS. 
+Any changes between the 'template 'markers will be lost once
+the add-on updates its template.
 -->
 
 <div class="back">
@@ -195,11 +193,9 @@ var olToggle = function() {
 }
 </script>
 
-<!--
-/* ################################################### */
-/* ######### CLOZE OVERLAPPER DEFAULT TEMPLATE END ######### */
-/* ################################################### */
-/*template-->
+/*
+######### CLOZE OVERLAPPER DEFAULT TEMPLATE END #########
+*/template
 
 <!-- Add your customizations here: -->
 \
@@ -207,9 +203,13 @@ var olToggle = function() {
 
 card_css = """\
 /*template
-##################################################
 ######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
-##################################################
+*/
+
+/*
+PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS. 
+Any changes between the 'template 'markers will be lost once
+the add-on updates its template.
 */
 
 /* general card style */
@@ -295,9 +295,7 @@ html {
 }
 
 /*
-###################################################
-######### CLOZE OVERLAPPER DEFAULT TEMPLATE END #########
-###################################################
+######## CLOZE OVERLAPPER DEFAULT TEMPLATE END ########
 */template
 
 /* Add your customizations here: */
