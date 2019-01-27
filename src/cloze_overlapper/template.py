@@ -91,13 +91,13 @@ https://ankiweb.net/shared/info/969733775
         {{cloze:Text19}}
         {{cloze:Text20}}
         {{cloze:Full}}
-    <div class="hidden">
-        <div>{{Original}}</div>
+        <div class="hidden">
+            <div>{{Original}}</div>
+        </div>
     </div>
-  </div>
 </div>
 
-<!-- 
+<!--
 /* ################################################### */
 /* ######### CLOZE OVERLAPPER DEFAULT TEMPLATE END ######### */
 /* ################################################### */
@@ -114,47 +114,48 @@ card_back = """\
 -->
 
 <div class="back">
-  {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
-  <div class="text" id="clozed">
-    {{cloze:Text1}}
-    {{cloze:Text2}}
-    {{cloze:Text3}}
-    {{cloze:Text4}}
-    {{cloze:Text5}}
-    {{cloze:Text6}}
-    {{cloze:Text7}}
-    {{cloze:Text8}}
-    {{cloze:Text9}}
-    {{cloze:Text10}}
-    {{cloze:Text11}}
-    {{cloze:Text12}}
-    {{cloze:Text13}}
-    {{cloze:Text14}}
-    {{cloze:Text15}}
-    {{cloze:Text16}}
-    {{cloze:Text17}}
-    {{cloze:Text18}}
-    {{cloze:Text19}}
-    {{cloze:Text20}}
-    {{cloze:Full}}
-  </div>
-  <div class="extra"><hr></div>
-      <button id="btn-reveal" onclick="olToggle();">Reveal all clozes</button>
+    {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
+    <div class="text" id="clozed">
+        {{cloze:Text1}}
+        {{cloze:Text2}}
+        {{cloze:Text3}}
+        {{cloze:Text4}}
+        {{cloze:Text5}}
+        {{cloze:Text6}}
+        {{cloze:Text7}}
+        {{cloze:Text8}}
+        {{cloze:Text9}}
+        {{cloze:Text10}}
+        {{cloze:Text11}}
+        {{cloze:Text12}}
+        {{cloze:Text13}}
+        {{cloze:Text14}}
+        {{cloze:Text15}}
+        {{cloze:Text16}}
+        {{cloze:Text17}}
+        {{cloze:Text18}}
+        {{cloze:Text19}}
+        {{cloze:Text20}}
+        {{cloze:Full}}
         <div class="hidden">
-            <div id="original">{{Original}}</div>
+            <div>{{Original}}</div>
         </div>
-  <div class="extra">
-    {{#Remarks}}
-    <div class="extra-entry">
-      <div class="extra-descr">Remarks</div><div>{{Remarks}}</div>
     </div>
-    {{/Remarks}}
-    {{#Sources}}
-    <div class="extra-entry">
-      <div class="extra-descr">Sources</div><div>{{Sources}}</div>
+    <div class="extra"><hr></div>
+    <button id="btn-reveal" onclick="olToggle();">Reveal all clozes</button>
+    <div class="hidden"><div id="original">{{Original}}</div></div>
+    <div class="extra">
+        {{#Remarks}}
+        <div class="extra-entry">
+            <div class="extra-descr">Remarks</div><div>{{Remarks}}</div>
+        </div>
+        {{/Remarks}}
+        {{#Sources}}
+        <div class="extra-entry">
+            <div class="extra-descr">Sources</div><div>{{Sources}}</div>
+        </div>
+        {{/Sources}}
     </div>
-    {{/Sources}}
-  </div>
 </div>
 
 <script>
@@ -190,7 +191,7 @@ var olToggle = function() {
 }
 </script>
 
-<!-- 
+<!--
 /* ################################################### */
 /* ######### CLOZE OVERLAPPER DEFAULT TEMPLATE END ######### */
 /* ################################################### */
