@@ -69,28 +69,30 @@ https://ankiweb.net/shared/info/969733775
 
 <div class="front">
     {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
-    <div class="text" id="clozed">
-        {{cloze:Text1}}
-        {{cloze:Text2}}
-        {{cloze:Text3}}
-        {{cloze:Text4}}
-        {{cloze:Text5}}
-        {{cloze:Text6}}
-        {{cloze:Text7}}
-        {{cloze:Text8}}
-        {{cloze:Text9}}
-        {{cloze:Text10}}
-        {{cloze:Text11}}
-        {{cloze:Text12}}
-        {{cloze:Text13}}
-        {{cloze:Text14}}
-        {{cloze:Text15}}
-        {{cloze:Text16}}
-        {{cloze:Text17}}
-        {{cloze:Text18}}
-        {{cloze:Text19}}
-        {{cloze:Text20}}
-        {{cloze:Full}}
+    <div class="text">
+        <div id="clozed">
+            {{cloze:Text1}}
+            {{cloze:Text2}}
+            {{cloze:Text3}}
+            {{cloze:Text4}}
+            {{cloze:Text5}}
+            {{cloze:Text6}}
+            {{cloze:Text7}}
+            {{cloze:Text8}}
+            {{cloze:Text9}}
+            {{cloze:Text10}}
+            {{cloze:Text11}}
+            {{cloze:Text12}}
+            {{cloze:Text13}}
+            {{cloze:Text14}}
+            {{cloze:Text15}}
+            {{cloze:Text16}}
+            {{cloze:Text17}}
+            {{cloze:Text18}}
+            {{cloze:Text19}}
+            {{cloze:Text20}}
+            {{cloze:Full}}
+        </div>
         <div class="hidden">
             <div>{{Original}}</div>
         </div>
@@ -115,28 +117,30 @@ card_back = """\
 
 <div class="back">
     {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
-    <div class="text" id="clozed">
-        {{cloze:Text1}}
-        {{cloze:Text2}}
-        {{cloze:Text3}}
-        {{cloze:Text4}}
-        {{cloze:Text5}}
-        {{cloze:Text6}}
-        {{cloze:Text7}}
-        {{cloze:Text8}}
-        {{cloze:Text9}}
-        {{cloze:Text10}}
-        {{cloze:Text11}}
-        {{cloze:Text12}}
-        {{cloze:Text13}}
-        {{cloze:Text14}}
-        {{cloze:Text15}}
-        {{cloze:Text16}}
-        {{cloze:Text17}}
-        {{cloze:Text18}}
-        {{cloze:Text19}}
-        {{cloze:Text20}}
-        {{cloze:Full}}
+    <div class="text">
+        <div id="clozed">
+            {{cloze:Text1}}
+            {{cloze:Text2}}
+            {{cloze:Text3}}
+            {{cloze:Text4}}
+            {{cloze:Text5}}
+            {{cloze:Text6}}
+            {{cloze:Text7}}
+            {{cloze:Text8}}
+            {{cloze:Text9}}
+            {{cloze:Text10}}
+            {{cloze:Text11}}
+            {{cloze:Text12}}
+            {{cloze:Text13}}
+            {{cloze:Text14}}
+            {{cloze:Text15}}
+            {{cloze:Text16}}
+            {{cloze:Text17}}
+            {{cloze:Text18}}
+            {{cloze:Text19}}
+            {{cloze:Text20}}
+            {{cloze:Full}}
+        </div>
         <div class="hidden">
             <div>{{Original}}</div>
         </div>
