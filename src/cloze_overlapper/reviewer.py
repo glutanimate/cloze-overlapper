@@ -30,28 +30,45 @@
 # Any modifications to this file must keep this entire header intact.
 
 """
-Initializes add-on components.
+Additions to Anki's card reviewer
 """
 
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
+from aqt.qt import QKeySequence
 
-from anki.hooks import addHook
+from aqt.reviewer import Reviewer
+from anki.hooks import wrap
 
-from .gui.options_global import initializeOptions
-from .template import initializeModels
-from .editor import initializeEditor
-from .sched import initializeScheduler
-from .reviewer import initializeReviewer
+from .libaddon.platform import ANKI20
 
+olc_hotkey_reveal = "g"
+olc_keycode_reveal = QKeySequence(olc_hotkey_reveal)[0]
 
-def delayedInit():
-    initializeModels()
-    initializeScheduler()
+def onHintRevealHotkey(reviewer):
+    if reviewer.state != "answer":
+        return
+    reviewer.web.eval("""
+        var btn = document.getElementById("btn-reveal");
+        if (btn) { btn.click(); };
+    """)
 
+def newKeyHandler20(reviewer, evt):
+    """Bind mask reveal to a hotkey"""
+    if (evt.key() == olc_keycode_reveal):
+        onHintRevealHotkey(reviewer)
 
-addHook("profileLoaded", delayedInit)
-initializeOptions()
-initializeEditor()
-initializeReviewer()
+def onShortcutKeys21(reviewer, _old):
+    keys = _old(reviewer)
+    keys.append(
+        (olc_hotkey_reveal, lambda r=reviewer: onHintRevealHotkey(r)))
+    return keys
+
+def initializeReviewer():
+    if ANKI20:
+        Reviewer._keyHandler = wrap(
+            Reviewer._keyHandler, newKeyHandler20, "before")
+    else:
+        Reviewer._shortcutKeys = wrap(Reviewer._shortcutKeys, onShortcutKeys21,
+                                      "around")
