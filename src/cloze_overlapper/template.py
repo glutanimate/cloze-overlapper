@@ -45,9 +45,31 @@ from .utils import showTT, warnUser
 from .consts import *
 
 card_front = """\
+<!--template
+##################################################
+######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
+##################################################
+-->
+
+<!--
+PLEASE DO NOT MODIFY THE TEMPLATE SECTIONS in this or any of the
+two fields below. Any changes between the template markers
+will be lost once the add-on updates its template.
+
+Please add your customizations after the default section.
+
+Copyright (C) 2016-2019 Aristotelis P. <https://glutanimate.com/>
+
+The Cloze Overlapper card template is licensed under the CC BY-SA 4.0
+license (https://creativecommons.org/licenses/by-sa/4.0/).
+
+Get Cloze Overlapper for Anki at:
+https://ankiweb.net/shared/info/969733775
+-->
+
 <div class="front">
     {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
-    <div class="text">
+    <div class="text" id="clozed">
         {{cloze:Text1}}
         {{cloze:Text2}}
         {{cloze:Text3}}
@@ -69,63 +91,83 @@ card_front = """\
         {{cloze:Text19}}
         {{cloze:Text20}}
         {{cloze:Full}}
-        <div class="hidden">
+    <div class="hidden">
         <div>{{Original}}</div>
-        </div>
     </div>
-</div>\
+  </div>
+</div>
+
+<!-- 
+/* ################################################### */
+/* ######### CLOZE OVERLAPPER DEFAULT TEMPLATE END ######### */
+/* ################################################### */
+/*template-->
+
+<!-- Add your customizations here: -->\
 """
 
 card_back = """\
+<!--template
+##################################################
+######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
+##################################################
+-->
+
 <div class="back">
-    {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
-    <div class="text">
-        {{cloze:Text1}}
-        {{cloze:Text2}}
-        {{cloze:Text3}}
-        {{cloze:Text4}}
-        {{cloze:Text5}}
-        {{cloze:Text6}}
-        {{cloze:Text7}}
-        {{cloze:Text8}}
-        {{cloze:Text9}}
-        {{cloze:Text10}}
-        {{cloze:Text11}}
-        {{cloze:Text12}}
-        {{cloze:Text13}}
-        {{cloze:Text14}}
-        {{cloze:Text15}}
-        {{cloze:Text16}}
-        {{cloze:Text17}}
-        {{cloze:Text18}}
-        {{cloze:Text19}}
-        {{cloze:Text20}}
-        {{cloze:Full}}
-        <div class="hidden">{{Original}}</div>
-    </div>
-    <div class="extra"><hr></div>
-    <div class="text"><div class="fullhint">{{hint:Original}}</div></div>
-    <div class="extra">
-        {{#Remarks}}
-        <div class="extra-entry">
-        <div class="extra-descr">Remarks</div><div>{{Remarks}}</div>
+  {{#Title}}<div class="title">{{Title}}</div>{{/Title}}
+  <div class="text" id="clozed">
+    {{cloze:Text1}}
+    {{cloze:Text2}}
+    {{cloze:Text3}}
+    {{cloze:Text4}}
+    {{cloze:Text5}}
+    {{cloze:Text6}}
+    {{cloze:Text7}}
+    {{cloze:Text8}}
+    {{cloze:Text9}}
+    {{cloze:Text10}}
+    {{cloze:Text11}}
+    {{cloze:Text12}}
+    {{cloze:Text13}}
+    {{cloze:Text14}}
+    {{cloze:Text15}}
+    {{cloze:Text16}}
+    {{cloze:Text17}}
+    {{cloze:Text18}}
+    {{cloze:Text19}}
+    {{cloze:Text20}}
+    {{cloze:Full}}
+  </div>
+  <div class="extra"><hr></div>
+      <button id="btn-reveal" onclick="olToggle();">Reveal all clozes</button>
+        <div class="hidden">
+            <div id="original">{{Original}}</div>
         </div>
-        {{/Remarks}}
-        {{#Sources}}
-        <div class="extra-entry">
-        <div class="extra-descr">Sources</div><div>{{Sources}}</div>
-        </div>
-        {{/Sources}}
+  <div class="extra">
+    {{#Remarks}}
+    <div class="extra-entry">
+      <div class="extra-descr">Remarks</div><div>{{Remarks}}</div>
     </div>
+    {{/Remarks}}
+    {{#Sources}}
+    <div class="extra-entry">
+      <div class="extra-descr">Sources</div><div>{{Sources}}</div>
+    </div>
+    {{/Sources}}
+  </div>
 </div>
+
 <script>
-    // remove cloze syntax from revealed hint
-    var hint = document.querySelector('.fullhint>[id^="hint"]')
+// Remove cloze syntax from revealed hint
+var hint = document.getElementById("ol-original")
+if (hint) {
     var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg, "$2")
     hint.innerHTML = html
-    // scroll to cloze
-    document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function(){
+};
+
+// Scroll to cloze
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function(){
         const cloze1 = document.getElementsByClassName("cloze")[0];
         const rect = cloze1.getBoundingClientRect();
         const absTop = rect.top + window.pageYOffset;
@@ -133,94 +175,128 @@ card_back = """\
         if (absBot >= window.innerHeight) {
             const height = rect.top - rect.bottom
             const middle = absTop - (window.innerHeight/2) - (height/2);
-            window.scrollTo(0, middle);};
-        }, 1);
-    }, false);
-</script>\
+            window.scrollTo(0, middle);
+        };
+    }, 1);
+}, false);
+
+// Reveal full list
+var olToggle = function() {
+    var orig = document.getElementById('original');
+    var clozed = document.getElementById('clozed');
+    var origHtml = orig.innerHTML
+    orig.innerHTML = clozed.innerHTML
+    clozed.innerHTML = origHtml
+}
+</script>
+
+<!-- 
+/* ################################################### */
+/* ######### CLOZE OVERLAPPER DEFAULT TEMPLATE END ######### */
+/* ################################################### */
+/*template-->
+
+<!-- Add your customizations here: -->
+\
 """
 
 card_css = """\
+/*template
+##################################################
+######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
+##################################################
+*/
+
 /* general card style */
 
 html {
-    /* scrollbar always visible in order to prevent shift when revealing answer*/
-    overflow-y: scroll;
+  /* scrollbar always visible in order to prevent shift when revealing answer*/
+  overflow-y: scroll;
 }
 
 .card {
-    font-family: "Helvetica LT Std", Helvetica, Arial, Sans;
-    font-size: 150%;
-    text-align: center;
-    color: black;
-    background-color: white;
+  font-family: "Helvetica LT Std", Helvetica, Arial, Sans;
+  font-size: 150%;
+  text-align: center;
+  color: black;
+  background-color: white;
 }
 
 /* general layout */
 
 .text {
-    /* center left-aligned text on card */
-    display: inline-block;
-    align: center;
-    text-align: left;
-    margin: auto;
-    max-width: 40em;
+  /* center left-aligned text on card */
+  display: inline-block;
+  align: center;
+  text-align: left;
+  margin: auto;
+  max-width: 40em;
 }
 
 .hidden {
-    /* guarantees a consistent width across front and back */
-    font-weight: bold;
-    display: block;
-    line-height:0;
-    height: 0;
-    overflow: hidden;
-    visibility: hidden;
+  /* guarantees a consistent width across front and back */
+  font-weight: bold;
+  display: block;
+  line-height:0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
 }
 
 .title {
-    font-weight: bold;
-    font-size: 1.1em;
-    margin-bottom: 1em;
-    text-align: center;
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 1em;
+  text-align: center;
 }
 
 /* clozes */
 
 .cloze {
-    /* regular cloze deletion */
-    font-weight: bold;
-    color: #0048FF;
+  /* regular cloze deletion */
+  font-weight: bold;
+  color: #0048FF;
 }
 
 /* original text reveal hint */
 
 .fullhint a {
-    color: #0048FF;
+  color: #0048FF;
 }
 
 .card21 .fullhint{
-    /* no need to display hint on last card */
-    display:none;
+  /* no need to display hint on last card */
+  display:none;
 }
 
 /* additional fields */
 
 .extra{
-    margin-top: 0.5em;
-    margin: auto;
-    max-width: 40em;
+  margin-top: 0.5em;
+  margin: auto;
+  max-width: 40em;
 }
 
 .extra-entry{
-    margin-top: 0.8em;
-    font-size: 0.9em;
-    text-align:left;
+  margin-top: 0.8em;
+  font-size: 0.9em;
+  text-align:left;
 }
 
 .extra-descr{
-    margin-bottom: 0.2em;
-    font-weight: bold;
-    font-size: 1em;
-}\
+  margin-bottom: 0.2em;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+/*
+###################################################
+######### CLOZE OVERLAPPER DEFAULT TEMPLATE END #########
+###################################################
+*/template
+
+/* Add your customizations here: */
+\
 """
 
 
