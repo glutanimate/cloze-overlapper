@@ -135,12 +135,6 @@ if (typeof window.getSelection != "undefined") {
 }
 """
 
-js_apply_markup = """
-focusField(%d);
-document.execCommand('selectAll')
-document.execCommand('%s');
-saveField('key');
-"""
 
 
 # EDITOR
@@ -164,19 +158,16 @@ def editorSaveThen(callback):
 # In some cases we need to apply changes to field HTML via JS before
 # proceeding:
 
-def applyMarkupThen(editor, markup, callback):
-    if markup == "ul":
-        cmd = "insertUnorderedList"
-    elif markup == "ol":
-        cmd = "insertOrderedList"
-    else:
-        return callback()
+def JSformatFieldThen(editor, field_idx, commands, callback):
 
-    field_map = mw.col.models.fieldMap(editor.note.model())
-    og_fld_name = config["synced"]["flds"]["og"]
-    og_fld_idx = field_map[og_fld_name][0]
+    cmd_str = "\n".join("""document.execCommand("{}");""".format(cmd)
+                        for cmd in commands)
 
-    js = js_apply_markup % (og_fld_idx, cmd)
+    js = """
+focusField(%(field_idx)d);
+%(cmd_str)s
+saveField('key');
+""" % {"field_idx": field_idx, "cmd_str": cmd_str}
     
     if ANKI20:
         editor.web.eval(js)
@@ -273,17 +264,23 @@ def onOlClozeButton(editor, markup=None, parent=None):
     if not checkModel(editor.note.model()):
         return False
     
-    def onMarkupApplied():
+    def onFieldReady():
         overlapper = ClozeOverlapper(editor.note, markup=markup,
                                      parent=parent)
         overlapper.add()
         refreshEditor(editor)
-    
-    # JS-based, thus run asynchronously on anki21
+
     if markup:
-        applyMarkupThen(editor, markup, onMarkupApplied)
-    else:
-        onMarkupApplied()
+        field_map = mw.col.models.fieldMap(editor.note.model())
+        og_fld_name = config["synced"]["flds"]["og"]
+        og_fld_idx = field_map[og_fld_name][0]
+
+        field_commands = ["selectAll", "insertOrderedList" if markup == "ol"
+                          else "insertUnorderedList"]
+        return JSformatFieldThen(editor, og_fld_idx,
+                                 field_commands, onFieldReady)
+    
+    return onFieldReady()
 
 
 # Patching buttons in
