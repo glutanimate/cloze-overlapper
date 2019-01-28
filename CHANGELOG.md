@@ -12,6 +12,29 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [Unreleased]
 
+### Added
+
+- Automatically scroll to cloze item
+- Cloze reveal button that uncovers clozes in place
+- Hint reveal hotkey (G)
+- Beautiful new button icons
+- anki21: Support for V2 Scheduler
+
+### Changed
+
+- Override sibling-spacing in review queue by default
+- Introduced comment markers to templates that should make programmatic parsing and automated template updates easier in the future.
+- Updated About section with support for Patreons & Contributors
+
+### Fixed
+
+- Card content shifting between front/back
+- Backwards compatibility with anki20
+- anki21: Dialog layout issues
+- anki21: Dialog tab focus order
+- anki21: JS asynchronicity issues when saving note content
+- anki21: Adding ordered/unordered list
+
 ## [0.4.0-dev.2] - 2019-01-26
 
 ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.2)
