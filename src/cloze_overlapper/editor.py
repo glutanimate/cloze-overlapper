@@ -59,7 +59,7 @@ from .utils import showTT
 # Hotkey definitions
 
 olc_hotkey_generate = "Alt+Shift+C"  # Cloze generation/preview
-olc_hotkey_settings = "Alt+Shift+O"  # Note-specific settings
+olc_hotkey_options = "Alt+Shift+O"  # Note-specific settings
 olc_hotkey_cremove = "Alt+Shift+U"  # Remove selected clozes
 olc_hotkey_olist = "Ctrl+Alt+Shift+."  # Toggle ordered list
 olc_hotkey_ulist = "Ctrl+Alt+Shift+,"  # Toggle unordered list
@@ -145,7 +145,7 @@ saveField('key');
 
 # EDITOR
 
-# anki21: Button callback wrappers
+# Button callback wrappers
 
 # anki21 executes JS asynchronously. In order to assure that we are working
 # with the most recent field contents, we use a decorator to fire the
@@ -160,6 +160,9 @@ def editorSaveThen(callback):
         editor.saveNow(lambda: callback(editor, *args, **kwargs))
 
     return onSaved
+
+# In some cases we need to apply changes to field HTML via JS before
+# proceeding:
 
 def applyMarkupThen(editor, markup, callback):
     if markup == "ul":
@@ -180,6 +183,14 @@ def applyMarkupThen(editor, markup, callback):
         callback()
     else:
         editor.web.evalWithCallback(js, lambda res: callback())
+
+
+# Utility
+
+def refreshEditor(editor):
+    editor.loadNote()
+    focus = editor.currentField or 0
+    editor.web.eval("focusField({});".format(focus))
 
 # Button callbacks
 
@@ -208,12 +219,12 @@ def onInsertMultipleClozes(self):
     # check that the model is set up for cloze deletion
     if not re.search('{{(.*:)*cloze:', model['tmpls'][0]['qfmt']):
         if self.addMode:
-            tooltip(_("Warning, cloze deletions will not work until "
-                      "you switch the type at the top to Cloze."))
+            tooltip("Warning, cloze deletions will not work until "
+                    "you switch the type at the top to Cloze.")
         else:
-            showInfo(_("""\
+            showInfo("""\
 To make a cloze deletion on an existing note, you need to change it \
-to a cloze type first, via Edit>Change Note Type."""))
+to a cloze type first, via Edit>Change Note Type.""")
             return
     if checkModel(model, fields=False, notify=False):
         cloze_re = "\[\[oc(\d+)::"
@@ -263,9 +274,10 @@ def onOlClozeButton(editor, markup=None, parent=None):
         return False
     
     def onMarkupApplied():
-        overlapper = ClozeOverlapper(editor, markup=markup,
+        overlapper = ClozeOverlapper(editor.note, markup=markup,
                                      parent=parent)
         overlapper.add()
+        refreshEditor(editor)
     
     # JS-based, thus run asynchronously on anki21
     if markup:
@@ -277,16 +289,16 @@ def onOlClozeButton(editor, markup=None, parent=None):
 # Patching buttons in
 
 def setupAdditionalHotkeys(editor):
-    add_ol_cut = QShortcut(QKeySequence(_(olc_hotkey_olist)), editor.widget)
+    add_ol_cut = QShortcut(QKeySequence(olc_hotkey_olist), editor.widget)
     add_ol_cut.activated.connect(lambda o="ol": onOlClozeButton(editor, o))
-    add_ul_cut = QShortcut(QKeySequence(_(olc_hotkey_ulist)), editor.widget)
+    add_ul_cut = QShortcut(QKeySequence(olc_hotkey_ulist), editor.widget)
     add_ul_cut.activated.connect(lambda o="ul": onOlClozeButton(editor, o))
 
     mult_cloze_cut1 = QShortcut(QKeySequence(
-        _(olc_hotkey_mcloze)), editor.widget)
+        olc_hotkey_mcloze), editor.widget)
     mult_cloze_cut1.activated.connect(lambda: onInsertMultipleClozes(editor))
     mult_cloze_cut2 = QShortcut(QKeySequence(
-        _(olc_hotkey_mclozealt)), editor.widget)
+        olc_hotkey_mclozealt), editor.widget)
     mult_cloze_cut2.activated.connect(lambda: onInsertMultipleClozes(editor))
 
 
@@ -296,27 +308,31 @@ icon_options = os.path.join(icon_path, "oc_options.svg")
 icon_remove = os.path.join(icon_path, "oc_remove.svg")
 
 
+tooltip_generate = "Generate overlapping clozes ({})".format(
+    olc_hotkey_generate)
+tooltip_options = "Overlapping cloze options ({})".format(
+    olc_hotkey_options)
+tooltip_remove = "Remove all cloze markers in selected text ({})".format(
+    olc_hotkey_cremove)
+
 def onSetupEditorButtons20(editor):
     """Add buttons and hotkeys to the editor widget"""
 
-    b = editor._addButton("Cloze Overlapper",
-                          editor.onOlClozeButton, _(olc_hotkey_generate),
-                          "Generate overlapping clozes (%s)" % _(
-                              olc_hotkey_generate), size=True)
+    b = editor._addButton("OlCloze",
+                          editor.onOlClozeButton, olc_hotkey_generate,
+                          tooltip_generate, size=True)
     b.setIcon(QIcon(icon_generate))
     b.setFixedWidth(24)
 
-    b = editor._addButton("Cloze Overlapper Note Settings",
-                          editor.onOlOptionsButton, _(olc_hotkey_settings),
-                          "Overlapping cloze generation settings (%s)" % _(
-                              olc_hotkey_settings), size=True)
+    b = editor._addButton("OlOptions",
+                          editor.onOlOptionsButton, olc_hotkey_options,
+                          tooltip_options, size=True)
     b.setIcon(QIcon(icon_options))
     b.setFixedWidth(24)
 
-    b = editor._addButton("Remove Clozes",
-                          editor.onRemoveClozes, _(olc_hotkey_cremove),
-                          "Remove all cloze markers<br>in selected text (%s)" % _(
-                              olc_hotkey_cremove), size=True)
+    b = editor._addButton("RemoveClozes",
+                          editor.onRemoveClozes, olc_hotkey_cremove,
+                          tooltip_remove, size=True)
     b.setIcon(QIcon(icon_remove))
     b.setFixedWidth(24)
 
@@ -329,18 +345,15 @@ def onSetupEditorButtons21(buttons, editor):
     # bind to editor.olc_hotkey_generate because anki21 passes
     # editor instance by default
     b = editor.addButton(icon_generate, "OlCloze", onOlClozeButton,
-                         "Generate overlapping clozes (%s)" % _(
-                             olc_hotkey_generate), keys=olc_hotkey_generate)
+                         tooltip_generate, keys=olc_hotkey_generate)
     buttons.append(b)
 
     b = editor.addButton(icon_options, "OlOptions", onOlOptionsButton,
-                         "Overlapping cloze generation settings (%s)" % _(
-                             olc_hotkey_settings), keys=olc_hotkey_settings)
+                         tooltip_options, keys=olc_hotkey_options)
     buttons.append(b)
 
     b = editor.addButton(icon_remove, "RemoveClozes", onRemoveClozes,
-                         "Remove all cloze markers in selected text (%s)" % _(
-                             olc_hotkey_cremove), keys=olc_hotkey_cremove)
+                         tooltip_remove, keys=olc_hotkey_cremove)
     buttons.append(b)
 
     setupAdditionalHotkeys(editor)
@@ -369,10 +382,7 @@ def onAddCards(self, _old):
     if ret is False:
         return
 
-    editor.loadNote()
-
-    focus = editor.currentField or 0
-    editor.web.eval("focusField({});".format(focus))
+    refreshEditor(editor)
     
     oldret = _old(self)
     if total:
