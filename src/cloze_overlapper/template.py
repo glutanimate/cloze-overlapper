@@ -90,6 +90,7 @@ https://ankiweb.net/shared/info/969733775
             {{cloze:Full}}
         </div>
         <div class="hidden">
+            <div><span class="cloze">[...]</span></div>
             <div>{{Original}}</div>
         </div>
     </div>
@@ -140,6 +141,7 @@ the add-on updates its template.
             {{cloze:Full}}
         </div>
         <div class="hidden">
+            <div><span class="cloze">[...]</span></div>
             <div>{{Original}}</div>
         </div>
     </div>
@@ -162,9 +164,10 @@ the add-on updates its template.
 
 <script>
 // Remove cloze syntax from revealed hint
-var hint = document.getElementById("ol-original")
+var hint = document.getElementById("original");
 if (hint) {
-    var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg, "$2")
+    var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg, 
+                                      "<span class='cloze'>$2</span>");
     hint.innerHTML = html
 };
 
@@ -263,14 +266,8 @@ html {
   color: #0048FF;
 }
 
-/* original text reveal hint */
-
-.fullhint a {
-  color: #0048FF;
-}
-
-.card21 .fullhint{
-  /* no need to display hint on last card */
+.card21 #btn-reveal{
+  /* no need to display reveal btn on last card */
   display:none;
 }
 
