@@ -45,4 +45,4 @@ def warnUser(reason, text):
 
 
 def showTT(title, text, period=3000, parent=None):
-    tooltip(u"<b>%s</b>: %s" % (title, text), period, parent)
+    tooltip("<b>%s</b>: %s" % (title, text), period, parent)
