@@ -354,33 +354,56 @@ def onSetupEditorButtons21(buttons, editor):
 
 def onAddCards(self, _old):
     """Automatically generate overlapping clozes before adding cards"""
-    note = self.editor.note
+    editor = self.editor
+    note = editor.note
+    
     if not note or not checkModel(note.model(), notify=False):
         return _old(self)
-    overlapper = ClozeOverlapper(self.editor, silent=True)
+    
+    if ANKI20:
+        editor.saveNow()
+    
+    overlapper = ClozeOverlapper(editor.note, silent=True)
     ret, total = overlapper.add()
-    if not ret:
+
+    if ret is False:
         return
+
+    editor.loadNote()
+
+    focus = editor.currentField or 0
+    editor.web.eval("focusField({});".format(focus))
+    
     oldret = _old(self)
     if total:
         showTT("Info", "Added %d overlapping cloze cards" % total, period=1000)
+    
     return oldret
 
 
 def onEditCurrent(self, _old):
     """Automatically update overlapping clozes before updating cards"""
-    note = self.editor.note
+    editor = self.editor
+    note = editor.note
+    
     if not note or not checkModel(note.model(), notify=False):
         return _old(self)
-    overlapper = ClozeOverlapper(self.editor, silent=True)
+
+    if ANKI20:
+        editor.saveNow()
+    
+    overlapper = ClozeOverlapper(editor.note, silent=True)
     ret, total = overlapper.add()
+    
     # returning here won't stop the window from being rejected, so we simply
     # accept whatever changes the user performed, even if the generator
     # did not fire
+    
     oldret = _old(self)
     if total:
         showTT("Info", "Updated %d overlapping cloze cards" %
                total, period=1000)
+    
     return oldret
 
 
