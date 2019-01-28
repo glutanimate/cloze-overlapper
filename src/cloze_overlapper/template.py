@@ -193,9 +193,9 @@ var olToggle = function() {
 }
 </script>
 
-/*
-######### CLOZE OVERLAPPER DEFAULT TEMPLATE END #########
-*/template
+<!--
+/* ######## CLOZE OVERLAPPER DEFAULT TEMPLATE END ######## */
+/*template-->
 
 <!-- Add your customizations here: -->
 \
