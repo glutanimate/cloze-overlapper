@@ -96,9 +96,31 @@ https://ankiweb.net/shared/info/969733775
     </div>
 </div>
 
+<script>
+// Scroll to cloze
+function scrollToCloze () {
+    const cloze1 = document.getElementsByClassName("cloze")[0];
+    const rect = cloze1.getBoundingClientRect();
+    const absTop = rect.top + window.pageYOffset;
+    const absBot = rect.bottom + window.pageYOffset;
+    if (absBot >= window.innerHeight) {
+        const height = rect.top - rect.bottom
+        const middle = absTop - (window.innerHeight/2) - (height/2);
+        window.scrollTo(0, middle);
+    };
+}
+if ( document.readyState === 'complete' ) {
+    setTimeout(scrollToCloze, 1);
+} else {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(scrollToCloze, 1);
+    }, false);
+}
+</script>
+
 <!--
-/* ######## CLOZE OVERLAPPER DEFAULT TEMPLATE END ######## */
-/*template-->
+######## CLOZE OVERLAPPER DEFAULT TEMPLATE END ######## */
+template-->
 
 <!-- Add your customizations here: -->\
 """
@@ -172,19 +194,25 @@ if (hint) {
 };
 
 // Scroll to cloze
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function(){
-        const cloze1 = document.getElementsByClassName("cloze")[0];
-        const rect = cloze1.getBoundingClientRect();
-        const absTop = rect.top + window.pageYOffset;
-        const absBot = rect.bottom + window.pageYOffset;
-        if (absBot >= window.innerHeight) {
-            const height = rect.top - rect.bottom
-            const middle = absTop - (window.innerHeight/2) - (height/2);
-            window.scrollTo(0, middle);
-        };
-    }, 1);
-}, false);
+function scrollToCloze () {
+    const cloze1 = document.getElementsByClassName("cloze")[0];
+    const rect = cloze1.getBoundingClientRect();
+    const absTop = rect.top + window.pageYOffset;
+    const absBot = rect.bottom + window.pageYOffset;
+    if (absBot >= window.innerHeight) {
+        const height = rect.top - rect.bottom
+        const middle = absTop - (window.innerHeight/2) - (height/2);
+        window.scrollTo(0, middle);
+    };
+}
+if ( document.readyState === 'complete' ) {
+    setTimeout(scrollToCloze, 1);
+} else {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(scrollToCloze, 1);
+    }, false);
+}
+
 
 // Reveal full list
 var olToggle = function() {
@@ -197,8 +225,8 @@ var olToggle = function() {
 </script>
 
 <!--
-/* ######## CLOZE OVERLAPPER DEFAULT TEMPLATE END ######## */
-/*template-->
+######## CLOZE OVERLAPPER DEFAULT TEMPLATE END ######## */
+template-->
 
 <!-- Add your customizations here: -->
 \
@@ -291,9 +319,17 @@ html {
   font-size: 1em;
 }
 
+#btn-reveal {
+  font-size: 0.5em;
+}
+
+.mobile #btn-reveal {
+  font-size: 0.8em;
+}
+
 /*
 ######## CLOZE OVERLAPPER DEFAULT TEMPLATE END ########
-*/template
+template*/
 
 /* Add your customizations here: */
 \
