@@ -12,6 +12,10 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [Unreleased]
 
+## [0.4.0-dev.3] - 2019-01-28
+
+### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.3)
+
 ### Added
 
 - Automatically scroll to cloze item
@@ -151,7 +155,8 @@ First public pre-release.
 Early version of the add-on for internal use.
 
 
-[Unreleased]: https://github.com/glutanimate/cloze-overlapper/compare/v0.4.0-dev.2...HEAD
+[Unreleased]: https://github.com/glutanimate/cloze-overlapper/compare/v0.4.0-dev.3...HEAD
+[0.4.0-dev.3]: https://github.com/glutanimate/cloze-overlapper/compare/v0.4.0-dev.2...v0.4.0-dev.3
 [0.4.0-dev.2]: https://github.com/glutanimate/cloze-overlapper/compare/v0.4.0-dev.1...v0.4.0-dev.2
 [0.4.0-dev.1]: https://github.com/glutanimate/cloze-overlapper/compare/v0.3.0...v0.4.0-dev.1
 [0.3.0]: https://github.com/glutanimate/cloze-overlapper/compare/v0.2.1...v0.3.0
