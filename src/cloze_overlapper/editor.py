@@ -282,22 +282,79 @@ def onOlClozeButton(editor, markup=None, parent=None):
     
     return onFieldReady()
 
+# ADDCARDS / EDITCURRENT
 
-# Patching buttons in
+# Callbacks
 
-def setupAdditionalHotkeys(editor):
-    add_ol_cut = QShortcut(QKeySequence(olc_hotkey_olist), editor.widget)
-    add_ol_cut.activated.connect(lambda o="ol": onOlClozeButton(editor, o))
-    add_ul_cut = QShortcut(QKeySequence(olc_hotkey_ulist), editor.widget)
-    add_ul_cut.activated.connect(lambda o="ul": onOlClozeButton(editor, o))
+def onAddCards(self, _old):
+    """Automatically generate overlapping clozes before adding cards"""
+    editor = self.editor
+    note = editor.note
 
-    mult_cloze_cut1 = QShortcut(QKeySequence(
-        olc_hotkey_mcloze), editor.widget)
-    mult_cloze_cut1.activated.connect(lambda: onInsertMultipleClozes(editor))
-    mult_cloze_cut2 = QShortcut(QKeySequence(
-        olc_hotkey_mclozealt), editor.widget)
-    mult_cloze_cut2.activated.connect(lambda: onInsertMultipleClozes(editor))
+    if not note or not checkModel(note.model(), notify=False):
+        return _old(self)
 
+    if ANKI20:
+        editor.saveNow()
+
+    overlapper = ClozeOverlapper(editor.note, silent=True)
+    ret, total = overlapper.add()
+
+    if ret is False:
+        return
+
+    refreshEditor(editor)
+
+    oldret = _old(self)
+    if total:
+        showTT("Info", "Added %d overlapping cloze cards" % total, period=1000)
+
+    return oldret
+
+
+def onEditCurrent(editcurrent, _old):
+    """Automatically update overlapping clozes when editing cards"""
+    editor = editcurrent.editor
+    note = editor.note
+
+    if not note or not checkModel(note.model(), notify=False):
+        return _old(editcurrent)
+
+    if ANKI20:
+        editor.saveNow()
+
+    overlapper = ClozeOverlapper(editor.note, silent=True)
+    ret, total = overlapper.add()
+
+    # returning here won't stop the window from being rejected, so we simply
+    # accept whatever changes the user performed, even if the generator
+    # did not fire
+
+    oldret = _old(editcurrent)
+    if total:
+        showTT("Info", "Updated %d overlapping cloze cards" %
+               total, period=1000)
+
+    return oldret
+
+
+def onAddNote(addcards, note, _old):
+    """Suspend full cloze card if option active"""
+    note = _old(addcards, note)
+    if not note or not checkModel(note.model(), fields=False, notify=False):
+        return note
+    sched_conf = config["synced"].get("sched", None)
+    if not sched_conf or not sched_conf[2]:
+        return note
+    maxfields = ClozeOverlapper.getMaxFields(
+        note.model(), config["synced"]["flds"]["tx"])
+    last = note.cards()[-1]
+    if last.ord == maxfields:  # is full cloze (ord starts at 0)
+        mw.col.sched.suspendCards([last.id])
+    return note
+
+
+# BUTTONS / HOTKEYS
 
 icon_path = os.path.join(PATH_ADDON, "gui", "resources", "icons")
 icon_generate = os.path.join(icon_path, "oc_generate.svg")
@@ -357,80 +414,21 @@ def onSetupEditorButtons21(buttons, editor):
 
     return buttons
 
+def setupAdditionalHotkeys(editor):
+    add_ol_cut = QShortcut(QKeySequence(olc_hotkey_olist), editor.widget)
+    add_ol_cut.activated.connect(lambda o="ol": onOlClozeButton(editor, o))
+    add_ul_cut = QShortcut(QKeySequence(olc_hotkey_ulist), editor.widget)
+    add_ul_cut.activated.connect(lambda o="ul": onOlClozeButton(editor, o))
 
-# ADDCARDS / EDITCURRENT
+    mult_cloze_cut1 = QShortcut(QKeySequence(
+        olc_hotkey_mcloze), editor.widget)
+    mult_cloze_cut1.activated.connect(lambda: onInsertMultipleClozes(editor))
+    mult_cloze_cut2 = QShortcut(QKeySequence(
+        olc_hotkey_mclozealt), editor.widget)
+    mult_cloze_cut2.activated.connect(lambda: onInsertMultipleClozes(editor))
 
-# Callbacks
-
-def onAddCards(self, _old):
-    """Automatically generate overlapping clozes before adding cards"""
-    editor = self.editor
-    note = editor.note
-    
-    if not note or not checkModel(note.model(), notify=False):
-        return _old(self)
-    
-    if ANKI20:
-        editor.saveNow()
-    
-    overlapper = ClozeOverlapper(editor.note, silent=True)
-    ret, total = overlapper.add()
-
-    if ret is False:
-        return
-
-    refreshEditor(editor)
-    
-    oldret = _old(self)
-    if total:
-        showTT("Info", "Added %d overlapping cloze cards" % total, period=1000)
-    
-    return oldret
-
-
-def onEditCurrent(self, _old):
-    """Automatically update overlapping clozes before updating cards"""
-    editor = self.editor
-    note = editor.note
-    
-    if not note or not checkModel(note.model(), notify=False):
-        return _old(self)
-
-    if ANKI20:
-        editor.saveNow()
-    
-    overlapper = ClozeOverlapper(editor.note, silent=True)
-    ret, total = overlapper.add()
-    
-    # returning here won't stop the window from being rejected, so we simply
-    # accept whatever changes the user performed, even if the generator
-    # did not fire
-    
-    oldret = _old(self)
-    if total:
-        showTT("Info", "Updated %d overlapping cloze cards" %
-               total, period=1000)
-    
-    return oldret
-
-
-def onAddNote(self, note, _old):
-    """Suspend full cloze card if option active"""
-    note = _old(self, note)
-    if not note or not checkModel(note.model(), fields=False, notify=False):
-        return note
-    sched_conf = config["synced"].get("sched", None)
-    if not sched_conf or not sched_conf[2]:
-        return note
-    maxfields = ClozeOverlapper.getMaxFields(
-        note.model(), config["synced"]["flds"]["tx"])
-    last = note.cards()[-1]
-    if last.ord == maxfields:  # is full cloze (ord starts at 0)
-        mw.col.sched.suspendCards([last.id])
-    return note
 
 # MAIN
-
 
 def initializeEditor():
     # Editor widget
