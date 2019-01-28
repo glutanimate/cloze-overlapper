@@ -57,9 +57,8 @@ class ClozeOverlapper(object):
 
     creg = r"(?s)\[\[oc(\d+)::((.*?)(::(.*?))?)?\]\]"
 
-    def __init__(self, ed, markup=False, silent=False, parent=None):
-        self.ed = ed
-        self.note = self.ed.note
+    def __init__(self, note, markup=False, silent=False, parent=None):
+        self.note = note
         self.model = self.note.model()
         self.flds = config["synced"]["flds"]
         self.markup = markup
@@ -71,11 +70,11 @@ class ClozeOverlapper(object):
 
     def add(self):
         """Add overlapping clozes to note"""
-        self.ed.web.eval("saveField('key');")  # save field
         original = self.note[self.flds["og"]]
         if not original:
-            self.showTT("Reminder",
-                        u"Please enter some text in the '%s' field" % self.flds["og"])
+            self.showTT(
+                "Reminder",
+                "Please enter some text in the '%s' field" % self.flds["og"])
             return False, None
 
         matches = re.findall(self.creg, original)
@@ -120,14 +119,6 @@ class ClozeOverlapper(object):
         if not self.silent:
             self.showTT("Info", "Generated %d overlapping clozes" %
                         total, period=1000)
-
-        self.ed.loadNote()
-        
-        if self.ed.currentField is not None:
-            self.ed.web.eval("focusField(%d);" % self.ed.currentField)
-        else:
-            self.ed.web.eval("focusField(0);")
-
         return True, total
 
     def getClozeItems(self, matches):
