@@ -14,11 +14,16 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [0.4.0-alpha.0] - 2019-02-01
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-alpha.0)
+### Changed
+
+- Smaller adjustments to the card template
+- Committed updated template to docs folder
+
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-alpha.0) -->
 
 ## [0.4.0-dev.3] - 2019-01-28
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.3)
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.3) -->
 
 ### Added
 
@@ -45,7 +50,7 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [0.4.0-dev.2] - 2019-01-26
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.2)
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.2) -->
 
 ### Changed
 
@@ -57,7 +62,7 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [0.4.0-dev.1] - 2019-01-25
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.1)
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.4.0-dev.1) -->
 
 ### Added
 
@@ -76,7 +81,7 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [0.3.0] - 2017-03-07
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.3.0)
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.3.0) -->
 
 ### Added
 
@@ -89,7 +94,7 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [0.2.1] - 2017-03-03
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.2.1)
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.2.1) -->
 
 ### Added
 
@@ -107,7 +112,7 @@ If you enjoy Cloze Overlapper, please consider supporting my work on Patreon, or
 
 ## [0.2.0] - 2017-03-01
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.2.0)
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.2.0) -->
 
 First stable public release.
 
@@ -124,7 +129,7 @@ First stable public release.
 
 ## [0.1.2] - 2017-02-27
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.1.2)
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.1.2) -->
 
 ### Added
 
@@ -138,7 +143,7 @@ First stable public release.
 
 ## [0.1.1] - 2017-02-26
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.1.1)
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.1.1) -->
 
 ### Added
 
@@ -150,7 +155,7 @@ First stable public release.
 
 ## [0.1.0] - 2017-02-26
 
-### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.1.0)
+<!-- ### [Download](https://github.com/glutanimate/cloze-overlapper/releases/tag/v0.1.0) -->
 
 First public pre-release.
 
