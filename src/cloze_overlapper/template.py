@@ -47,17 +47,19 @@ from .consts import *
 card_front = """\
 <!--template
 ######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
+version: 1.0.0
 -->
 
 <!--
-PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS. 
-Any changes between the 'template 'markers will be lost once
+PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS.
+Any changes between the 'template' markers will be lost once
 the add-on updates its template.
 
 Copyright (C) 2016-2019 Aristotelis P. <https://glutanimate.com/>
 
 The Cloze Overlapper card template is licensed under the CC BY-SA 4.0
-license (https://creativecommons.org/licenses/by-sa/4.0/).
+license (https://creativecommons.org/licenses/by-sa/4.0/). This only
+applies to the card template, not the contents of your notes.
 
 Get Cloze Overlapper for Anki at:
 https://ankiweb.net/shared/info/969733775
@@ -128,11 +130,12 @@ template-->
 card_back = """\
 <!--template
 ######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
+version: 1.0.0
 -->
 
 <!--
 PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS. 
-Any changes between the 'template 'markers will be lost once
+Any changes between the 'template' markers will be lost once
 the add-on updates its template.
 -->
 
@@ -235,11 +238,12 @@ template-->
 card_css = """\
 /*template
 ######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
+version: 1.0.0
 */
 
 /*
 PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS. 
-Any changes between the 'template 'markers will be lost once
+Any changes between the 'template' markers will be lost once
 the add-on updates its template.
 */
 
