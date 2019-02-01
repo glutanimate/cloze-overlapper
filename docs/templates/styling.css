@@ -1,0 +1,100 @@
+/*template
+######## CLOZE OVERLAPPER DEFAULT TEMPLATE START ########
+version: 1.0.0
+*/
+
+/*
+PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS.
+Any changes between the 'template' markers will be lost once
+the add-on updates its template.
+*/
+
+/* general card style */
+
+html {
+  /* scrollbar always visible in order to prevent shift when revealing answer*/
+  overflow-y: scroll;
+}
+
+.card {
+  font-family: "Helvetica LT Std", Helvetica, Arial, Sans;
+  font-size: 150%;
+  text-align: center;
+  color: black;
+  background-color: white;
+}
+
+/* general layout */
+
+.text {
+  /* center left-aligned text on card */
+  display: inline-block;
+  align: center;
+  text-align: left;
+  margin: auto;
+  max-width: 40em;
+}
+
+.hidden {
+  /* guarantees a consistent width across front and back */
+  font-weight: bold;
+  display: block;
+  line-height:0;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 1em;
+  text-align: center;
+}
+
+/* clozes */
+
+.cloze {
+  /* regular cloze deletion */
+  font-weight: bold;
+  color: #0048FF;
+}
+
+.card21 #btn-reveal{
+  /* no need to display reveal btn on last card */
+  display:none;
+}
+
+/* additional fields */
+
+.extra{
+  margin-top: 0.5em;
+  margin: auto;
+  max-width: 40em;
+}
+
+.extra-entry{
+  margin-top: 0.8em;
+  font-size: 0.9em;
+  text-align:left;
+}
+
+.extra-descr{
+  margin-bottom: 0.2em;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+#btn-reveal {
+  font-size: 0.5em;
+}
+
+.mobile #btn-reveal {
+  font-size: 0.8em;
+}
+
+/*
+######## CLOZE OVERLAPPER DEFAULT TEMPLATE END ########
+template*/
+
+/* Add your customizations here: */

@@ -134,7 +134,7 @@ version: 1.0.0
 -->
 
 <!--
-PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS. 
+PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS.
 Any changes between the 'template' markers will be lost once
 the add-on updates its template.
 -->
@@ -191,7 +191,7 @@ the add-on updates its template.
 // Remove cloze syntax from revealed hint
 var hint = document.getElementById("original");
 if (hint) {
-    var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg, 
+    var html = hint.innerHTML.replace(/\[\[oc(\d+)::(.*?)(::(.*?))?\]\]/mg,
                                       "<span class='cloze'>$2</span>");
     hint.innerHTML = html
 };
@@ -242,7 +242,7 @@ version: 1.0.0
 */
 
 /*
-PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS. 
+PLEASE DO NOT MODIFY THE DEFAULT TEMPLATE SECTIONS.
 Any changes between the 'template' markers will be lost once
 the add-on updates its template.
 */
