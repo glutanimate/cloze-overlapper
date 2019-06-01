@@ -60,6 +60,8 @@ The easiest way to install Cloze Overlapper is through [AnkiWeb](https://ankiweb
 
 Please click on the entry corresponding to your Anki version:
 
+**New: Pre-compiled test builds for Anki 2.1 are now available [on my Patreon](https://www.patreon.com/glutanimate/posts?tag=Cloze%20Overlapper).**
+
 <details>
 
 <summary><i>Anki 2.1</i></summary>
