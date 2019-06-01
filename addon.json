@@ -1,0 +1,15 @@
+{
+    "display_name": "Cloze Overlapper",
+    "module_name": "cloze_overlapper",
+    "repo_name": "cloze-overlapper",
+    "ankiweb_id": "969733775",
+    "author": "Glutanimate",
+    "contact": "https://glutanimate.com",
+    "homepage": "https://github.com/glutanimate/cloze-overlapper",
+    "copyright_start": 2016,
+    "tags": "workflow card-creation cloze lists enumerations",
+    "conflicts": [],
+    "targets": [
+        "anki21"
+    ]
+}

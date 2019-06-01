@@ -1,17 +1,10 @@
+# Linux FM
+.hidden
+.directory
 # Byte-compiled / optimized / DLL files
 *.pyo
 *.pyc
 __pycache__/
-# Anki
-src/*/meta.json
-# Build files
-build
-src/*/gui/forms/anki*
-src/*/gui/forms/LICENSE*
-src/*/gui/resources/anki*
-src/*/gui/resources/LICENSE*
-src/*/data/patrons.py
-*-anki2*.zip
 # Python
 .python-version
 .mypy_cache/
@@ -31,20 +24,24 @@ node_modules
 .sublime-backup/
 .idea/
 .vscode/
+# Build files
+build
+src/*/gui/forms/anki*
+src/*/gui/forms/LICENSE*
+src/*/gui/resources/anki*
+src/*/gui/resources/LICENSE*
+*-anki2*.zip
 # Dev tools
-addon.json
 .bumpversion.cfg
+labels.toml
 # Temp
 .gitold
 obsolete
 research
-# Linux FM
-.hidden
-.directory
 # Docs
-docs/specs.md
-docs/todo.md
-docs/description.html
 todo
 # Assets
 resources/icons/optional
+# Anki
+src/*/meta.json
+src/*/manifest.json

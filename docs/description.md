@@ -1,12 +1,16 @@
+<!-- BANNER -->
+
 Facilitates **memorizing enumerations**, lists, or any other type of sequential information by breaking the sequence up into cards where each item serves as the context cue for the next:
 
-![](https://raw.githubusercontent.com/glutanimate/cloze-overlapper/master/screenshots/demo1.gif)
+![](https://raw.githubusercontent.com/glutanimate/cloze-overlapper/master/screenshots/screenshot.png)
 
-**COMPATIBILITY**
+### COMPATIBILITY
 
-This add-on only works with Anki's stable release branch (2.0.x ≥ 2.0.37). The 2.1 beta branch is **not supported** at this point in time.
+This add-on only works with Anki 2.0.x. Anki 2.1 **not supported** at this point in time.
 
-**BACKGROUND**
+<!-- CHANGELOG -->
+
+### BACKGROUND
  
 Memorizing lists and enumerations has always been a particularly difficult part of studying flashcards. Good flashcards follow the **minimum information principle**, where each card is kept as short as possible. Sequential information has unfortunately always somewhat eluded that basic principle because it is hard to break down into smaller chunks. Normally you would employ methods like grouping or categorizing to consolidate information, but with each item building upon the next, that does usually not work for sequences or enumerations.
 
@@ -14,7 +18,7 @@ One of the [common recommendations](https://www.supermemo.com/en/articles/20rule
 
 While this method is generally assumed to be quite effective, following it requires a significant **time investment** up-front that only few students are able or willing to make.
 
-**THE ADD-ON**
+### THE ADD-ON
 
 This is where *Cloze Overlapper* comes in. It takes care of all the arduous steps required to create these flashcards manually and provides you with a dead-simple workflow: You paste in the sequence or list, adjust the cloze generation settings, and let the add-on generate the cards for you. 
 
@@ -26,54 +30,19 @@ Due to working with the formatting tools that Anki provides itself, the cards ge
 
 ![](https://raw.githubusercontent.com/glutanimate/cloze-overlapper/master/screenshots/platforms.png)
 
-**VIDEO DEMONSTRATION**
+### VIDEO DEMONSTRATION
 
 [![YouTube: Memorize Lists Effectively with Cloze Overlapper for Anki](https://i.ytimg.com/vi/QzBoDe3PgAc/mqdefault.jpg)](https://youtu.be/QzBoDe3PgAc)
 
-**RELEASE LOG**
+### DOCUMENTATION
 
-This section will always be updated with the latest changes to *Cloze Overlapper*. More details on major releases are listed in the next section. For a full release log, including smaller bug fix releases and more details on each entry, make sure to check out the [releases page on GitHub](https://github.com/Glutanimate/cloze-overlapper/releases).
+The use of this add-on is documented in the [official Wiki](https://github.com/Glutanimate/cloze-overlapper/wiki) and a [series of video tutorials on YouTube](https://www.youtube.com/playlist?list=PL3MozITKTz5Y9owI163AJMYqKwhFrTKcT). Please make sure to check out the [FAQ](https://github.com/Glutanimate/cloze-overlapper/wiki/FAQ) and [Tips](https://github.com/Glutanimate/cloze-overlapper/wiki/Tips) sections in particular. They contain some valuable advice on when and how to use this add-on. You should also familiarize yourself with all of the [sections on card scheduling](https://github.com/glutanimate/cloze-overlapper/wiki/FAQ#card-scheduling).
 
-2017-03-07: **v0.3.0** – Adds a couple of options surrounding full cloze card generation
-2017-03-03: **v0.2.1** – Fixes some smaller bugs and adds a button to remove selected clozes
-2017-03-01: **v0.2.0** – Initial public release
+Run into any issues with the add-on? Then make sure to check out the [Troubleshooting section](https://github.com/Glutanimate/cloze-overlapper/wiki/Troubleshooting) as well.
 
-**LATEST CHANGES AND NEWS**
+<!-- SUPPORT -->
 
-*2017-03-07*
-
-**v0.3.0**:
-
-- **New**: Option to disable full cloze card generation (thanks to smh, dtconan18, Jon, and everyone else who suggested this)
-- **New**: Option to automatically suspend full cloze cards on creation
-- Fixed: More checks to prevent rare missing config errors (thanks to Chris for the bug report)
-
-**INSTALLATION**
-
-Simply follow the generic instructions listed below this add-on description.
-
-**DOCUMENTATION**
-
-The use of this add-on is documented in the [official Wiki](https://github.com/Glutanimate/cloze-overlapper/wiki) and a [series of video tutorials on YouTube](https://www.youtube.com/playlist?list=PL3MozITKTz5Y9owI163AJMYqKwhFrTKcT). Please make sure to check out the [FAQ](https://github.com/Glutanimate/cloze-overlapper/wiki/FAQ) and [Tips](https://github.com/Glutanimate/cloze-overlapper/wiki/Tips) sections in particular. They contain some valuable advice on how and when to use this add-on. You should also familiarize yourself with all of the [sections on card scheduling](https://github.com/glutanimate/cloze-overlapper/wiki/FAQ#card-scheduling).
-
-**HELP**
-
-Please check out the [Troubleshooting section](https://github.com/Glutanimate/cloze-overlapper/wiki/Troubleshooting) in the Wiki if you are experiencing issues with the add-on.
-
-Bug reports and suggestions are always welcome, but it might take me a while to get to them. **Please do not post bug reports in the review section**, as I will not be able to help you or reply. Instead, please use the [official support thread](https://anki.tenderapp.com/discussions/add-ons/9407-cloze-overlapper-official-thread) (no registration necessary!).
-
-**CREDITS AND LICENSE**
-
-*Cloze Overlapper* is *Copyright © 2016-2018 [Aristotelis P.](https://glutanimate.com)*
-
-I would like to extend my heartfelt thanks to everyone who has helped with testing, provided suggestions, or contributed in any other way! I would also like to thank:
-
-- [Piotr Wozniak](https://www.supermemo.com/english/company/wozniak.htm) for laying the theoretical groundwork for overlapping cloze deletions with his [20 rules of formulating knowledge](https://www.supermemo.com/en/articles/20rules)
-- [Soren Bjornstad](https://github.com/sobjornstad) for giving me the inspiration for this add-on with his project [AnkiLPCG](https://github.com/sobjornstad/AnkiLPCG), back when it was still a standalone module
-
-Licensed under the [GNU AGPL v3](https://www.gnu.org/licenses/agpl.html). The code for this add-on is available on [![GitHub icon](https://glutanimate.com/logos/github.svg) GitHub](https://github.com/Glutanimate/cloze-overlapper).
-
-**OTHER ADD-ONS**
+### OTHER ADD-ONS
 
 Make sure to also give some of my other add-ons a try:
 
@@ -84,22 +53,14 @@ Make sure to also give some of my other add-ons a try:
 - [Batch Note Editing](https://ankiweb.net/shared/info/291119185) - makes batch-editing notes a breeze
 - [Sticky Searches](https://ankiweb.net/shared/info/594622823) - quick toggles for often used search terms in the browser
 
-**ADD-ON COMMISSIONS**
+### CREDITS AND LICENSE
 
-A lot of my add-ons were commissioned by fellow Anki users. If you enjoy my work and would like to hire my services to work on an add-on or new feature, please feel free to reach out to me at:  ![Email icon](https://glutanimate.com/logos/email.svg) <em>ankiglutanimate [αt] gmail . com</em>
+*Copyright © 2019 [Aristotelis P.](https://glutanimate.com/)  (Glutanimate)*
 
-**MORE RESOURCES**
+With code contributions from: zjosua,
 
-Want to stay up-to-date with my latest add-on releases and updates? Feel free to follow me on Twitter: [![Twitter bird](https://glutanimate.com/logos/twitter.svg)@Glutanimate](https://twitter.com/glutanimate)
+Licensed under the _GNU AGPLv3_, extended by a number of additional terms. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY. For more information on the license please see the [LICENSE file](https://github.com/glutanimate/cloze-overlapper/blob/master/LICENSE) accompanying this add-on. The source code is available on [![GitHub icon](https://glutanimate.com/logos/github.svg) GitHub](https://github.com/glutanimate/cloze-overlapper). Pull requests and other contributions are welcome!
 
-New to Anki? Make sure to check out my YouTube channel where I post weekly tutorials on Anki add-ons and related topics: [![YouTube playbutton](https://glutanimate.com/logos/youtube.svg) / Glutanimate](https://www.youtube.com/c/glutanimate)
+<!-- RESOURCES -->
 
-============================================
-
-**SUPPORT THIS ADD-ON**
-
-Writing, supporting, and maintaining Anki add-ons like these takes a lot of time and effort. If *Cloze Overlapper* has been a valuable asset in your studies, please consider using one of the buttons below to support my efforts by buying me a **coffee**, **sandwich**, **meal**, or anything else you'd like:
-
-![](https://glutanimate.com/logos/paypal.svg)        [![](https://glutanimate.com/logos/contrib_btnsw_coffee.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4FT9NG3NJMY4U&on0=Project&os0=cloze-overlapper "Buy me a coffee ☺")    [![](https://glutanimate.com/logos/contrib_btnsw_sandwich.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=YKSP7QF45Y7SJ&on0=Project&os0=cloze-overlapper "Buy me a burger 😊")    [![](https://glutanimate.com/logos/contrib_btnsw_meal.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=MVDM6JAL2R5JA&on0=Project&os0=cloze-overlapper "Buy me a meal 😄")    [![](https://glutanimate.com/logos/contrib_btnsw_custom.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=EYNV4ECSKBGE4&on0=Project&os0=cloze-overlapper "Contribute a custom amount ☺")
-
-Each and every contribution is greatly appreciated and will help me maintain and improve *Cloze Overlapper* as time goes by!
+<!-- FUNDING -->
