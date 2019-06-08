@@ -60,14 +60,14 @@ The easiest way to install Cloze Overlapper is through [AnkiWeb](https://ankiweb
 
 Please click on the entry corresponding to your Anki version:
 
-**New: Pre-compiled test builds for Anki 2.1 are now available [on my Patreon](https://www.patreon.com/glutanimate/posts?tag=Cloze%20Overlapper).**
+**Note: Pre-compiled test builds for Anki 2.1 are now available [on my Patreon](https://www.patreon.com/glutanimate/posts?tag=Cloze%20Overlapper).** These will become public once testing is complete.
 
 <details>
 
 <summary><i>Anki 2.1</i></summary>
 
 1. Make sure you have the [latest version](https://apps.ankiweb.net/#download) of Anki 2.1 installed. Earlier releases (e.g. found in various Linux distros) do not support `.ankiaddon` packages.
-2. Download the latest `.ankiaddon` package from the [releases tab](https://github.com/glutanimate/cloze-overlapper/releases) (you might need to click on *Assets* below the description to reveal the download links)
+2. Download the latest `.ankiaddon` package from [my Patreon](https://www.patreon.com/glutanimate/posts?tag=Cloze%20Overlapper)
 3. From Anki's main window, head to *Tools* → *Add-ons*
 4. Drag-and-drop the `.ankiaddon` package onto the add-ons list
 5. Restart Anki
@@ -83,7 +83,7 @@ Please click on the entry corresponding to your Anki version:
 3. See if you can find a `cloze_overlapper` folder. If so:
     1. If the folder contains a `meta.json` file, copy the file to a safe location. This will allow you to preserve your current settings.
     2. Proceed to delete the `cloze_overlapper` folder
-4. Download and extract the latest Anki 2.0 add-on release from the [releases tab](https://github.com/glutanimate/cloze-overlapper/releases) (you might need to click on *Assets* below the description to reveal the download links)
+4. Download and extract the latest Anki 2.0 add-on release from [my Patreon](https://www.patreon.com/glutanimate/posts?tag=Cloze%20Overlapper)
 5. Move the extracted `Cloze Overlapper.py` and `cloze_overlapper` into the add-ons folder
 6. Optional: Place the `meta.json` file back into the directory if you created a copy beforehand.
 7. Restart Anki
