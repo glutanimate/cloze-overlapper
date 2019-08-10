@@ -40,7 +40,7 @@ from aqt.qt import Qt
 
 from aqt.utils import openLink
 
-from ..consts import LINKS
+from ..consts import ADDON
 from ..platform import PLATFORM
 
 from .basic.dialog_mapped import MappedDialog
@@ -94,7 +94,11 @@ class OptionsDialog(MappedDialog):
                 return
             for idx in range(tab_widget.count()):
                 tab = tab_widget.widget(idx)
+                if not tab:
+                    continue
                 layout = tab.layout()
+                if not layout:
+                    continue
                 layout.setContentsMargins(3, 3, 3, 3)
 
     def _setupAbout(self):
@@ -118,7 +122,7 @@ class OptionsDialog(MappedDialog):
 
     def _setupEvents(self):
         super(OptionsDialog, self)._setupEvents()
-        for name, link in LINKS.items():
+        for name, link in ADDON.LINKS.items():
             btn_widget = getattr(self.form, "btn" + name.capitalize(), None)
             if not btn_widget:
                 continue
