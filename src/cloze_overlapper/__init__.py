@@ -38,4 +38,24 @@ from __future__ import (absolute_import, division,
 
 from ._version import __version__  # noqa: F401
 
-from . import main  # noqa: F401
+from .consts import ADDON
+from .libaddon.consts import setAddonProperties
+
+setAddonProperties(ADDON)
+
+from anki.hooks import addHook
+
+from .gui.options_global import initializeOptions
+from .template import initializeModels
+from .editor import initializeEditor
+from .sched import initializeScheduler
+from .reviewer import initializeReviewer
+
+def delayedInit():
+    initializeModels()
+    initializeScheduler()
+
+addHook("profileLoaded", delayedInit)
+initializeOptions()
+initializeEditor()
+initializeReviewer()

@@ -113,7 +113,7 @@ config_defaults = {
         "flds": OLC_FLDS,
         "sched": [True, True, False],
         "olmdls": [OLC_MODEL],
-        "version": ADDON_VERSION
+        "version": ADDON.VERSION
     }
 }
 
