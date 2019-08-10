@@ -46,6 +46,7 @@ setAddonProperties(ADDON)
 from anki.hooks import addHook
 
 from .gui.options_global import initializeOptions
+from .gui import initializeQtResources
 from .template import initializeModels
 from .editor import initializeEditor
 from .sched import initializeScheduler
@@ -55,6 +56,7 @@ def delayedInit():
     initializeModels()
     initializeScheduler()
 
+initializeQtResources()
 addHook("profileLoaded", delayedInit)
 initializeOptions()
 initializeEditor()
