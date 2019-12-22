@@ -185,7 +185,7 @@ def refreshEditor(editor):
 
 # Button callbacks
 
-def onInsertCloze(self, _old):
+def _onInsertCloze(self, _old):
     """Handles cloze-wraps when the add-on model is active"""
     if not checkModel(self.note.model(), fields=False, notify=False):
         return _old(self)
@@ -200,7 +200,7 @@ def onInsertCloze(self, _old):
         highest += 1
     # must start at 1
     highest = max(1, highest)
-    self.web.eval("wrap('[[oc%d::', ']]');" % highest)
+    self.web.eval("wrap2('[[oc%d::', ']]');" % highest)
 
 
 @editorSaveThen
@@ -432,7 +432,7 @@ def setupAdditionalHotkeys(editor):
 
 def initializeEditor():
     # Editor widget
-    Editor.onCloze = wrap(Editor.onCloze, onInsertCloze, "around")
+    Editor._onCloze = wrap(Editor._onCloze, _onInsertCloze, "around")
     Editor.onOlClozeButton = onOlClozeButton
     Editor.onOlOptionsButton = onOlOptionsButton
     Editor.onInsertMultipleClozes = onInsertMultipleClozes
