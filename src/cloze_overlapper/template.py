@@ -256,7 +256,7 @@ html {
 
 .card {
   font-family: "Helvetica LT Std", Helvetica, Arial, Sans;
-  font-size: 150%;
+  font-size: 100%;
   text-align: center;
   color: black;
   background-color: white;
@@ -324,7 +324,7 @@ html {
 }
 
 #btn-reveal {
-  font-size: 0.5em;
+  font-size: 0.7em;
 }
 
 .mobile #btn-reveal {
