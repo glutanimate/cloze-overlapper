@@ -33,6 +33,8 @@
 Adds overlapping clozes
 """
 
+from aqt.utils import showInfo
+
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
@@ -203,10 +205,13 @@ class ClozeOverlapper(object):
         # This addon breaks in Anki 2.1.28+ will break due to changes in card-adding behaviour:
         # https://forums.ankiweb.net/t/assign-note-id-to-new-notes-in-addnote-window-revert-a-change-in-2-1-28/2354
         # so if there's no ID, change the hook to use col.backend.add_note(note=note: Note, deck_id=deck_id: int)
+        # Glutanimate has actually acknowledged this already and is doing a bunch of testing
         # yes, i also had to go digging through the code to find this, Damien hasn't written any docs for 2.1
+        # kinda dangerous, don't expect it to do all the right things, I'm not an experienced anki dev
         if note.id == 0:
             ncol = note.col
-            note.id = ncol.backend.add_note(note=note)
+            showInfo(ncol.conf["curDeck"])
+            note.id = ncol.backend.add_note(note=note, deck_id=ncol.conf["curDeck"])
         note.flush()
 
 
