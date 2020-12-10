@@ -36,8 +36,6 @@ Adds overlapping clozes
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
-from aqt.utils import showInfo
-
 from .libaddon.platform import ANKI20
 
 import re
@@ -202,7 +200,15 @@ class ClozeOverlapper(object):
             full = full if custom else self.processField(full)
         note[self.flds["fl"]] = full
         note[self.flds["st"]] = createNoteSettings(setopts)
+        # This addon breaks in Anki 2.1.28+ will break due to changes in card-adding behaviour:
+        # https://forums.ankiweb.net/t/assign-note-id-to-new-notes-in-addnote-window-revert-a-change-in-2-1-28/2354
+        # so if there's no ID, change the hook to use col.backend.add_note(note=note: Note, deck_id=deck_id: int)
+        # yes, i also had to go digging through the code to find this, Damien hasn't written any docs for 2.1
+        if note.id == 0:
+            ncol = note.col
+            note.id = ncol.backend.add_note(note=note)
         note.flush()
+
 
     def processField(self, field):
         """Convert field contents back to HTML based on previous markup"""
