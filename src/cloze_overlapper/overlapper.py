@@ -33,11 +33,10 @@
 Adds overlapping clozes
 """
 
-from aqt.utils import showInfo
-
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
+from aqt.utils import showInfo
 from .libaddon.platform import ANKI20
 
 import re
