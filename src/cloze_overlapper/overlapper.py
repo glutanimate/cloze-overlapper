@@ -209,7 +209,6 @@ class ClozeOverlapper(object):
         # kinda dangerous, don't expect it to do all the right things, I'm not an experienced anki dev
         if note.id == 0:
             ncol = note.col
-            showInfo(ncol.conf["curDeck"])
             note.id = ncol.backend.add_note(note=note, deck_id=ncol.conf["curDeck"])
         note.flush()
 
