@@ -36,6 +36,7 @@ Adds overlapping clozes
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
+from anki.notes import Note
 from aqt.utils import showInfo
 from .libaddon.platform import ANKI20
 
@@ -209,6 +210,7 @@ class ClozeOverlapper(object):
         # kinda dangerous, don't expect it to do all the right things, I'm not an experienced anki dev
         if note.id == 0:
             ncol = note.col
+            showInfo(str(isinstance(note, Note)))
             note.id = ncol.backend.add_note(note=note, deck_id=ncol.conf["curDeck"])
         note.flush()
 
