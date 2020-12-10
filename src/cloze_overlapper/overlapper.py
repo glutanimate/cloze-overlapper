@@ -214,8 +214,7 @@ class ClozeOverlapper(object):
             # ok this is just bizarre, it says "expected type Note got type Note. for field" Like WTF??? WHY IS THERE A DOT???
             # nvm i just realised i'm retarded HAHAHAHA
             note.id = ncol.backend.add_note(note=note.to_backend_note(), deck_id=ncol.conf["curDeck"])
-        else:
-            note.flush()
+        note.flush()
 
 
     def processField(self, field):
