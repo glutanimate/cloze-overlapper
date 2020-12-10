@@ -208,13 +208,15 @@ class ClozeOverlapper(object):
         # Glutanimate has actually acknowledged this already and is doing a bunch of testing
         # yes, i also had to go digging through the code to find this, Damien hasn't written any docs for 2.1
         # kinda dangerous, don't expect it to do all the right things, I'm not an experienced anki dev
+        # more problems:
+        # TODO first, it doesn't clear the editor after adding. make it do that.
+        # TODO cards won't add to the collection, how to fix?
+        # TODO i keep getting a poison error, why?
         if note.id == 0:
             ncol = note.col
-            # showInfo(str(isinstance(note, Note)))
-            # ok this is just bizarre, it says "expected type Note got type Note. for field" Like WTF??? WHY IS THERE A DOT???
-            # nvm i just realised i'm retarded HAHAHAHA
             note.id = ncol.backend.add_note(note=note.to_backend_note(), deck_id=ncol.conf["curDeck"])
-        note.flush()
+        else:
+            note.flush()
 
 
     def processField(self, field):
