@@ -186,6 +186,7 @@ class ClozeOverlapper(object):
     def updateNote(self, fields, full, setopts, custom):
         """Write changes to note"""
         note = self.note
+        note.load()
         self.showTT("Alert", note.id)
         options = setopts[1]
         for idx, field in enumerate(fields):
