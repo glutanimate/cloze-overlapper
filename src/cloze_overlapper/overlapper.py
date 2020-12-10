@@ -36,6 +36,8 @@ Adds overlapping clozes
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
+from aqt.utils import showInfo
+
 from .libaddon.platform import ANKI20
 
 import re
@@ -188,6 +190,7 @@ class ClozeOverlapper(object):
         note = self.note
         if note.id == 0:
             # should fix assertion errors for rust-based versions of anki
+            showInfo(str(note))
             new_id = note.col.backend.new_note(self.model["id"])
             note.id = new_id
             note.load()
