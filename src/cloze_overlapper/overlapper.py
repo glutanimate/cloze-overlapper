@@ -188,14 +188,6 @@ class ClozeOverlapper(object):
     def updateNote(self, fields, full, setopts, custom):
         """Write changes to note"""
         note = self.note
-        if note.id == 0:
-            # should fix assertion errors for rust-based versions of anki
-            note.id = hash(note.guid)
-            showInfo("Note with hashed integer ID: "+str(note))
-            # note.load()
-            showInfo("Note model: "+str(self.model))
-            new_id = note.col.backend.new_note(self.model["id"])
-            showInfo("New ID: "+str(new_id))
         options = setopts[1]
         for idx, field in enumerate(fields):
             name = self.flds["tx"] + str(idx+1)

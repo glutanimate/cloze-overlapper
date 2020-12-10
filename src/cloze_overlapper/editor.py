@@ -290,8 +290,6 @@ def onAddCards(self, _old):
     """Automatically generate overlapping clozes before adding cards"""
     editor = self.editor
     note = editor.note
-    showInfo("Called from onAddCards: "+str(note))
-    showInfo("Model check: "+str(checkModel(note.model(), notify=False)))
 
     if not note or not checkModel(note.model(), notify=False):
         return _old(self)
