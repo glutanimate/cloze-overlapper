@@ -190,11 +190,9 @@ class ClozeOverlapper(object):
         note = self.note
         if note.id == 0:
             # should fix assertion errors for rust-based versions of anki
-            showInfo("called from overlapper.updateNote: "+str(note))
-            new_id = note.col.backend.new_note(self.model["id"])
-            showInfo("New ID: "+str(new_id))
-            note.id = new_id
-            note.load()
+            # new_id = note.col.backend.new_note(self.model["id"])
+            # showInfo("New ID: "+str(new_id))
+            note.id = hash(note.guid)
         options = setopts[1]
         for idx, field in enumerate(fields):
             name = self.flds["tx"] + str(idx+1)
