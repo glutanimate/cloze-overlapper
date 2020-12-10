@@ -210,8 +210,10 @@ class ClozeOverlapper(object):
         # kinda dangerous, don't expect it to do all the right things, I'm not an experienced anki dev
         if note.id == 0:
             ncol = note.col
-            showInfo(str(isinstance(note, Note)))
-            note.id = ncol.backend.add_note(note=note, deck_id=ncol.conf["curDeck"])
+            # showInfo(str(isinstance(note, Note)))
+            # ok this is just bizarre, it says "expected type Note got type Note. for field" Like WTF??? WHY IS THERE A DOT???
+            # nvm i just realised i'm retarded HAHAHAHA
+            note.id = ncol.backend.add_note(note=note.to_backend_note(), deck_id=ncol.conf["curDeck"])
         note.flush()
 
 
