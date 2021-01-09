@@ -1,3 +1,5 @@
+# Thanks to this guy: https://www.reddit.com/r/Anki/comments/jlj1yy/fixing_cloze_overlapper_for_2128/
+
 # -*- coding: utf-8 -*-
 
 # Cloze Overlapper Add-on for Anki
@@ -8,7 +10,7 @@
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version, with the additions
-# listed at the end of the license file that accompanied this program
+# listed at the end of the accompanied license file.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,7 +23,7 @@
 # NOTE: This program is subject to certain additional terms pursuant to
 # Section 7 of the GNU Affero General Public License.  You should have
 # received a copy of these additional terms immediately following the
-# terms and conditions of the GNU Affero General Public License that
+# terms and conditions of the GNU Affero General Public License which
 # accompanied this program.
 #
 # If not, please request a copy through one of the means of contact
@@ -33,11 +35,8 @@
 Adds overlapping clozes
 """
 
-from __future__ import (absolute_import, division,
-                        print_function, unicode_literals)
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-from anki.notes import Note
-from aqt.utils import showInfo
 from .libaddon.platform import ANKI20
 
 import re
@@ -75,8 +74,8 @@ class ClozeOverlapper(object):
         original = self.note[self.flds["og"]]
         if not original:
             self.showTT(
-                "Reminder",
-                "Please enter some text in the '%s' field" % self.flds["og"])
+                "Reminder", "Please enter some text in the '%s' field" % self.flds["og"]
+            )
             return False, None
 
         matches = re.findall(self.creg, original)
@@ -90,12 +89,13 @@ class ClozeOverlapper(object):
             items, keys = self.getLineItems(original)
 
         if not items:
-            self.showTT("Warning",
-                        "Could not find any items to cloze.<br>Please check your input.",)
+            self.showTT(
+                "Warning",
+                "Could not find any items to cloze.<br>Please check your input.",
+            )
             return False, None
         if len(items) < 1:
-            self.showTT("Reminder",
-                        "Please enter at least 1 item to cloze.")
+            self.showTT("Reminder", "Please enter at least 1 item to cloze.")
             return False, None
 
         setopts = parseNoteSettings(self.note[self.flds["st"]])
@@ -107,20 +107,25 @@ class ClozeOverlapper(object):
         fields, full, total = gen.generate(items, formstr, keys)
 
         if fields is None:
-            self.showTT("Warning", "This would generate <b>%d</b> overlapping clozes,<br>"
-                        "The note type can only handle a maximum of <b>%d</b> with<br>"
-                        "the current number of %s fields" % (total, maxfields, self.flds["tx"]))
+            self.showTT(
+                "Warning",
+                "This would generate <b>%d</b> overlapping clozes,<br>"
+                "The note type can only handle a maximum of <b>%d</b> with<br>"
+                "the current number of %s fields" % (total, maxfields, self.flds["tx"]),
+            )
             return False, None
         if fields == 0:
-            self.showTT("Warning", "This would generate no overlapping clozes at all<br>"
-                        "Please check your cloze-generation settings")
+            self.showTT(
+                "Warning",
+                "This would generate no overlapping clozes at all<br>"
+                "Please check your cloze-generation settings",
+            )
             return False, None
 
         self.updateNote(fields, full, setopts, custom)
 
         if not self.silent:
-            self.showTT("Info", "Generated %d overlapping clozes" %
-                        total, period=1000)
+            self.showTT("Info", "Generated %d overlapping clozes" % total, period=1000)
         return True, total
 
     def getClozeItems(self, matches):
@@ -152,16 +157,15 @@ class ClozeOverlapper(object):
         else:
             self.markup = "div"
         # remove empty lines:
-        lines = re.sub(r"^(&nbsp;)+$", "", text,
-                       flags=re.MULTILINE).splitlines()
-        items = [line for line in lines if line.strip() != '']
+        lines = re.sub(r"^(&nbsp;)+$", "", text, flags=re.MULTILINE).splitlines()
+        items = [line for line in lines if line.strip() != ""]
         return items, None
 
     @staticmethod
     def getMaxFields(model, prefix):
         """Determine number of text fields available for cloze sequences"""
         m = model
-        fields = [f['name'] for f in m['flds'] if f['name'].startswith(prefix)]
+        fields = [f["name"] for f in m["flds"] if f["name"].startswith(prefix)]
         last = 0
         for f in fields:
             # check for non-continuous cloze fields
@@ -180,8 +184,11 @@ class ClozeOverlapper(object):
             warnUser("Note Type", "Cloze fields not configured properly")
             return False
         elif expected != actual:
-            warnUser("Note Type", "Cloze fields are not continuous."
-                     "<br>(breaking off after %i fields)" % actual)
+            warnUser(
+                "Note Type",
+                "Cloze fields are not continuous."
+                "<br>(breaking off after %i fields)" % actual,
+            )
             return False
         return actual
 
@@ -190,7 +197,7 @@ class ClozeOverlapper(object):
         note = self.note
         options = setopts[1]
         for idx, field in enumerate(fields):
-            name = self.flds["tx"] + str(idx+1)
+            name = self.flds["tx"] + str(idx + 1)
             if name not in note:
                 print("Missing field. Should never happen.")
                 continue
@@ -202,22 +209,8 @@ class ClozeOverlapper(object):
             full = full if custom else self.processField(full)
         note[self.flds["fl"]] = full
         note[self.flds["st"]] = createNoteSettings(setopts)
-        # This addon breaks in Anki 2.1.28+ will break due to changes in card-adding behaviour:
-        # https://forums.ankiweb.net/t/assign-note-id-to-new-notes-in-addnote-window-revert-a-change-in-2-1-28/2354
-        # so if there's no ID, change the hook to use col.backend.add_note(note=note: Note, deck_id=deck_id: int)
-        # Glutanimate has actually acknowledged this already and is doing a bunch of testing
-        # yes, i also had to go digging through the code to find this, Damien hasn't written any docs for 2.1
-        # kinda dangerous, don't expect it to do all the right things, I'm not an experienced anki dev
-        # more problems:
-        # TODO first, it doesn't clear the editor after adding. make it do that.
-        # TODO cards won't add to the collection, how to fix?
-        # TODO i keep getting a poison error, why?
-        if note.id == 0:
-            ncol = note.col
-            note.id = ncol.backend.add_note(note=note.to_backend_note(), deck_id=ncol.conf["curDeck"])
-        else:
+        if note.id != 0:  # Not in add mode
             note.flush()
-
 
     def processField(self, field):
         """Convert field contents back to HTML based on previous markup"""
@@ -226,8 +219,8 @@ class ClozeOverlapper(object):
             tag_start, tag_end = "", ""
             tag_items = "<div>{0}</div>"
         else:
-            tag_start = '<{0}>'.format(markup)
-            tag_end = '</{0}>'.format(markup)
+            tag_start = "<{0}>".format(markup)
+            tag_end = "</{0}>".format(markup)
             tag_items = "<li>{0}</li>"
         lines = "".join(tag_items.format(line) for line in field)
         return tag_start + lines + tag_end
