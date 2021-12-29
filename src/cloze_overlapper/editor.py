@@ -192,7 +192,7 @@ def onInsertCloze(self, _old):
     # find the highest existing cloze
     highest = 0
     for name, val in self.note.items():
-        m = re.findall("\[\[oc(\d+)::", val)
+        m = re.findall(r"\[\[oc(\d+)::", val)
         if m:
             highest = max(highest, sorted([int(x) for x in m])[-1])
     # reuse last?
@@ -218,10 +218,10 @@ To make a cloze deletion on an existing note, you need to change it \
 to a cloze type first, via Edit>Change Note Type.""")
             return
     if checkModel(model, fields=False, notify=False):
-        cloze_re = "\[\[oc(\d+)::"
+        cloze_re = r"\[\[oc(\d+)::"
         wrap_pre, wrap_post = "[[oc", "]]"
     else:
-        cloze_re = "\{\{c(\d+)::"
+        cloze_re = r"\{\{c(\d+)::"
         wrap_pre, wrap_post = "{{c", "}}"
     # find the highest existing cloze
     highest = 0
