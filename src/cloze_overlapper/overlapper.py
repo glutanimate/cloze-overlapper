@@ -59,7 +59,7 @@ class ClozeOverlapper(object):
 
     def __init__(self, note, markup=False, silent=False, parent=None):
         self.note = note
-        self.model = self.note.model()
+        self.model = self.note.note_type()
         self.flds = config["synced"]["flds"]
         self.markup = markup
         self.silent = silent

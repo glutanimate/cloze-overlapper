@@ -187,7 +187,7 @@ def refreshEditor(editor):
 
 def onInsertCloze(self, _old):
     """Handles cloze-wraps when the add-on model is active"""
-    if not checkModel(self.note.model(), fields=False, notify=False):
+    if not checkModel(self.note.note_type(), fields=False, notify=False):
         return _old(self)
     # find the highest existing cloze
     highest = 0
@@ -206,7 +206,7 @@ def onInsertCloze(self, _old):
 @editorSaveThen
 def onInsertMultipleClozes(self):
     """Wraps each line in a separate cloze"""
-    model = self.note.model()
+    model = self.note.note_type()
     # check that the model is set up for cloze deletion
     if not re.search('{{(.*:)*cloze:', model['tmpls'][0]['qfmt']):
         if self.addMode:
@@ -242,7 +242,7 @@ to a cloze type first, via Edit>Change Note Type.""")
 @editorSaveThen
 def onRemoveClozes(self):
     """Remove cloze markers and hints from selected text"""
-    if checkModel(self.note.model(), fields=False, notify=False):
+    if checkModel(self.note.note_type(), fields=False, notify=False):
         cloze_re = r"\[\[oc(\d+)::(.*?)(::(.*?))?\]\]"
     else:
         cloze_re = r"\{\{c(\d+)::(.*?)(::(.*?))?\}\}"
@@ -252,7 +252,7 @@ def onRemoveClozes(self):
 @editorSaveThen
 def onOlOptionsButton(self):
     """Invoke note-specific options dialog"""
-    if not checkModel(self.note.model()):
+    if not checkModel(self.note.note_type()):
         return False
     options = OlcOptionsNote(self.parentWindow)
     options.exec_()
