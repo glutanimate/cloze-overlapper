@@ -255,7 +255,7 @@ def onOlOptionsButton(self):
     if not checkModel(self.note.note_type()):
         return False
     options = OlcOptionsNote(self.parentWindow)
-    options.exec_()
+    options.exec()
 
 
 @editorSaveThen
