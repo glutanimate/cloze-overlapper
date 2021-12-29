@@ -46,7 +46,7 @@ else:
     from anki.schedv2 import Scheduler as SchedulerV2
     SCHEDULERS = (SchedulerV1, SchedulerV2)
 
-from anki.utils import ids2str, intTime
+from anki.utils import ids2str, int_time
 from anki.hooks import wrap
 
 from aqt import mw
@@ -104,7 +104,7 @@ and (queue=0 or (queue=2 and due<=?))""", card.nid, card.id, self.today):
             self.col.db.execute(
                 "update cards set queue=-2,mod=?,usn=? where id in " +
                 ids2str(toBury),
-                intTime(), self.col.usn())
+                int_time(), self.col.usn())
             self.col.log(toBury)
         elif mw.col.schedVer() == 2:
             self.buryCards(toBury, manual=False)
