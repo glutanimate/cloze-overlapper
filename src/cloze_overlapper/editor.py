@@ -187,12 +187,12 @@ def refreshEditor(editor):
 
 def onInsertCloze(self, _old):
     """Handles cloze-wraps when the add-on model is active"""
-    if not checkModel(self.note.model(), fields=False, notify=False):
+    if not checkModel(self.note.note_type(), fields=False, notify=False):
         return _old(self)
     # find the highest existing cloze
     highest = 0
     for name, val in self.note.items():
-        m = re.findall("\[\[oc(\d+)::", val)
+        m = re.findall(r"\[\[oc(\d+)::", val)
         if m:
             highest = max(highest, sorted([int(x) for x in m])[-1])
     # reuse last?
@@ -206,7 +206,7 @@ def onInsertCloze(self, _old):
 @editorSaveThen
 def onInsertMultipleClozes(self):
     """Wraps each line in a separate cloze"""
-    model = self.note.model()
+    model = self.note.note_type()
     # check that the model is set up for cloze deletion
     if not re.search('{{(.*:)*cloze:', model['tmpls'][0]['qfmt']):
         if self.addMode:
@@ -218,10 +218,10 @@ To make a cloze deletion on an existing note, you need to change it \
 to a cloze type first, via Edit>Change Note Type.""")
             return
     if checkModel(model, fields=False, notify=False):
-        cloze_re = "\[\[oc(\d+)::"
+        cloze_re = r"\[\[oc(\d+)::"
         wrap_pre, wrap_post = "[[oc", "]]"
     else:
-        cloze_re = "\{\{c(\d+)::"
+        cloze_re = r"\{\{c(\d+)::"
         wrap_pre, wrap_post = "{{c", "}}"
     # find the highest existing cloze
     highest = 0
@@ -242,7 +242,7 @@ to a cloze type first, via Edit>Change Note Type.""")
 @editorSaveThen
 def onRemoveClozes(self):
     """Remove cloze markers and hints from selected text"""
-    if checkModel(self.note.model(), fields=False, notify=False):
+    if checkModel(self.note.note_type(), fields=False, notify=False):
         cloze_re = r"\[\[oc(\d+)::(.*?)(::(.*?))?\]\]"
     else:
         cloze_re = r"\{\{c(\d+)::(.*?)(::(.*?))?\}\}"
@@ -252,10 +252,10 @@ def onRemoveClozes(self):
 @editorSaveThen
 def onOlOptionsButton(self):
     """Invoke note-specific options dialog"""
-    if not checkModel(self.note.model()):
+    if not checkModel(self.note.note_type()):
         return False
     options = OlcOptionsNote(self.parentWindow)
-    options.exec_()
+    options.exec()
 
 
 @editorSaveThen

@@ -37,7 +37,7 @@ from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 
 from aqt import mw
-from anki.utils import stripHTML
+from anki.utils import strip_html
 
 from .libaddon.anki.configmanager import ConfigManager
 
@@ -48,7 +48,7 @@ def parseNoteSettings(html):
     """Return note settings. Fall back to defaults if necessary."""
     options, settings, opts, sets = None, None, None, None
     dflt_set, dflt_opt = config["synced"]["dflts"], config["synced"]["dflto"]
-    field = stripHTML(html)
+    field = strip_html(html)
 
     lines = field.replace(" ", "").split("|")
     if not lines:

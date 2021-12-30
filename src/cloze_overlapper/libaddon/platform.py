@@ -41,7 +41,7 @@ import os
 
 from aqt import mw
 from anki import version as anki_version
-from anki.utils import isMac, isWin
+from anki.utils import is_mac, is_win
 
 __all__ = ["PYTHON3", "ANKI20", "SYS_ENCODING", "MODULE_ADDON",
            "MODULE_LIBADDON", "DIRECTORY_ADDONS", "JSPY_BRIDGE",
@@ -66,9 +66,9 @@ else:
 PATH_ADDON = os.path.join(DIRECTORY_ADDONS, MODULE_ADDON)
 PATH_USERFILES = os.path.join(PATH_ADDON, "user_files")
 
-if isMac:
+if is_mac:
     PLATFORM = "mac"
-elif isWin:
+elif is_win:
     PLATFORM = "win"
 else:
     PLATFORM = "lin"
