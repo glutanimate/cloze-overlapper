@@ -200,7 +200,8 @@ class ClozeOverlapper(object):
             full = full if custom else self.processField(full)
         note[self.flds["fl"]] = full
         note[self.flds["st"]] = createNoteSettings(setopts)
-        note.flush()
+        if note.id != 0:  # Not in add mode
+            note.flush()
 
     def processField(self, field):
         """Convert field contents back to HTML based on previous markup"""
