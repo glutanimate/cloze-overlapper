@@ -407,7 +407,7 @@ def addModel(col):
 def updateTemplate(col):
     """Update add-on card templates"""
     print("Updating %s card template".format(OLC_MODEL))
-    model = col.models.byName(OLC_MODEL)
+    model = col.models.by_name(OLC_MODEL)
     template = model['tmpls'][0]
     template['qfmt'] = card_front
     template['afmt'] = card_back
@@ -417,6 +417,6 @@ def updateTemplate(col):
 
 
 def initializeModels():
-    model = mw.col.models.byName(OLC_MODEL)
+    model = mw.col.models.by_name(OLC_MODEL)
     if not model:
         model = addModel(mw.col)
